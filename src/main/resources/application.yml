@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+      dialect: org.hibernate.dialect.MySQLDialect
+    generate-ddl: false
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
