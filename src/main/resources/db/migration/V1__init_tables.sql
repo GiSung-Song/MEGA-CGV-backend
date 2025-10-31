@@ -61,21 +61,21 @@ CREATE TABLE movie_types
 
 	CONSTRAINT fk_movie_types_movie FOREIGN KEY (movie_id) REFERENCES movies(id),
 
-	CONSTRAINT chk_movie_types_type CHECK (type IN ('2D', '3D', '4D'))
+	CONSTRAINT chk_movie_types_type CHECK (type IN ('TWO_D', 'THREE_D'))
 )
 
 -- 상영관 테이블
 CREATE TABLE theaters
 (
-	id         BIGINT AUTO_INCREMENT PRIMARY KEY, -- 식별자 ID 
-	name       VARCHAR(10) NOT NULL,              -- 상영관 이름
-	total_seat INT         NOT NULL,              -- 총 좌석 수
-	type       VARCHAR(10) NOT NULL DEFAULT '2D', -- 영화 타입(2D, 3D, 4D)
-	base_price INT         NOT NULL,              -- 가
+	id         BIGINT AUTO_INCREMENT PRIMARY KEY,    -- 식별자 ID 
+	name       VARCHAR(10) NOT NULL,                 -- 상영관 이름
+	total_seat INT         NOT NULL,                 -- 총 좌석 수
+	type       VARCHAR(10) NOT NULL DEFAULT 'TWO_D', -- 영화 타입(2D, 3D, 4D)
+	base_price INT         NOT NULL,                 -- 가격
 
 	CONSTRAINT uq_theaters_name UNIQUE (name),
 
-	CONSTRAINT chk_theaters_type CHECK (type IN ('2D', '3D', '4D'))
+	CONSTRAINT chk_theaters_type CHECK (type IN ('TWO_D', 'FOUR_DX', 'IMAX', 'SCREENX'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 좌석
@@ -83,13 +83,13 @@ CREATE TABLE seats
 (
 	id         BIGINT AUTO_INCREMENT PRIMARY KEY,    -- 식별자 ID 
 	theater_id BIGINT      NOT NULL,                 -- 상영관 식별자 ID
-	row        VARCHAR(1)  NOT NULL,                 -- 행
-	col        INT         NOT NULL,                 -- 번호
+	row_label  VARCHAR(1)  NOT NULL,                 -- 행
+	col_number INT         NOT NULL,                 -- 번호
 	type       VARCHAR(20) NOT NULL DEFAULT 'NORMAL' -- 좌석 타입(일반/프리미엄/룸)
 
-	CONSTRAINT fk_seats_screen FOREIGN KEY (theater_id) REFERENCES theaters(id),
+	CONSTRAINT fk_seats_theater FOREIGN KEY (theater_id) REFERENCES theaters(id),
 
-	CONSTRAINT uq_seats_screen_id_row_col UNIQUE (theater_id, row, col, type),
+	CONSTRAINT uq_seats_theater_id_row_col UNIQUE (theater_id, row, col, type),
 
 	CONSTRAINT chk_seats_type CHECK (type IN ('NORMAL', 'PREMIUM', 'ROOM')),
 
@@ -105,6 +105,8 @@ CREATE TABLE screenings
 	start_time TIMESTAMP NOT NULL,                -- 상영 시작 시간
 	end_time   TIMESTAMP NOT NULL,                -- 상영 종료 시간
 	sequence   INT NOT NULL,                      -- 상영회차 (1, 2, 3 ...)
+	created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 
 	CONSTRAINT fk_screenings_movie   FOREIGN KEY (movie_id)   REFERENCES movies(id),
 	CONSTRAINT fk_screenings_theater FOREIGN KEY (theater_id) REFERENCES theaters(id),
@@ -138,9 +140,12 @@ CREATE TABLE reservations
 	screening_seat_id    BIGINT NOT NULL, -- 상영-좌석 식별자 ID
 	price                INT    NOT NULL, -- 가격
 
-	CONSTRAINT fk_reservations_screening_seat FOREIGN KEY (screening_seat_id) REFERENCES screening_seats(id),
+	CONSTRAINT fk_reservations_reservation_group FOREIGN KEY (reservation_group_id) REFERENCES reservation_groups(id),
+	CONSTRAINT fk_reservations_screening_seat    FOREIGN KEY (screening_seat_id)    REFERENCES screening_seats(id),
 
-	CONSTRAINT uq_reservations_screening_seat UNIQUE (screening_seat_id)
+	CONSTRAINT uq_reservations_screening_seat UNIQUE (screening_seat_id),
+
+	INDEX idx_reservations_reservation_group (reservation_group_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 예약 그룹 테이블
