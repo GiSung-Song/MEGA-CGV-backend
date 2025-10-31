@@ -20,6 +20,10 @@ public enum ErrorCode {
     // Jwt Token
     JWT_TOKEN_INVALID("JWT_TOKEN_INVALID", "JWT 토큰이 올바르지 않습니다.", HttpStatus.UNAUTHORIZED),
     JWT_TOKEN_EXPIRED("JWT_TOKEN_EXPIRED", "JWT 토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
+
+    // 도메인
+    SCREENING_SEAT_NOT_AVAILABLE("SCREENING_SEAT_NOT_AVAILABLE", "예약 불가능한 좌석입니다.", HttpStatus.CONFLICT),
+    SCREENING_SEAT_NOT_RESERVED("SCREENING_SEAT_NOT_RESERVED", "예약된 좌석이 아닙니다.", HttpStatus.CONFLICT),
     ;
 
     private final String code;
