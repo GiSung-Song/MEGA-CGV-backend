@@ -25,7 +25,7 @@ CREATE TABLE movies
 	description TEXT         NOT NULL,             -- 설명
 	poster_url  VARCHAR(500) NOT NULL,             -- 포스터 파일 URL
 	created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	INDEX idx_movies_title (title)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -37,7 +37,7 @@ CREATE TABLE genres
 	name VARCHAR(50) NOT NULL,              -- 장르
 
 	CONSTRAINT uq_genres_name UNIQUE (name)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 영화-장르 관계 테이블
 CREATE TABLE movie_genres
@@ -49,20 +49,20 @@ CREATE TABLE movie_genres
 
 	CONSTRAINT fk_movie_genres_movie FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
 	CONSTRAINT fk_movie_genres_genre FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 영화-타입 관계 테이블
 CREATE TABLE movie_types
 (
 	movie_id BIGINT      NOT NULL, -- 영화 식별자 ID
-	type     VARCHAR(50) NOT NULL, -- 영화 타입(2D, 3D, 4D)
+	type     VARCHAR(50) NOT NULL, -- 영화 타입(2D, 3D)
 
 	PRIMARY KEY (movie_id, type),
 
 	CONSTRAINT fk_movie_types_movie FOREIGN KEY (movie_id) REFERENCES movies(id),
 
 	CONSTRAINT chk_movie_types_type CHECK (type IN ('TWO_D', 'THREE_D'))
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 상영관 테이블
 CREATE TABLE theaters
@@ -81,15 +81,15 @@ CREATE TABLE theaters
 -- 좌석
 CREATE TABLE seats
 (
-	id         BIGINT AUTO_INCREMENT PRIMARY KEY,    -- 식별자 ID 
-	theater_id BIGINT      NOT NULL,                 -- 상영관 식별자 ID
-	row_label  VARCHAR(1)  NOT NULL,                 -- 행
-	col_number INT         NOT NULL,                 -- 번호
-	type       VARCHAR(20) NOT NULL DEFAULT 'NORMAL' -- 좌석 타입(일반/프리미엄/룸)
+	id         BIGINT AUTO_INCREMENT PRIMARY KEY,     -- 식별자 ID
+	theater_id BIGINT      NOT NULL,                  -- 상영관 식별자 ID
+	row_label  VARCHAR(1)  NOT NULL,                  -- 행
+	col_number INT         NOT NULL,                  -- 번호
+	type       VARCHAR(20) NOT NULL DEFAULT 'NORMAL', -- 좌석 타입(일반/프리미엄/룸)
 
 	CONSTRAINT fk_seats_theater FOREIGN KEY (theater_id) REFERENCES theaters(id),
 
-	CONSTRAINT uq_seats_theater_id_row_col UNIQUE (theater_id, row, col, type),
+	CONSTRAINT uq_seats_theater_id_row_col UNIQUE (theater_id, row_label, col_number, type),
 
 	CONSTRAINT chk_seats_type CHECK (type IN ('NORMAL', 'PREMIUM', 'ROOM')),
 
@@ -100,13 +100,13 @@ CREATE TABLE seats
 CREATE TABLE screenings
 (
 	id         BIGINT AUTO_INCREMENT PRIMARY KEY, -- 식별자 ID 
-	movie_id   BIGINT NOT NULL,                   -- 영화 식별자 ID
-	theater_id BIGINT NOT NULL,                   -- 상영관 식별자 ID
+	movie_id   BIGINT    NOT NULL,                -- 영화 식별자 ID
+	theater_id BIGINT    NOT NULL,                -- 상영관 식별자 ID
 	start_time TIMESTAMP NOT NULL,                -- 상영 시작 시간
 	end_time   TIMESTAMP NOT NULL,                -- 상영 종료 시간
-	sequence   INT NOT NULL,                      -- 상영회차 (1, 2, 3 ...)
-	created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+	sequence   INT       NOT NULL,                -- 상영회차 (1, 2, 3 ...)
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	CONSTRAINT fk_screenings_movie   FOREIGN KEY (movie_id)   REFERENCES movies(id),
 	CONSTRAINT fk_screenings_theater FOREIGN KEY (theater_id) REFERENCES theaters(id),
@@ -132,6 +132,21 @@ CREATE TABLE screening_seats
 	INDEX idx_screening_seats_screen (screening_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- 예약 그룹 테이블
+CREATE TABLE reservation_groups
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,      -- 식별자 ID
+    user_id     BIGINT      NOT NULL,                   -- 회원 식별자 ID
+    total_price INT         NOT NULL,                   -- 총 가격
+    status      VARCHAR(20) NOT NULL DEFAULT 'PENDING', -- 예약 상태
+    created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 생성 시각
+    updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 종료 시각
+
+    CONSTRAINT chk_reservation_groups_status CHECK (status IN ('PENDING', 'PAID', 'CANCELLED')),
+
+    INDEX idx_reservation_groups_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- 예약 테이블
 CREATE TABLE reservations
 (
@@ -146,21 +161,4 @@ CREATE TABLE reservations
 	CONSTRAINT uq_reservations_screening_seat UNIQUE (screening_seat_id),
 
 	INDEX idx_reservations_reservation_group (reservation_group_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- 예약 그룹 테이블
-CREATE TABLE reservation_groups
-(
-	id          BIGINT AUTO_INCREMENT PRIMARY KEY,      -- 식별자 ID
-	user_id     BIGINT      NOT NULL,                   -- 회원 식별자 ID
-	total_price INT         NOT NULL,                   -- 총 가격
-	status      VARCHAR(20) NOT NULL DEFAULT 'PENDING', -- 예약 상태
-	created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 생성 시각
-	updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 종료 시각
-
-	CONSTRAINT fk_reservation_groups_user FOREIGN KEY (user_id) REFERENCES users(id),
-
-	CONSTRAINT chk_reservation_groups_status CHECK (status IN ('PENDING', 'PAID', 'CANCELLED')),
-
-	INDEX idx_reservation_groups_user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

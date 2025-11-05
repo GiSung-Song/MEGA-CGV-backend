@@ -38,13 +38,13 @@ public class ScreeningSeat {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    @Builder.Default
-    private ScreeningSeatStatus status = ScreeningSeatStatus.AVAILABLE;
+    private ScreeningSeatStatus status;
 
     @Builder(access = AccessLevel.PRIVATE)
     private ScreeningSeat(Screening screening, Seat seat) {
         this.screening = screening;
         this.seat = seat;
+        this.status = ScreeningSeatStatus.AVAILABLE;
     }
 
     public static ScreeningSeat createScreeningSeat(Screening screening, Seat seat) {

@@ -1,0 +1,12 @@
+spring:
+  data:
+    redis:
+      host: localhost
+
+jwt:
+  secretKey: gisung-mega-cgv-project-test-jwt-secret-key
+  access:
+    expiration: 1800000
+
+  refresh:
+    expiration: 3600000

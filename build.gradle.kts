@@ -84,3 +84,15 @@ tasks.register("generateQueryDSL") {
     group = "build"
     description = "Generate only QueryDSL Q-types without running tests"
 }
+
+tasks.test {
+    useJUnitPlatform {
+        excludeTags("integration")
+    }
+}
+
+tasks.register<Test>("integrationTest") {
+    useJUnitPlatform {
+        includeTags("integration")
+    }
+}

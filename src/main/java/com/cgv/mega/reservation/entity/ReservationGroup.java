@@ -3,9 +3,11 @@ package com.cgv.mega.reservation.entity;
 import com.cgv.mega.common.entity.BaseTimeEntity;
 import com.cgv.mega.common.enums.ReservationStatus;
 import com.cgv.mega.screening.entity.ScreeningSeat;
-import com.cgv.mega.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,31 +25,28 @@ public class ReservationGroup extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_reservation_groups_user"))
-    private User user;
+    @Column(nullable = false, name = "user_id")
+    private Long userId;
 
     @Column(nullable = false)
     private int totalPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
-    private ReservationStatus status = ReservationStatus.PENDING;
+    private ReservationStatus status;
 
     @OneToMany(mappedBy = "reservationGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private ReservationGroup(User user) {
-        this.user = user;
+    private ReservationGroup(Long userId) {
+        this.userId = userId;
+        this.status = ReservationStatus.PENDING;
     }
 
-    public static ReservationGroup createReservationGroup(User user) {
+    public static ReservationGroup createReservationGroup(Long userId) {
         return ReservationGroup.builder()
-                .user(user)
+                .userId(userId)
                 .build();
     }
 
