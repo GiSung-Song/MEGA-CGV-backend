@@ -1,6 +1,7 @@
 package com.cgv.mega.common.security;
 
 import com.cgv.mega.auth.dto.JwtPayloadDto;
+import com.cgv.mega.common.enums.TokenStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (hasToken) {
             String accessToken = requestHeader.substring(7);
 
-            if (!jwtTokenProvider.validateToken(accessToken) || isLogout(accessToken)) {
+            if (!(jwtTokenProvider.getTokenStatus(accessToken) == TokenStatus.VALID) || isLogout(accessToken)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
