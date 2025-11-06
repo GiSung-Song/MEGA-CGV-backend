@@ -1,6 +1,7 @@
 package com.cgv.mega.common.exception;
 
 import com.cgv.mega.common.enums.ErrorCode;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,11 +16,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * 커스텀 예외 처리
-     * @param ex 커스텀 예외
-     * @return ErrorResponse를 포함한 ResponseEntity
-     */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
         ErrorCode errorCode = ex.getErrorCode();
@@ -30,6 +26,17 @@ public class GlobalExceptionHandler {
                         errorCode.getStatus(),
                         errorCode.getCode(),
                         errorCode.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(
+                        HttpStatus.CONFLICT,
+                        "DATA_INTEGRITY_VIOLATION",
+                        "데이터 제약 조건을 위반했습니다."
                 ));
     }
 
@@ -55,11 +62,6 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    /**
-     * @Valid 검증 실패 시 발생하는 예외 처리
-     * @param ex 검증 실패 예외
-     * @return 필드별 오류 정보를 담은 ErrorResponse를 포함한 ResponseEntity
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         List<ErrorResponse.FieldError> fieldErrorList = ex.getBindingResult()

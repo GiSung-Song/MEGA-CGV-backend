@@ -13,7 +13,7 @@ services:
       - "3306:3306"
     command:
       --character-set-server=utf8mb4
-      --collation-server=utf8mb4_u900_ai_ci
+      --collation-server=utf8mb4_0900_ai_ci
     volumes:
       - mysql_data:/var/lib/mysql
 

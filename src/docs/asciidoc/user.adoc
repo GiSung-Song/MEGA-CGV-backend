@@ -1,0 +1,51 @@
+:snippets: ../../../build/generated-snippets
+
+=== 회원가입
+회원가입을 수행합니다.
+
+include::{snippets}/user-register/http-request.adoc[]
+include::{snippets}/user-register/http-response.adoc[]
+include::{snippets}/user-register/request-fields.adoc[]
+include::{snippets}/user-register/response-fields.adoc[]
+
+---
+
+=== 회원탈퇴
+현재 로그인한 사용자를 탈퇴 처리합니다.
+
+include::{snippets}/user-delete/http-request.adoc[]
+include::{snippets}/user-delete/http-response.adoc[]
+include::{snippets}/user-delete/request-headers.adoc[]
+include::{snippets}/user-delete/response-fields.adoc[]
+
+---
+
+=== 비밀번호 변경
+현재 비밀번호를 검증 후 새로운 비밀번호로 변경합니다.
+
+include::{snippets}/user-change-password/http-request.adoc[]
+include::{snippets}/user-change-password/http-response.adoc[]
+include::{snippets}/user-change-password/request-headers.adoc[]
+include::{snippets}/user-change-password/request-fields.adoc[]
+include::{snippets}/user-change-password/response-fields.adoc[]
+
+---
+
+=== 휴대폰 번호 변경
+사용자의 휴대폰 번호를 수정합니다.
+
+include::{snippets}/user-change-phone-number/http-request.adoc[]
+include::{snippets}/user-change-phone-number/http-response.adoc[]
+include::{snippets}/user-change-phone-number/request-headers.adoc[]
+include::{snippets}/user-change-phone-number/request-fields.adoc[]
+include::{snippets}/user-change-phone-number/response-fields.adoc[]
+
+---
+
+=== 회원정보 조회
+로그인한 사용자의 프로필 정보를 조회합니다.
+
+include::{snippets}/user-info/http-request.adoc[]
+include::{snippets}/user-info/http-response.adoc[]
+include::{snippets}/user-info/request-headers.adoc[]
+include::{snippets}/user-info/response-fields.adoc[]

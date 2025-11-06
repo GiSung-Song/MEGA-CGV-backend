@@ -30,6 +30,10 @@ public enum ErrorCode {
 
     // 사용자
     USER_NOT_FOUND("USER_NOT_FOUND", "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    DUPLICATE_EMAIL("DUPLICATE_EMAIL", "이미 등록된 이메일입니다.", HttpStatus.CONFLICT),
+    DUPLICATE_PHONE_NUMBER("DUPLICATE_PHONE_NUMBER", "이미 등록된 휴대폰 번호입니다.", HttpStatus.CONFLICT),
+    DUPLICATE_USER("DUPLICATE_USER", "이미 등록된 사용자입니다.", HttpStatus.CONFLICT),
+    INCORRECT_PASSWORD("INCORRECT_PASSWORD", "현재 비밀번호가 맞지 않습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;
