@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,10 +25,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
+import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.megacgv.com", uriPort = 443)
 @Tag("integration")
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -75,6 +83,18 @@ public class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists("refreshToken"))
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
+                .andDo(document("auth-login",
+                        requestFields(
+                                fieldWithPath("email").description("사용자 이메일"),
+                                fieldWithPath("password").description("비밀번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.accessToken").description("JWT Access Token"),
+                                fieldWithPath("data.refreshToken").description("Refresh Token").optional()
+                        )
+                ))
                 .andDo(print());
     }
 
@@ -88,6 +108,15 @@ public class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(cookie().exists("refreshToken"))
                 .andExpect(cookie().maxAge("refreshToken", 0))
+                .andDo(document("auth-logout",
+                        requestHeaders(
+                                headerWithName("Authorization").description("JWT Access Token (Bearer)")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지")
+                        )
+                ))
                 .andDo(print());
     }
 
@@ -102,6 +131,17 @@ public class AuthIntegrationTest {
                         .cookie(new Cookie("refreshToken", refreshToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
+                .andDo(document("auth-refresh",
+                        requestCookies(
+                                cookieWithName("refreshToken").description("JWT Refresh Token")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.accessToken").description("새로운 JWT Access Token"),
+                                fieldWithPath("data.refreshToken").description("JWT Refresh Token").optional()
+                        )
+                ))
                 .andDo(print());
     }
 }

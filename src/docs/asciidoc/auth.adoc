@@ -1,0 +1,31 @@
+:snippets: ../../../build/generated-snippets
+
+=== 로그인
+이메일과 비밀번호를 사용하여 로그인합니다.
+성공 시 Access Token과 Refresh Token이 발급됩니다.
+
+include::{snippets}/auth-login/http-request.adoc[]
+include::{snippets}/auth-login/http-response.adoc[]
+include::{snippets}/auth-login/request-fields.adoc[]
+include::{snippets}/auth-login/response-fields.adoc[]
+
+---
+
+=== 로그아웃
+Access Token을 사용하여 로그아웃합니다.
+서버는 Refresh Token 쿠키를 삭제합니다.
+
+include::{snippets}/auth-logout/http-request.adoc[]
+include::{snippets}/auth-logout/http-response.adoc[]
+include::{snippets}/auth-logout/request-headers.adoc[]
+include::{snippets}/auth-logout/response-fields.adoc[]
+
+---
+
+=== 토큰 재발급
+만료된 Access Token 대신 Refresh Token을 사용하여 새 Access Token을 발급받습니다.
+
+include::{snippets}/auth-refresh/http-request.adoc[]
+include::{snippets}/auth-refresh/http-response.adoc[]
+include::{snippets}/auth-refresh/request-cookies.adoc[]
+include::{snippets}/auth-refresh/response-fields.adoc[]

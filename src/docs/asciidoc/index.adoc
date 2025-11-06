@@ -1,0 +1,14 @@
+= MegaCGV REST API 문서
+:toc: left
+:toclevels: 2
+:sectlinks:
+:doctype: book
+:icons: font
+
+== 인증 API
+include::auth.adoc[]
+
+---
+
+== 사용자 API
+include::user.adoc[]
