@@ -120,9 +120,8 @@ tasks.withType<AsciidoctorTask> {
     baseDirFollowsSourceDir()
 }
 
-tasks.bootJar {
+tasks.register<Copy>("copyIndexDoc") {
     dependsOn(tasks.named("asciidoctor"))
-    from("${tasks.named<AsciidoctorTask>("asciidoctor").get().outputDir}") {
-        into("src/main/resources/static/docs")
-    }
+    from(layout.buildDirectory.file("docs/asciidoc/index.html"))
+    into(layout.projectDirectory.dir("src/main/resources/static/docs"))
 }
