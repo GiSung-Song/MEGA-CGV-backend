@@ -88,10 +88,12 @@ CREATE TABLE seats
 	row_label  VARCHAR(1)  NOT NULL,                  -- 행
 	col_number INT         NOT NULL,                  -- 번호
 	type       VARCHAR(20) NOT NULL DEFAULT 'NORMAL', -- 좌석 타입(일반/프리미엄/룸)
+    created_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	CONSTRAINT fk_seats_theater FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE,
 
-	CONSTRAINT uq_seats_theater_id_row_col UNIQUE (theater_id, row_label, col_number, type),
+	CONSTRAINT uq_seats_theater_row_col UNIQUE (theater_id, row_label, col_number),
 
 	CONSTRAINT chk_seats_type CHECK (type IN ('NORMAL', 'PREMIUM', 'ROOM')),
 
