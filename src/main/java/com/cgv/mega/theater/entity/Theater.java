@@ -1,5 +1,6 @@
 package com.cgv.mega.theater.entity;
 
+import com.cgv.mega.common.entity.BaseTimeEntity;
 import com.cgv.mega.common.enums.TheaterType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import org.hibernate.annotations.Immutable;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Immutable
-public class Theater {
+public class Theater extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
