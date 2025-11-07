@@ -67,11 +67,13 @@ CREATE TABLE movie_types
 -- 상영관 테이블
 CREATE TABLE theaters
 (
-	id         BIGINT AUTO_INCREMENT PRIMARY KEY,    -- 식별자 ID 
+	id         BIGINT PRIMARY KEY,                   -- 식별자 ID
 	name       VARCHAR(10) NOT NULL,                 -- 상영관 이름
 	total_seat INT         NOT NULL,                 -- 총 좌석 수
-	type       VARCHAR(10) NOT NULL DEFAULT 'TWO_D', -- 영화 타입(2D, 3D, 4D)
+	type       VARCHAR(10) NOT NULL DEFAULT 'TWO_D', -- 상영관 타입(2D, 3D, 4D)
 	base_price INT         NOT NULL,                 -- 가격
+    created_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	CONSTRAINT uq_theaters_name UNIQUE (name),
 
@@ -87,7 +89,7 @@ CREATE TABLE seats
 	col_number INT         NOT NULL,                  -- 번호
 	type       VARCHAR(20) NOT NULL DEFAULT 'NORMAL', -- 좌석 타입(일반/프리미엄/룸)
 
-	CONSTRAINT fk_seats_theater FOREIGN KEY (theater_id) REFERENCES theaters(id),
+	CONSTRAINT fk_seats_theater FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE,
 
 	CONSTRAINT uq_seats_theater_id_row_col UNIQUE (theater_id, row_label, col_number, type),
 
