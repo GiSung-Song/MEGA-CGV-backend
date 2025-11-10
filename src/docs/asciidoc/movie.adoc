@@ -1,0 +1,32 @@
+:snippets: ../../../build/generated-snippets
+
+=== 영화 등록 API (관리자 전용)
+영화를 등록합니다.
+
+include::{snippets}/movie-register/http-request.adoc[]
+include::{snippets}/movie-register/http-response.adoc[]
+include::{snippets}/movie-register/request-headers.adoc[]
+include::{snippets}/movie-register/request-fields.adoc[]
+include::{snippets}/movie-register/response-fields.adoc[]
+
+---
+
+=== 영화 삭제 API (관리자 전용)
+영화를 삭제합니다.
+
+include::{snippets}/movie-delete/http-request.adoc[]
+include::{snippets}/movie-delete/http-response.adoc[]
+include::{snippets}/movie-delete/path-parameters.adoc[]
+include::{snippets}/movie-delete/request-headers.adoc[]
+include::{snippets}/movie-delete/response-fields.adoc[]
+
+---
+
+=== 영화 상세 정보 조회
+영화의 상세 정보를 조회합니다.
+
+include::{snippets}/movie-info/http-request.adoc[]
+include::{snippets}/movie-info/http-response.adoc[]
+include::{snippets}/movie-info/path-parameters.adoc[]
+include::{snippets}/movie-info/request-headers.adoc[]
+include::{snippets}/movie-info/response-fields.adoc[]

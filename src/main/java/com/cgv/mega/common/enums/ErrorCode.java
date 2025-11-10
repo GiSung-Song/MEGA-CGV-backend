@@ -34,6 +34,14 @@ public enum ErrorCode {
     DUPLICATE_PHONE_NUMBER("DUPLICATE_PHONE_NUMBER", "이미 등록된 휴대폰 번호입니다.", HttpStatus.CONFLICT),
     DUPLICATE_USER("DUPLICATE_USER", "이미 등록된 사용자입니다.", HttpStatus.CONFLICT),
     INCORRECT_PASSWORD("INCORRECT_PASSWORD", "현재 비밀번호가 맞지 않습니다.", HttpStatus.BAD_REQUEST),
+
+    // 장르
+    GENRE_NOT_FOUND("GENRE_NOT_FOUND", "장르를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+    // 영화
+    MOVIE_NOT_FOUND("MOVIE_NOT_FOUND", "영화를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    MOVIE_ALREADY_DELETED("MOVIE_ALREADY_DELETED", "이미 삭제된 영화입니다.", HttpStatus.CONFLICT),
+    MOVIE_ALREADY_SCREENING("MOVIE_ALREADY_SCREENING", "상영중이거나 상영된 영화는 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

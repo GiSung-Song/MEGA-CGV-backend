@@ -12,3 +12,8 @@ include::auth.adoc[]
 
 == 사용자 API
 include::user.adoc[]
+
+---
+
+== 영화 API
+include::movie.adoc[]

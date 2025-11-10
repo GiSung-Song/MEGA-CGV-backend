@@ -462,6 +462,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_회원정보_조회">회원정보 조회</a></li>
 </ul>
 </li>
+<li><a href="#_영화_api">영화 API</a>
+<ul class="sectlevel2">
+<li><a href="#_영화_등록_api_관리자_전용">영화 등록 API (관리자 전용)</a></li>
+<li><a href="#_영화_삭제_api_관리자_전용">영화 삭제 API (관리자 전용)</a></li>
+<li><a href="#_영화_상세_정보_조회">영화 상세 정보 조회</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -491,8 +498,8 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 94b10108-2895-4916-bebd-2b0fac3048b9
-Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzOTUyMiwiaWF0IjoxNzYyNDM1OTIyfQ.41zmDB5XmzsVJH7M3HpFNeGI1hEHCim-O7tp4N5Igmg; Path=/api/auth/refresh; Max-Age=1209600; Expires=Thu, 20 Nov 2025 13:32:02 GMT; Secure; HttpOnly
+X-Request-ID: abcb0952-bfe1-4521-a3cc-9c11d22d8b8b
+Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2Mjc3MzEzNiwiaWF0IjoxNzYyNzY5NTM2fQ.nMNoE-dwvsNWzcPGIKYp1tuYZ5SPB-XKAZuo3E7VWjk; Path=/api/auth/refresh; Max-Age=1209600; Expires=Mon, 24 Nov 2025 10:12:16 GMT; Secure; HttpOnly
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -503,7 +510,7 @@ Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
 Content-Length: 451
 
-{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyMiwiaWF0IjoxNzYyNDM1OTIyfQ.Xa_rOb0T7dTML-I9yrO0QRC1kXrqnq1QpigSCIh4seE","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzOTUyMiwiaWF0IjoxNzYyNDM1OTIyfQ.41zmDB5XmzsVJH7M3HpFNeGI1hEHCim-O7tp4N5Igmg"}}</code></pre>
+{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2Mjc3MTMzNiwiaWF0IjoxNzYyNzY5NTM2fQ.dCrGlrgcB5g0crPq3PcJ6N5p1aqeyTw4zRX__rbQteM","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2Mjc3MzEzNiwiaWF0IjoxNzYyNzY5NTM2fQ.nMNoE-dwvsNWzcPGIKYp1tuYZ5SPB-XKAZuo3E7VWjk"}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -579,7 +586,7 @@ Content-Length: 451
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/logout HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyMSwiaWF0IjoxNzYyNDM1OTIxfQ.xDCmwosbvgtKD7AqCjwedb3QyzZcXBiAisDT4EQfuzY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2Mjc3MTMzNSwiaWF0IjoxNzYyNzY5NTM1fQ.Zanam38K3mT7nkG3PessNzFAp9QRv-8ssppz4AqoNUk
 Host: api.megacgv.com
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -590,7 +597,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 268396c2-2a55-4dc6-9e56-07248499e6ce
+X-Request-ID: 72e59808-2c42-410a-aee4-188330cf10f2
 Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; HttpOnly
 Content-Type: application/json
 X-Content-Type-Options: nosniff
@@ -660,7 +667,7 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/refresh HTTP/1.1
 Host: api.megacgv.com
-Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzOTUyMiwiaWF0IjoxNzYyNDM1OTIyfQ.0r9lyQNiRnBDa7k3ACs-qe4DmMa8D3GWbD-tunHIcOA
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2Mjc3MzEzNiwiaWF0IjoxNzYyNzY5NTM2fQ.QvH4sNMTJkOpi6vzuT4dPSb7gP8GzR-xGshOBYIqXaY
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
@@ -670,7 +677,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 132d6662-16b9-4fcd-abc1-309dbdccea4b
+X-Request-ID: 4ebf2343-fc28-4a49-941c-344cbb439ac9
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -681,7 +688,7 @@ Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
 Content-Length: 266
 
-{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyMiwiaWF0IjoxNzYyNDM1OTIyfQ.GMGt5YU7YVBETWHb8O_Kc4D1RTVTdEwRxPsw71-nwR8","refreshToken":null}}</code></pre>
+{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2Mjc3MTMzNiwiaWF0IjoxNzYyNzY5NTM2fQ.LT46UD-cIztIphkKQaF5l_s58v-R0Jf11VVRfmySLlA","refreshToken":null}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -766,7 +773,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: c5161514-aa2d-41ec-806c-05831ce6d9ec
+X-Request-ID: 504cbc3c-8364-4d3f-a884-ef54be144f35
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -852,7 +859,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/users/me HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3IiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyNSwiaWF0IjoxNzYyNDM1OTI1fQ.o3jU0MEYfpSz4jUbufLeltrhbcI3Y0bU_MtSX89a8P0
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNSIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjI3NzEzNDAsImlhdCI6MTc2Mjc2OTU0MH0.kykA_jtjzxeaE6ZXWygcIIuc3uaHDPXr8LDj9g3BKpY
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -862,7 +869,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 0ed99e39-4619-45cc-a4c3-9ca295b1f5b8
+X-Request-ID: f25d0c6d-83cb-4cc7-ad60-43a4fcbaf2c4
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -931,7 +938,7 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/users/me/password HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5IiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyNSwiaWF0IjoxNzYyNDM1OTI1fQ._rHUV9fMuBe4ynzdHIyYy_sevGWVYeYf_NZp5MIOWpw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjI3NzEzNDEsImlhdCI6MTc2Mjc2OTU0MX0.9jmtiKAdTAis5S0HmOt3TPusuzRruAiPmW3Rn1w4LuE
 Content-Length: 61
 Host: api.megacgv.com
 
@@ -944,7 +951,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 6a1a5ee5-98e2-408f-8160-a2e7524e2a9a
+X-Request-ID: 6610f7c7-364e-4f5d-a15e-a65df3357b07
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1039,7 +1046,7 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/users/me/phone-number HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2IiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyNSwiaWF0IjoxNzYyNDM1OTI1fQ.07bo2fOk9ghT-_sE39TfmRugge6e8WgVQLYNZ5_XcEY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNCIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjI3NzEzNDAsImlhdCI6MTc2Mjc2OTU0MH0.C9OtjDdQYf8vdK5SDKm9kgx5XhUA7k1nHjNE0B7MWtg
 Content-Length: 29
 Host: api.megacgv.com
 
@@ -1052,7 +1059,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: cdda40d7-6faf-427a-b1b3-7da27d092937
+X-Request-ID: 8d5b6033-8ba4-4211-b7d8-89f314be0288
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1141,7 +1148,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/users/me HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2MjQzNzcyNSwiaWF0IjoxNzYyNDM1OTI1fQ.x7lMA-3NrAlN-wnYINp78mChRgrkgpU8uHB_JIlaRRg
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNiIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjI3NzEzNDEsImlhdCI6MTc2Mjc2OTU0MX0.WJ7o0JwkkC7KogNMu8mP2wSE3aJeCQuBAm-yPCW0pPk
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -1151,7 +1158,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: c89ac92e-cc79-4580-b04f-ce193aa833ca
+X-Request-ID: 46d41b28-a3d8-4c79-b3d4-103f9c24a52c
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1224,6 +1231,348 @@ Content-Length: 102
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_영화_api"><a class="link" href="#_영화_api">영화 API</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_영화_등록_api_관리자_전용"><a class="link" href="#_영화_등록_api_관리자_전용">영화 등록 API (관리자 전용)</a></h3>
+<div class="paragraph">
+<p>영화를 등록합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/admin/movies HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2Mjc3MTMzOSwiaWF0IjoxNzYyNzY5NTM5fQ.JCjp4r7OWi_H6NT2DS5ReqixtRzoB5gGtL5KkXepHsI
+Content-Length: 153
+Host: api.megacgv.com
+
+{"title":"인터스텔라","duration":150,"description":"인터스텔라 설명","posterUrl":"poster.png","types":["TWO_D","THREE_D"],"genreIds":[3,2,1]}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: 69387c51-8f23-4602-b6fd-7e234db511af
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 33
+
+{"status":200,"message":"성공"}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token (Bearer)</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영 시간 (분 단위)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 설명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>posterUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 포스터 URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>types[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영 타입 목록 (TWO_D, THREE_D)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>genreIds[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 장르 ID 목록</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_영화_삭제_api_관리자_전용"><a class="link" href="#_영화_삭제_api_관리자_전용">영화 삭제 API (관리자 전용)</a></h3>
+<div class="paragraph">
+<p>영화를 삭제합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/admin/movies/2 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1IiwiZW1haWwiOiJjQGQuY29tIiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZXhwIjoxNzYyNzcxMzM4LCJpYXQiOjE3NjI3Njk1Mzh9.QgPN0Qw9rNVcYTiGv93Vk-8cxWSS45wIp164Fh2Oxw0
+Host: api.megacgv.com
+Content-Type: application/x-www-form-urlencoded</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: c1dd0d15-ccf0-4ca8-94a3-552a29d6a72c
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 33
+
+{"status":200,"message":"성공"}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/admin/movies/{movieId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>movieId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 영화의 ID</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token (Bearer)</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_영화_상세_정보_조회"><a class="link" href="#_영화_상세_정보_조회">영화 상세 정보 조회</a></h3>
+<div class="paragraph">
+<p>영화의 상세 정보를 조회합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/movies/1 HTTP/1.1
+Host: api.megacgv.com</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: 6721ac89-1071-4c46-a727-7b9aefa26e7c
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 186
+
+{"status":200,"message":"성공","data":{"title":"혹성탈출","duration":150,"description":"test-description","posterUrl":"poster.png","genres":["DRAMA","ACTION"],"types":["3D","2D"]}}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. /api/movies/{movieId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>movieId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 영화의 ID</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Unresolved directive in movie.adoc - include::../../../build/generated-snippets/movie-info/request-headers.adoc[]</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.duration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영 시간 (분 단위)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 설명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posterUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 포스터 URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.genres[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">영화 장르 목록(액션, 드라마 등)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.types[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영 타입 목록 (2D, 3D 등)</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -1231,7 +1580,7 @@ Content-Length: 102
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-11-06 22:07:50 +0900
+Last updated 2025-11-10 19:03:49 +0900
 </div>
 </div>
 </body>

@@ -27,7 +27,7 @@ public class QReservationGroup extends EntityPathBase<ReservationGroup> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final ListPath<Reservation, QReservation> reservations = this.<Reservation, QReservation>createList("reservations", Reservation.class, QReservation.class, PathInits.DIRECT2);
+    public final SetPath<Reservation, QReservation> reservations = this.<Reservation, QReservation>createSet("reservations", Reservation.class, QReservation.class, PathInits.DIRECT2);
 
     public final EnumPath<com.cgv.mega.common.enums.ReservationStatus> status = createEnum("status", com.cgv.mega.common.enums.ReservationStatus.class);
 

@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -36,7 +38,7 @@ public class ReservationGroup extends BaseTimeEntity {
     private ReservationStatus status;
 
     @OneToMany(mappedBy = "reservationGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reservation> reservations = new ArrayList<>();
+    private Set<Reservation> reservations = new HashSet<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private ReservationGroup(Long userId) {
@@ -53,11 +55,7 @@ public class ReservationGroup extends BaseTimeEntity {
     public void addReservation(ScreeningSeat screeningSeat, int price) {
         Reservation reservation = Reservation.createReservation(this, screeningSeat, price);
 
-        boolean exists = this.reservations.stream()
-                .anyMatch(r -> r.getScreeningSeat().equals(screeningSeat));
-
-        if (!exists) {
-            this.reservations.add(reservation);
+        if (this.reservations.add(reservation)) {
             this.totalPrice += price;
         }
     }

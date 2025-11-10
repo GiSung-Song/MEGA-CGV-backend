@@ -3,11 +3,14 @@ package com.cgv.mega.movie.entity;
 import com.cgv.mega.common.entity.BaseTimeEntity;
 import com.cgv.mega.common.enums.MovieType;
 import com.cgv.mega.genre.entity.Genre;
+import com.cgv.mega.movie.enums.MovieStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -36,35 +39,45 @@ public class Movie extends BaseTimeEntity {
     @Column(nullable = false, length = 500, name = "poster_url")
     private String posterUrl;
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MovieGenre> movieGenres = new ArrayList<>();
+    @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    private MovieStatus status;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MovieTypeMapping> movieTypes = new ArrayList<>();
+    private Set<MovieGenre> movieGenres = new HashSet<>();
 
-    @Builder
-    public Movie(String title, int duration, String description, String posterUrl) {
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MovieTypeMapping> movieTypes = new HashSet<>();
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Movie(String title, int duration, String description, String posterUrl) {
         this.title = title;
         this.duration = duration;
         this.description = description;
         this.posterUrl = posterUrl;
+        this.status = MovieStatus.ACTIVE;
+    }
+
+    public static Movie createMovie(String title, int duration, String description, String posterUrl) {
+        return Movie.builder()
+                .title(title)
+                .duration(duration)
+                .description(description)
+                .posterUrl(posterUrl)
+                .build();
     }
 
     public void addGenre(Genre genre) {
         MovieGenre movieGenre = MovieGenre.createMovieGenre(this, genre);
-
-        boolean exists = this.movieGenres.stream()
-                .anyMatch(mg -> mg.getGenre().equals(genre));
-
-        if (!exists) this.movieGenres.add(movieGenre);
+        this.movieGenres.add(movieGenre);
     }
 
     public void addType(MovieType movieType) {
         MovieTypeMapping movieTypeMapping = MovieTypeMapping.createMovieTypeMapping(this, movieType);
+        this.movieTypes.add(movieTypeMapping);
+    }
 
-        boolean exists = this.movieTypes.stream()
-                .anyMatch(mt -> mt.getType().equals(movieType));
-
-        if (!exists) this.movieTypes.add(movieTypeMapping);
+    public void deactivate() {
+        this.status = MovieStatus.INACTIVE;
     }
 }

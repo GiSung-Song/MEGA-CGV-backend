@@ -20,29 +20,35 @@ ON DUPLICATE KEY UPDATE
 -- =========================================
 -- 일반좌석
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 1, r, c, 'NORMAL', NOW(), NOW()
-FROM (SELECT 'A' AS r UNION ALL SELECT 'B' UNION ALL SELECT 'C' UNION ALL SELECT 'D') rows
-CROSS JOIN (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-    UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
-) cols
+(
+    SELECT 1, r, c, 'NORMAL', NOW(), NOW()
+    FROM (SELECT 'A' AS r UNION ALL SELECT 'B' UNION ALL SELECT 'C' UNION ALL SELECT 'D') AS rset
+    CROSS JOIN (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+        UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 프리미엄좌석 (E 1~7)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 1, 'E', c, 'PREMIUM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-    UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
-) cols
+(
+    SELECT 1, 'E', c, 'PREMIUM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+        UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 룸좌석 (F 1~3)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 1, 'F', c, 'ROOM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3
-) cols
+(
+    SELECT 1, 'F', c, 'ROOM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- =========================================
@@ -51,29 +57,35 @@ ON DUPLICATE KEY UPDATE updated_at = NOW();
 -- =========================================
 -- 일반좌석
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 2, r, c, 'NORMAL', NOW(), NOW()
-FROM (SELECT 'A' AS r UNION ALL SELECT 'B' UNION ALL SELECT 'C' UNION ALL SELECT 'D') rows
-CROSS JOIN (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-    UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
-) cols
+(
+    SELECT 2, r, c, 'NORMAL', NOW(), NOW()
+    FROM (SELECT 'A' AS r UNION ALL SELECT 'B' UNION ALL SELECT 'C' UNION ALL SELECT 'D') AS rset
+    CROSS JOIN (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+        UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 프리미엄좌석 (E 1~7)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 2, 'E', c, 'PREMIUM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
-    UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
-) cols
+(
+    SELECT 2, 'E', c, 'PREMIUM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+        UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 룸좌석 (F 1~3)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 2, 'F', c, 'ROOM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3
-) cols
+(
+    SELECT 2, 'F', c, 'ROOM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- =========================================
@@ -82,28 +94,34 @@ ON DUPLICATE KEY UPDATE updated_at = NOW();
 -- =========================================
 -- 일반좌석 (A~B 1~10)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 3, r, c, 'NORMAL', NOW(), NOW()
-FROM (SELECT 'A' AS r UNION ALL SELECT 'B') rows
-CROSS JOIN (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-    UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
-) cols
+(
+    SELECT 3, r, c, 'NORMAL', NOW(), NOW()
+    FROM (SELECT 'A' AS r UNION ALL SELECT 'B') AS rset
+    CROSS JOIN (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+        UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 프리미엄좌석 (C 1~5)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 3, 'C', c, 'PREMIUM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-) cols
+(
+    SELECT 3, 'C', c, 'PREMIUM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 룸좌석 (D 1~5)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 3, 'D', c, 'ROOM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-) cols
+(
+    SELECT 3, 'D', c, 'ROOM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- =========================================
@@ -112,27 +130,33 @@ ON DUPLICATE KEY UPDATE updated_at = NOW();
 -- =========================================
 -- 일반좌석 (A 1~10)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 4, 'A', c, 'NORMAL', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-    UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
-) cols
+(
+    SELECT 4, 'A', c, 'NORMAL', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+        UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 프리미엄좌석 (B 1~5)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 4, 'B', c, 'PREMIUM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-) cols
+(
+    SELECT 4, 'B', c, 'PREMIUM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- 룸좌석 (D 1~5)
 INSERT INTO seats (theater_id, row_label, col_number, type, created_at, updated_at)
-SELECT 4, 'D', c, 'ROOM', NOW(), NOW()
-FROM (
-    SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-) cols
+(
+    SELECT 4, 'D', c, 'ROOM', NOW(), NOW()
+    FROM (
+        SELECT 1 AS c UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
+    ) AS cset
+)
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 

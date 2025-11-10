@@ -24,10 +24,13 @@ CREATE TABLE movies
 	duration    INT          NOT NULL,             -- 상영 시간 (분 단위)
 	description TEXT         NOT NULL,             -- 설명
 	poster_url  VARCHAR(500) NOT NULL,             -- 포스터 파일 URL
+	status      VARCHAR(10)  NOT NULL DEFAULT 'ACTIVE', -- 상태
 	created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-	INDEX idx_movies_title (title)
+	INDEX idx_movies_title (title),
+
+    CONSTRAINT chk_movies_status CHECK (status IN ('ACTIVE', 'INACTIVE'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 장르 테이블

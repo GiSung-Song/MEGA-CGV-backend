@@ -9,10 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -53,11 +53,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // 인증 관련 API
+                        // 토큰 관련 API
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
 
-                        // 사용자 관련 API
+                        // 영화 상세 정보 조회 API
+                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+
+                        // ADMIN 전용 API
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // 회원가입 API
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
                         .anyRequest().authenticated()

@@ -2,14 +2,13 @@ package com.cgv.mega.user.service;
 
 import com.cgv.mega.common.enums.ErrorCode;
 import com.cgv.mega.common.exception.CustomException;
+import com.cgv.mega.user.dto.ChangePasswordRequest;
 import com.cgv.mega.user.dto.ChangePhoneNumberRequest;
 import com.cgv.mega.user.dto.RegisterUserRequest;
-import com.cgv.mega.user.dto.ChangePasswordRequest;
 import com.cgv.mega.user.dto.UserInfoResponse;
 import com.cgv.mega.user.entity.User;
 import com.cgv.mega.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
