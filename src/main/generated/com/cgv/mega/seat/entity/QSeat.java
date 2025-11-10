@@ -22,7 +22,12 @@ public class QSeat extends EntityPathBase<Seat> {
 
     public static final QSeat seat = new QSeat("seat");
 
+    public final com.cgv.mega.common.entity.QBaseTimeEntity _super = new com.cgv.mega.common.entity.QBaseTimeEntity(this);
+
     public final NumberPath<Integer> colNumber = createNumber("colNumber", Integer.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -31,6 +36,9 @@ public class QSeat extends EntityPathBase<Seat> {
     public final com.cgv.mega.theater.entity.QTheater theater;
 
     public final EnumPath<com.cgv.mega.common.enums.SeatType> type = createEnum("type", com.cgv.mega.common.enums.SeatType.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public QSeat(String variable) {
         this(Seat.class, forVariable(variable), INITS);

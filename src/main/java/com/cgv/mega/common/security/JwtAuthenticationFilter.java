@@ -26,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final List<PermitPass> PASS_PATHS = List.of(
             new PermitPass(HttpMethod.POST, "/api/auth/login"),
             new PermitPass(HttpMethod.POST, "/api/auth/refresh"),
-            new PermitPass(HttpMethod.POST, "/api/users")
+            new PermitPass(HttpMethod.POST, "/api/users"),
+            new PermitPass(HttpMethod.GET, "/api/movies/**")
     );
 
     @Override

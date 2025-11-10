@@ -9,7 +9,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -48,7 +50,7 @@ public class Screening extends BaseTimeEntity {
     private int sequence;
 
     @OneToMany(mappedBy = "screening", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ScreeningSeat> screeningSeats = new ArrayList<>();
+    private Set<ScreeningSeat> screeningSeats = new HashSet<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private Screening(Movie movie, Theater theater, LocalDateTime startTime, LocalDateTime endTime, int sequence) {
@@ -71,12 +73,7 @@ public class Screening extends BaseTimeEntity {
 
     public void initializeSeats(List<Seat> seats) {
         for (Seat seat : seats) {
-            boolean exists = this.screeningSeats.stream()
-                    .anyMatch(ss -> ss.getSeat().equals(seat));
-
-            if (!exists) {
-                this.screeningSeats.add(ScreeningSeat.createScreeningSeat(this, seat));
-            }
+            this.screeningSeats.add(ScreeningSeat.createScreeningSeat(this, seat));
         }
     }
 

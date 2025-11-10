@@ -31,11 +31,13 @@ public class QMovie extends EntityPathBase<Movie> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final ListPath<MovieGenre, QMovieGenre> movieGenres = this.<MovieGenre, QMovieGenre>createList("movieGenres", MovieGenre.class, QMovieGenre.class, PathInits.DIRECT2);
+    public final SetPath<MovieGenre, QMovieGenre> movieGenres = this.<MovieGenre, QMovieGenre>createSet("movieGenres", MovieGenre.class, QMovieGenre.class, PathInits.DIRECT2);
 
-    public final ListPath<MovieTypeMapping, QMovieTypeMapping> movieTypes = this.<MovieTypeMapping, QMovieTypeMapping>createList("movieTypes", MovieTypeMapping.class, QMovieTypeMapping.class, PathInits.DIRECT2);
+    public final SetPath<MovieTypeMapping, QMovieTypeMapping> movieTypes = this.<MovieTypeMapping, QMovieTypeMapping>createSet("movieTypes", MovieTypeMapping.class, QMovieTypeMapping.class, PathInits.DIRECT2);
 
     public final StringPath posterUrl = createString("posterUrl");
+
+    public final EnumPath<com.cgv.mega.movie.enums.MovieStatus> status = createEnum("status", com.cgv.mega.movie.enums.MovieStatus.class);
 
     public final StringPath title = createString("title");
 

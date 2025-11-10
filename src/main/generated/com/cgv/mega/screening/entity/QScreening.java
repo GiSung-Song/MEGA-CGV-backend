@@ -33,7 +33,7 @@ public class QScreening extends EntityPathBase<Screening> {
 
     public final com.cgv.mega.movie.entity.QMovie movie;
 
-    public final ListPath<ScreeningSeat, QScreeningSeat> screeningSeats = this.<ScreeningSeat, QScreeningSeat>createList("screeningSeats", ScreeningSeat.class, QScreeningSeat.class, PathInits.DIRECT2);
+    public final SetPath<ScreeningSeat, QScreeningSeat> screeningSeats = this.<ScreeningSeat, QScreeningSeat>createSet("screeningSeats", ScreeningSeat.class, QScreeningSeat.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> sequence = createNumber("sequence", Integer.class);
 
