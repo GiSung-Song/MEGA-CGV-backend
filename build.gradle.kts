@@ -40,6 +40,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("com.github.ben-manes.caffeine:caffeine")
 
+    // ES
+    implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+
     // flyway
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
@@ -68,6 +71,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:mysql:1.17.6")
+    testImplementation("org.testcontainers:elasticsearch")
 
     // restdocs
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")

@@ -61,9 +61,11 @@ public class AuthIntegrationTest {
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         TestContainerManager.startRedis();
+        TestContainerManager.startElasticSearch();
 
         TestContainerManager.registerMySQL(registry);
         TestContainerManager.registerRedis(registry);
+        TestContainerManager.registerElasticsearch(registry);
     }
 
     private User user;

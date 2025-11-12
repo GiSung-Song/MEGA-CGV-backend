@@ -3,6 +3,15 @@ spring:
     redis:
       host: localhost
 
+    elasticsearch:
+      repositories:
+        enabled: true
+
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 5s
+    socket-timeout: 10s
+
 jwt:
   secretKey: gisung-mega-cgv-project-test-jwt-secret-key
   access:

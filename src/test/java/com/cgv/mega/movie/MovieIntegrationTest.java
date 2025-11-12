@@ -48,7 +48,10 @@ public class MovieIntegrationTest {
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
+        TestContainerManager.startElasticSearch();
+
         TestContainerManager.registerMySQL(registry);
+        TestContainerManager.registerElasticsearch(registry);
     }
 
     @Test

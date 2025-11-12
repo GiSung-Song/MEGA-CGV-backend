@@ -42,6 +42,9 @@ public enum ErrorCode {
     MOVIE_NOT_FOUND("MOVIE_NOT_FOUND", "영화를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MOVIE_ALREADY_DELETED("MOVIE_ALREADY_DELETED", "이미 삭제된 영화입니다.", HttpStatus.CONFLICT),
     MOVIE_ALREADY_SCREENING("MOVIE_ALREADY_SCREENING", "상영중이거나 상영된 영화는 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
+    // 상영
+    INVALID_SCREENING_START_TIME("INVALID_SCREENING_START_TIME", "현재 시간 이전으로는 등록할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;
