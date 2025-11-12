@@ -1,19 +1,25 @@
 package com.cgv.mega.movie.service;
 
+import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.enums.ErrorCode;
 import com.cgv.mega.common.enums.MovieType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;
-import com.cgv.mega.movie.dto.MovieInfoResponse;
-import com.cgv.mega.movie.dto.RegisterMovieRequest;
+import com.cgv.mega.movie.dto.*;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.entity.MovieDocument;
 import com.cgv.mega.movie.enums.MovieStatus;
 import com.cgv.mega.movie.repository.MovieRepository;
+import com.cgv.mega.movie.repository.MovieSearchRepository;
 import com.cgv.mega.screening.repository.ScreeningRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -26,6 +32,8 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final GenreRepository genreRepository;
     private final ScreeningRepository screeningRepository;
+    private final MovieSearchRepository movieSearchRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     // 영화 등록
     @Transactional
@@ -48,6 +56,8 @@ public class MovieService {
         }
 
         movieRepository.save(movie);
+
+        eventPublisher.publishEvent(new MovieCreatedEvent(movie.getId()));
     }
 
     // 영화 삭제
@@ -65,6 +75,8 @@ public class MovieService {
         }
 
         movie.deactivate();
+
+        eventPublisher.publishEvent(new MovieDeletedEvent(movieId));
     }
 
     // 영화 상세조회
@@ -83,5 +95,18 @@ public class MovieService {
 
         return new MovieInfoResponse(movie.getTitle(), movie.getDuration(), movie.getDescription(),
                 movie.getPosterUrl(), genres, types);
+    }
+
+    // 영화 전체 목록 조회
+    public PageResponse getMovieList(String keyword, Pageable pageable) {
+        if (!StringUtils.hasText(keyword)) {
+            return PageResponse.from(Page.empty());
+        }
+
+        Page<MovieDocument> searchPage = movieSearchRepository.searchByTitle(keyword, pageable);
+
+        Page<MovieListResponse> responsePage = searchPage.map(MovieListResponse::from);
+
+        return PageResponse.from(responsePage);
     }
 }

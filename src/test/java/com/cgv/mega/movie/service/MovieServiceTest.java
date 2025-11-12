@@ -1,16 +1,19 @@
 package com.cgv.mega.movie.service;
 
+import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.enums.ErrorCode;
 import com.cgv.mega.common.enums.MovieType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.entity.GenreFixture;
 import com.cgv.mega.genre.repository.GenreRepository;
-import com.cgv.mega.movie.dto.MovieInfoResponse;
-import com.cgv.mega.movie.dto.RegisterMovieRequest;
+import com.cgv.mega.movie.dto.*;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.entity.MovieDocument;
+import com.cgv.mega.movie.entity.MovieDocumentFixture;
 import com.cgv.mega.movie.enums.MovieStatus;
 import com.cgv.mega.movie.repository.MovieRepository;
+import com.cgv.mega.movie.repository.MovieSearchRepository;
 import com.cgv.mega.screening.repository.ScreeningRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,10 +21,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,7 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MovieServiceTest {
@@ -44,6 +55,12 @@ class MovieServiceTest {
 
     @Mock
     private ScreeningRepository screeningRepository;
+
+    @Mock
+    private MovieSearchRepository movieSearchRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private MovieService movieService;
@@ -68,6 +85,7 @@ class MovieServiceTest {
 
             then(genreRepository).should().findAllById(request.genreIds());
             then(movieRepository).should().save(any(Movie.class));
+            then(eventPublisher).should().publishEvent(any(MovieCreatedEvent.class));
         }
 
         @Test
@@ -108,6 +126,7 @@ class MovieServiceTest {
             movieService.deleteMovie(1L);
 
             assertThat(movie.getStatus()).isEqualTo(MovieStatus.INACTIVE);
+            then(eventPublisher).should().publishEvent(any(MovieDeletedEvent.class));
         }
 
         @Test
@@ -197,6 +216,35 @@ class MovieServiceTest {
                         assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MOVIE_NOT_FOUND);
                         assertThat(ex.getErrorCode().getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
                     });
+        }
+    }
+
+    @Nested
+    class 영화_목록_조회_테스트 {
+
+        @Test
+        void 조회_결과_0건() {
+            Pageable pageable = PageRequest.of(0, 10);
+
+            PageResponse<MovieListResponse> movieList = movieService.getMovieList("", pageable);
+
+            assertThat(movieList.content()).isEmpty();
+            assertThat(movieList.pageInfo().totalElements()).isEqualTo(0);
+        }
+
+        @Test
+        void 조회_결과_반환() {
+            Pageable pageable = PageRequest.of(0, 10);
+            MovieDocument doc = MovieDocumentFixture.create(1L, "혹성탈출", Set.of("ACTION", "DRAMA"), Set.of("TWO_D", "THREE_D"), "poster@png.com");
+
+            Page<MovieDocument> page = new PageImpl<>(List.of(doc), pageable, 1);
+            given(movieSearchRepository.searchByTitle("혹성", pageable)).willReturn(page);
+
+            PageResponse<MovieListResponse> result = movieService.getMovieList("혹성", pageable);
+
+            assertThat(result.content()).hasSize(1);
+            assertThat(result.content().get(0).title()).isEqualTo("혹성탈출");
+            assertThat(result.pageInfo().totalElements()).isEqualTo(1);
         }
     }
 }
