@@ -25,6 +25,7 @@ public enum ErrorCode {
     JWT_TOKEN_EXPIRED("JWT_TOKEN_EXPIRED", "JWT 토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
 
     // 상영-좌석
+    SEAT_NOT_FOUND("SEAT_NOT_FOUND", "좌석이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     SCREENING_SEAT_NOT_AVAILABLE("SCREENING_SEAT_NOT_AVAILABLE", "예약 불가능한 좌석입니다.", HttpStatus.CONFLICT),
     SCREENING_SEAT_NOT_RESERVED("SCREENING_SEAT_NOT_RESERVED", "예약된 좌석이 아닙니다.", HttpStatus.CONFLICT),
 
@@ -43,8 +44,14 @@ public enum ErrorCode {
     MOVIE_ALREADY_DELETED("MOVIE_ALREADY_DELETED", "이미 삭제된 영화입니다.", HttpStatus.CONFLICT),
     MOVIE_ALREADY_SCREENING("MOVIE_ALREADY_SCREENING", "상영중이거나 상영된 영화는 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
+    // 상영관
+    THEATER_NOT_FOUND("THEATER_NOT_FOUND", "상영관을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
     // 상영
     INVALID_SCREENING_START_TIME("INVALID_SCREENING_START_TIME", "현재 시간 이전으로는 등록할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    DUPLICATE_THEATER_SCREENING_TIME("DUPLICATE_THEATER_SCREENING_TIME", "해당 시간에 상영 예정인 영화가 있습니다.", HttpStatus.CONFLICT),
+    INVALID_SCREENING_CANCEL("INVALID_SCREENING_CANCEL", "취소할 수 없는 상태입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_SCREENING_END("INVALID_SCREENING_END", "완료할 수 없는 상태입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

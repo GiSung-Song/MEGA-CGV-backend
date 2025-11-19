@@ -39,6 +39,8 @@ public class QScreening extends EntityPathBase<Screening> {
 
     public final DateTimePath<java.time.LocalDateTime> startTime = createDateTime("startTime", java.time.LocalDateTime.class);
 
+    public final EnumPath<com.cgv.mega.screening.enums.ScreeningStatus> status = createEnum("status", com.cgv.mega.screening.enums.ScreeningStatus.class);
+
     public final com.cgv.mega.theater.entity.QTheater theater;
 
     //inherited

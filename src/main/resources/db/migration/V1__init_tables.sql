@@ -13,7 +13,7 @@ CREATE TABLE users
 	CONSTRAINT uq_users_email        UNIQUE (email),
 	CONSTRAINT uq_users_phone_number UNIQUE (phone_number),
 
-	CONSTRAINT chk_users_role CHECK (role IN ('USER', 'STAFF', 'ADMIN'))
+	CONSTRAINT chk_users_role CHECK (role IN ('USER', 'ADMIN'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 영화 테이블
@@ -75,12 +75,12 @@ CREATE TABLE theaters
 	total_seat INT         NOT NULL,                 -- 총 좌석 수
 	type       VARCHAR(10) NOT NULL DEFAULT 'TWO_D', -- 상영관 타입(2D, 3D, 4D)
 	base_price INT         NOT NULL,                 -- 가격
-    created_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	CONSTRAINT uq_theaters_name UNIQUE (name),
 
-	CONSTRAINT chk_theaters_type CHECK (type IN ('TWO_D', 'FOUR_DX', 'IMAX', 'SCREENX'))
+	CONSTRAINT chk_theaters_type   CHECK (type IN ('TWO_D', 'FOUR_DX', 'IMAX', 'SCREENX'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 좌석
@@ -112,13 +112,16 @@ CREATE TABLE screenings
 	start_time TIMESTAMP NOT NULL,                -- 상영 시작 시간
 	end_time   TIMESTAMP NOT NULL,                -- 상영 종료 시간
 	sequence   INT       NOT NULL,                -- 상영회차 (1, 2, 3 ...)
+    status     VARCHAR(10) NOT NULL,                 -- 상태
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
 	CONSTRAINT fk_screenings_movie   FOREIGN KEY (movie_id)   REFERENCES movies(id),
 	CONSTRAINT fk_screenings_theater FOREIGN KEY (theater_id) REFERENCES theaters(id),
 
-	CONSTRAINT uq_screenings_sequence UNIQUE (movie_id, sequence)
+	CONSTRAINT uq_screenings_sequence UNIQUE (movie_id, sequence),
+
+    CONSTRAINT chk_screening_status CHECK (status IN ('SCHEDULED', 'CANCELED', 'ENDED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 상영-좌석 관계 테이블

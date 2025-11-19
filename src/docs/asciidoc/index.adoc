@@ -17,3 +17,8 @@ include::user.adoc[]
 
 == 영화 API
 include::movie.adoc[]
+
+---
+
+== 상영 API
+include::screening.adoc[]
