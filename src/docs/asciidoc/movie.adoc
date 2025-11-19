@@ -27,7 +27,7 @@ include::{snippets}/movie-delete/response-fields.adoc[]
 
 include::{snippets}/movie-list-search/http-request.adoc[]
 include::{snippets}/movie-list-search/http-response.adoc[]
-include::{snippets}/movie-list-search/path-parameters.adoc[]
+include::{snippets}/movie-list-search/query-parameters.adoc[]
 include::{snippets}/movie-list-search/request-headers.adoc[]
 include::{snippets}/movie-list-search/response-fields.adoc[]
 

@@ -2,15 +2,14 @@ package com.cgv.mega.screening.entity;
 
 import com.cgv.mega.common.entity.BaseTimeEntity;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.theater.entity.Theater;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -49,6 +48,10 @@ public class Screening extends BaseTimeEntity {
     @Column(nullable = false)
     private int sequence;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ScreeningStatus status;
+
     @OneToMany(mappedBy = "screening", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ScreeningSeat> screeningSeats = new HashSet<>();
 
@@ -59,6 +62,7 @@ public class Screening extends BaseTimeEntity {
         this.startTime = startTime;
         this.endTime = endTime;
         this.sequence = sequence;
+        this.status = ScreeningStatus.SCHEDULED;
     }
 
     public static Screening createScreening(Movie movie, Theater theater, LocalDateTime startTime, LocalDateTime endTime, int sequence) {
@@ -71,13 +75,22 @@ public class Screening extends BaseTimeEntity {
                 .build();
     }
 
-    public void initializeSeats(List<Seat> seats) {
+    public void initializeSeats(Set<Seat> seats) {
         for (Seat seat : seats) {
             this.screeningSeats.add(ScreeningSeat.createScreeningSeat(this, seat));
         }
     }
 
-    public void removeSeat(ScreeningSeat screeningSeat) {
-        screeningSeats.remove(screeningSeat);
+    public void cancelScreening() {
+        this.status = ScreeningStatus.CANCELED;
+    }
+
+    public void markEnded() {
+        this.status = ScreeningStatus.ENDED;
+    }
+
+    public boolean isEnded() {
+        return this.status == ScreeningStatus.ENDED
+                || LocalDateTime.now().isAfter(this.endTime);
     }
 }

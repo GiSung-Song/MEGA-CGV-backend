@@ -1,5 +1,6 @@
 package com.cgv.mega.screening.dto;
 
+import com.cgv.mega.common.enums.MovieType;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -7,6 +8,9 @@ import java.time.LocalDateTime;
 public record RegisterScreeningRequest(
         @NotNull(message = "영화 식별자 ID는 필수입니다.")
         Long movieId,
+
+        @NotNull(message = "영화 타입은 필수입니다.")
+        MovieType movieType,
 
         @NotNull(message = "상영관 식별자 ID는 필수입니다.")
         Long theaterId,

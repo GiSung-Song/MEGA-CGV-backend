@@ -5,6 +5,9 @@ import com.cgv.mega.common.enums.Role;
 import com.cgv.mega.common.security.JwtTokenProvider;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.repository.MovieRepository;
+import com.cgv.mega.screening.entity.Screening;
+import com.cgv.mega.screening.repository.ScreeningRepository;
+import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.user.entity.User;
 import com.cgv.mega.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Component
 @Profile("test")
@@ -29,6 +34,9 @@ public class TestDataFactory {
     private MovieRepository movieRepository;
 
     @Autowired
+    private ScreeningRepository screeningRepository;
+
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     public User createUser(String name, String email, String phoneNumber) {
@@ -41,6 +49,14 @@ public class TestDataFactory {
         Movie movie = Movie.createMovie(title, 150, "test-description", "poster.png");
 
         return movieRepository.save(movie);
+    }
+
+    public Screening createScreening(Movie movie, Theater theater, LocalDateTime startTime, int sequence) {
+        LocalDateTime endTime = startTime.plusMinutes(160);
+
+        Screening screening = Screening.createScreening(movie, theater, startTime, endTime, sequence);
+
+        return screeningRepository.save(screening);
     }
 
     public void setAdmin(User user) {
