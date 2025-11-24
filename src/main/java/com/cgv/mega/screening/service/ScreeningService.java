@@ -6,8 +6,10 @@ import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.repository.MovieRepository;
 import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.entity.Screening;
+import com.cgv.mega.screening.entity.ScreeningSeat;
 import com.cgv.mega.screening.repository.ScreeningQueryRepository;
 import com.cgv.mega.screening.repository.ScreeningRepository;
+import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
@@ -33,6 +35,7 @@ public class ScreeningService {
     private final MovieRepository movieRepository;
     private final TheaterRepository theaterRepository;
     private final SeatRepository seatRepository;
+    private final ScreeningSeatRepository screeningSeatRepository;
 
     private static final LocalTime THEATER_OPEN_TIME = LocalTime.of(5, 0);
     private static final LocalTime LAST_SCREENING_START_TIME = LocalTime.of(1, 0);
@@ -183,5 +186,47 @@ public class ScreeningService {
         List<MovieScreeningResponse.MovieScreeningInfo> movieScreeningList = screeningQueryRepository.getMovieScreeningList(movieId, null);
 
         return new MovieScreeningResponse(movieScreeningList);
+    }
+
+    // 해당 상영회차의 좌석 현황 조회
+    @Transactional(readOnly = true)
+    public ScreeningSeatResponse getScreeningSeatStatus(Long screeningId) {
+        List<ScreeningSeatDto> rows = screeningQueryRepository.getScreeningSeat(screeningId);
+
+        if (rows.isEmpty()) {
+            throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
+        }
+
+        int basePrice = rows.get(0).basePrice();
+
+        List<ScreeningSeatResponse.ScreeningSeatInfo> screeningSeatInfos = rows.stream()
+                .map(r -> new ScreeningSeatResponse.ScreeningSeatInfo(
+                        r.screeningSeatId(),
+                        r.rowLabel(),
+                        r.colNumber(),
+                        r.seatType(),
+                        r.status()
+                ))
+                .toList();
+
+        return new ScreeningSeatResponse(screeningId, basePrice, screeningSeatInfos);
+    }
+
+    // 해당 좌석 상태 변경 -> 수리중 (관리자용)
+    @Transactional
+    public void fixingScreeningSeat(Long screeningSeatId) {
+        ScreeningSeat screeningSeat = screeningSeatRepository.findById(screeningSeatId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+
+        screeningSeat.fixScreeningSeat();
+    }
+
+    // 수리 완료 (관리자용)
+    @Transactional
+    public void restoringScreeningSeat(Long screeningSeatId) {
+        ScreeningSeat screeningSeat = screeningSeatRepository.findById(screeningSeatId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+
+        screeningSeat.restoreScreeningSeat();
     }
 }

@@ -22,9 +22,9 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -137,6 +137,44 @@ class AdminScreeningControllerTest {
         @Test
         void 경로_변수_오류_400반환() throws Exception {
             mockMvc.perform(get("/api/admin/screenings/{movieId}", "abcdefg"))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 특정_좌석_수리중_상태로_변경 {
+        @Test
+        void 변경_성공() throws Exception {
+            willDoNothing().given(screeningService).fixingScreeningSeat(anyLong());
+
+            mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/fix", 1L))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/fix", "1L"))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 특정_좌석_예약가능_상태로_변경 {
+        @Test
+        void 변경_성공() throws Exception {
+            willDoNothing().given(screeningService).restoringScreeningSeat(anyLong());
+
+            mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/restore", 1L))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/restore", "1L"))
                     .andExpect(status().isBadRequest())
                     .andDo(print());
         }

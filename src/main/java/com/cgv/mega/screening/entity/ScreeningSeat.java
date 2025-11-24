@@ -55,18 +55,43 @@ public class ScreeningSeat {
     }
 
     public void reserveScreeningSeat() {
-        if (this.status != ScreeningSeatStatus.AVAILABLE) {
+        if (this.status != ScreeningSeatStatus.BLOCKED) {
             throw new CustomException(ErrorCode.SCREENING_SEAT_NOT_AVAILABLE);
         }
 
         this.status = ScreeningSeatStatus.RESERVED;
     }
 
+    public void restoreScreeningSeat() {
+        if (this.status != ScreeningSeatStatus.FIXING) {
+            throw new CustomException(ErrorCode.SCREENING_SEAT_CANNOT_UPDATE);
+        }
+
+        this.status = ScreeningSeatStatus.AVAILABLE;
+    }
+
     public void cancelScreeningSeat() {
-        if (this.status != ScreeningSeatStatus.RESERVED) {
+        if (this.status != ScreeningSeatStatus.RESERVED && this.status != ScreeningSeatStatus.BLOCKED) {
             throw new CustomException(ErrorCode.SCREENING_SEAT_NOT_RESERVED);
         }
 
         this.status = ScreeningSeatStatus.AVAILABLE;
+    }
+
+    public void blockScreeningSeat() {
+        if (this.status != ScreeningSeatStatus.AVAILABLE) {
+            throw new CustomException(ErrorCode.SCREENING_SEAT_NOT_AVAILABLE);
+        }
+
+        this.status = ScreeningSeatStatus.BLOCKED;
+    }
+
+    public void fixScreeningSeat() {
+        if (this.status != ScreeningSeatStatus.AVAILABLE &&
+            this.status != ScreeningSeatStatus.FIXING) {
+            throw new CustomException(ErrorCode.SCREENING_SEAT_CANNOT_UPDATE);
+        }
+
+        this.status = ScreeningSeatStatus.FIXING;
     }
 }

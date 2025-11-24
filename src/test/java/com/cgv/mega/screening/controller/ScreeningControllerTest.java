@@ -1,7 +1,10 @@
 package com.cgv.mega.screening.controller;
 
+import com.cgv.mega.common.enums.SeatType;
 import com.cgv.mega.screening.dto.MovieScreeningResponse;
 import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
+import com.cgv.mega.screening.dto.ScreeningSeatResponse;
+import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 import com.cgv.mega.screening.service.ScreeningService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -99,5 +102,42 @@ class ScreeningControllerTest {
                     .andDo(print());
         }
     }
+
+    @Nested
+    class 상영회차별_좌석현황_조회 {
+        @Test
+        void 조회_성공() throws Exception {
+            ScreeningSeatResponse response = new ScreeningSeatResponse(
+                    1L, 15000,
+                    List.of(new ScreeningSeatResponse.ScreeningSeatInfo(
+                                    1L, "A", 1, SeatType.NORMAL, ScreeningSeatStatus.AVAILABLE),
+                            new ScreeningSeatResponse.ScreeningSeatInfo(2L, "A", 2, SeatType.NORMAL, ScreeningSeatStatus.FIXING),
+                            new ScreeningSeatResponse.ScreeningSeatInfo(3L, "A", 3, SeatType.NORMAL, ScreeningSeatStatus.BLOCKED)
+                    ));
+
+            given(screeningService.getScreeningSeatStatus(1L)).willReturn(response);
+
+            mockMvc.perform(get("/api/screenings/{screeningId}/seats", 1L))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].rowLabel").value("A"))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].colNumber").value(1))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].status").value(ScreeningSeatStatus.AVAILABLE.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].rowLabel").value("A"))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].colNumber").value(2))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].status").value(ScreeningSeatStatus.FIXING.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].rowLabel").value("A"))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].colNumber").value(3))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].status").value(ScreeningSeatStatus.BLOCKED.name()))
+                    .andDo(print());
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(get("/api/screenings/{screeningId}/seats", "1L"))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+    }
+
 
 }

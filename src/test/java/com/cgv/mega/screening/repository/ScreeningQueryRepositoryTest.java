@@ -10,8 +10,13 @@ import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.repository.MovieRepository;
 import com.cgv.mega.screening.dto.MovieScreeningResponse;
 import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
+import com.cgv.mega.screening.dto.ScreeningSeatDto;
 import com.cgv.mega.screening.dto.ScreeningTimeDto;
 import com.cgv.mega.screening.entity.Screening;
+import com.cgv.mega.screening.entity.ScreeningSeat;
+import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.seat.entity.Seat;
+import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.theater.repository.TheaterRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +32,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,6 +55,12 @@ class ScreeningQueryRepositoryTest {
     private GenreRepository genreRepository;
 
     @Autowired
+    private SeatRepository seatRepository;
+
+    @Autowired
+    private ScreeningSeatRepository screeningSeatRepository;
+
+    @Autowired
     private ScreeningQueryRepository screeningQueryRepository;
 
     @DynamicPropertySource
@@ -58,6 +70,10 @@ class ScreeningQueryRepositoryTest {
 
     private Theater theater;
     private Movie movie;
+
+    private Screening screening1;
+    private Screening screening2;
+    private Screening screening3;
 
     @BeforeEach
     void setUp() {
@@ -79,20 +95,25 @@ class ScreeningQueryRepositoryTest {
         theater = theaterRepository.findById(1L)
                 .orElseThrow();
 
+        Set<Seat> seats = seatRepository.findByTheaterId(theater.getId());
+
         LocalDateTime startTime1 = LocalDateTime.of(2026, 11, 11, 6, 00);
         LocalDateTime endTime1 = startTime1.plusMinutes(movie.getDuration()).plusMinutes(15);
 
-        Screening screening1 = Screening.createScreening(movie, theater, startTime1, endTime1, 1);
+        screening1 = Screening.createScreening(movie, theater, startTime1, endTime1, 1);
+        screening1.initializeSeats(seats);
 
         LocalDateTime startTime2 = startTime1.plusHours(3);
         LocalDateTime endTime2 = startTime2.plusMinutes(movie.getDuration()).plusMinutes(15);
 
-        Screening screening2 = Screening.createScreening(movie, theater, startTime2, endTime2, 2);
+        screening2 = Screening.createScreening(movie, theater, startTime2, endTime2, 2);
+        screening2.initializeSeats(seats);
 
         LocalDateTime startTime3 = startTime1.plusHours(10);
         LocalDateTime endTime3 = startTime3.plusMinutes(movie.getDuration()).plusMinutes(15);
 
-        Screening screening3 = Screening.createScreening(movie, theater, startTime3, endTime3, 3);
+        screening3 = Screening.createScreening(movie, theater, startTime3, endTime3, 3);
+        screening3.initializeSeats(seats);
 
         screeningRepository.saveAll(List.of(screening1, screening2, screening3));
     }
@@ -157,5 +178,32 @@ class ScreeningQueryRepositoryTest {
         assertThat(movieScreeningList).hasSize(3)
                 .extracting(ms -> ms.startTime())
                 .containsExactly(startTime1, startTime2, startTime3);
+    }
+
+    @Test
+    void 상영회차_좌석_현황_조회() {
+        Seat seat = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                        theater.getId(), "A", 1)
+                .orElseThrow();
+
+        ScreeningSeat reservedSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening1.getId(), seat.getId())
+                .orElseThrow();
+
+        reservedSeat.blockScreeningSeat();
+        reservedSeat.reserveScreeningSeat();
+
+        List<ScreeningSeatDto> screeningSeat = screeningQueryRepository.getScreeningSeat(screening1.getId());
+
+        int basePrice = screeningSeat.get(0).basePrice();
+        int theaterBasePrice = theater.getBasePrice();
+
+        assertThat(screeningSeat.get(0).rowLabel()).isEqualTo("A");
+        assertThat(screeningSeat.get(0).colNumber()).isEqualTo(1);
+        assertThat(screeningSeat.get(0).status()).isEqualTo(ScreeningSeatStatus.RESERVED);
+
+        assertThat(screeningSeat.get(1).rowLabel()).isEqualTo("A");
+        assertThat(screeningSeat.get(1).colNumber()).isEqualTo(2);
+        assertThat(screeningSeat.get(1).status()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
+        assertThat(basePrice).isEqualTo(theaterBasePrice);
     }
 }

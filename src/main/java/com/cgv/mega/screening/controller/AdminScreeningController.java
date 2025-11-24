@@ -51,4 +51,22 @@ public class AdminScreeningController {
 
         return ResponseEntity.ok(CustomResponse.of(response));
     }
+
+    @PatchMapping("/seats/{screeningSeatId}/fix")
+    public ResponseEntity<CustomResponse<Void>> fixSeat(
+            @PathVariable("screeningSeatId") Long screeningSeatId
+    ) {
+        screeningService.fixingScreeningSeat(screeningSeatId);
+
+        return ResponseEntity.ok(CustomResponse.of());
+    }
+
+    @PatchMapping("/seats/{screeningSeatId}/restore")
+    public ResponseEntity<CustomResponse<Void>> restoreSeat(
+            @PathVariable("screeningSeatId") Long screeningSeatId
+    ) {
+        screeningService.restoringScreeningSeat(screeningSeatId);
+
+        return ResponseEntity.ok(CustomResponse.of());
+    }
 }

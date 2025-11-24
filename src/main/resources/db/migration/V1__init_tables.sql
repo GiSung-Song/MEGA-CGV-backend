@@ -137,7 +137,7 @@ CREATE TABLE screening_seats
 
 	CONSTRAINT uq_screening_seats_screen_seat UNIQUE (screening_id, seat_id),
 
-	CONSTRAINT chk_screening_seats_status CHECK (status IN ('AVAILABLE', 'RESERVED')),
+	CONSTRAINT chk_screening_seats_status CHECK (status IN ('AVAILABLE', 'RESERVED', 'BLOCKED', 'FIXING')),
 
 	INDEX idx_screening_seats_screen (screening_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

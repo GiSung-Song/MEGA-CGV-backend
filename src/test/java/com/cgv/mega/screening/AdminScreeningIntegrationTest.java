@@ -4,7 +4,13 @@ import com.cgv.mega.common.enums.MovieType;
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.screening.dto.RegisterScreeningRequest;
+import com.cgv.mega.screening.entity.Screening;
+import com.cgv.mega.screening.entity.ScreeningSeat;
+import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 import com.cgv.mega.screening.repository.ScreeningRepository;
+import com.cgv.mega.screening.repository.ScreeningSeatRepository;
+import com.cgv.mega.seat.entity.Seat;
+import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.theater.repository.TheaterRepository;
 import com.cgv.mega.user.entity.User;
@@ -19,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -33,8 +40,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,6 +70,12 @@ public class AdminScreeningIntegrationTest {
     @Autowired
     private ScreeningRepository screeningRepository;
 
+    @Autowired
+    private SeatRepository seatRepository;
+
+    @Autowired
+    private ScreeningSeatRepository screeningSeatRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         TestContainerManager.startRedis();
@@ -80,7 +92,7 @@ public class AdminScreeningIntegrationTest {
     private Movie monster;
     private Movie interstellar;
     private Movie kingkong;
-
+    private Screening screening;
     private Theater theater;
 
     @BeforeEach
@@ -105,7 +117,10 @@ public class AdminScreeningIntegrationTest {
         LocalDateTime interstellarStartTime = LocalDateTime.of(2026, 11, 11, 20, 0);
         LocalDateTime kingkongStartTime = LocalDateTime.of(2026, 11, 11, 23, 0);
 
-        testDataFactory.createScreening(monster, theater, monsterStartTime1, 1);
+        screening = testDataFactory.createScreening(monster, theater, monsterStartTime1, 1);
+
+        testDataFactory.initializeScreeningSeat(screening, theater);
+
         testDataFactory.createScreening(monster, theater, monsterStartTime2, 2);
         testDataFactory.createScreening(interstellar, theater, interstellarStartTime, 1);
         testDataFactory.createScreening(kingkong, theater, kingkongStartTime, 1);
@@ -296,6 +311,124 @@ public class AdminScreeningIntegrationTest {
             mockMvc.perform(MockMvcRequestBuilders.get("/api/admin/screenings/{movieId}", monster.getId())
                             .header("Authorization", userToken))
                     .andExpect(status().isForbidden());
+        }
+    }
+
+    @Nested
+    class 특정_좌석_수리중_상태로_변경 {
+        @Test
+        void 변경_성공() throws Exception {
+            Seat seat = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 3)
+                    .orElseThrow();
+
+            ScreeningSeat screeningSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/fix", screeningSeat.getId())
+                            .header("Authorization", adminToken))
+                    .andExpect(status().isOk())
+                    .andDo(document("screening-seat-fixing",
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT Access Token (Bearer)")
+                            ),
+                            pathParameters(
+                                    parameterWithName("screeningSeatId").description("상영회차별 좌석 식별자 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("status").description("HTTP 응답 코드"),
+                                    fieldWithPath("message").description("응답 메시지")
+                            )
+                    ))
+                    .andDo(print());
+
+            ScreeningSeat brokenSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            assertThat(brokenSeat.getStatus()).isEqualTo(ScreeningSeatStatus.FIXING);
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.patch("/api/admin/screenings/seats/{screeningSeatId}/fix", "1L")
+                            .header("Authorization", adminToken))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+
+        @Test
+        void 권한_없음_403반환() throws Exception {
+            Seat seat = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 3)
+                    .orElseThrow();
+
+            ScreeningSeat screeningSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            mockMvc.perform(MockMvcRequestBuilders.patch("/api/admin/screenings/seats/{screeningSeatId}/fix", screeningSeat.getId())
+                            .header("Authorization", userToken))
+                    .andExpect(status().isForbidden())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 특정_좌석_예약가능_상태로_변경 {
+        @Test
+        void 변경_성공() throws Exception {
+            Seat seat = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 3)
+                    .orElseThrow();
+
+            ScreeningSeat screeningSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            screeningSeat.fixScreeningSeat();
+
+            mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/restore", screeningSeat.getId())
+                            .header("Authorization", adminToken))
+                    .andExpect(status().isOk())
+                    .andDo(document("screening-seat-fixing",
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT Access Token (Bearer)")
+                            ),
+                            pathParameters(
+                                    parameterWithName("screeningSeatId").description("상영회차별 좌석 식별자 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("status").description("HTTP 응답 코드"),
+                                    fieldWithPath("message").description("응답 메시지")
+                            )
+                    ))
+                    .andDo(print());
+
+            ScreeningSeat availableSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            assertThat(availableSeat.getStatus()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.patch("/api/admin/screenings/seats/{screeningSeatId}/restore", "1L")
+                            .header("Authorization", adminToken))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+
+        @Test
+        void 권한_없음_403반환() throws Exception {
+            Seat seat = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 3)
+                    .orElseThrow();
+
+            ScreeningSeat screeningSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            mockMvc.perform(MockMvcRequestBuilders.patch("/api/admin/screenings/seats/{screeningSeatId}/restore", screeningSeat.getId())
+                            .header("Authorization", userToken))
+                    .andExpect(status().isForbidden())
+                    .andDo(print());
         }
     }
 }
