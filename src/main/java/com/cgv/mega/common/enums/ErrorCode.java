@@ -28,6 +28,7 @@ public enum ErrorCode {
     SEAT_NOT_FOUND("SEAT_NOT_FOUND", "좌석이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     SCREENING_SEAT_NOT_AVAILABLE("SCREENING_SEAT_NOT_AVAILABLE", "예약 불가능한 좌석입니다.", HttpStatus.CONFLICT),
     SCREENING_SEAT_NOT_RESERVED("SCREENING_SEAT_NOT_RESERVED", "예약된 좌석이 아닙니다.", HttpStatus.CONFLICT),
+    SCREENING_SEAT_CANNOT_UPDATE("SCREENING_SEAT_CANNOT_UPDATE", "좌석 상태를 변경할 수 없습니다.", HttpStatus.CONFLICT),
 
     // 사용자
     USER_NOT_FOUND("USER_NOT_FOUND", "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),

@@ -2,6 +2,12 @@ package com.cgv.mega.screening;
 
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.screening.entity.Screening;
+import com.cgv.mega.screening.entity.ScreeningSeat;
+import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.screening.repository.ScreeningSeatRepository;
+import com.cgv.mega.seat.entity.Seat;
+import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.theater.repository.TheaterRepository;
 import com.cgv.mega.util.TestDataFactory;
@@ -47,6 +53,12 @@ public class ScreeningIntegrationTest {
     private TheaterRepository theaterRepository;
 
     @Autowired
+    private ScreeningSeatRepository screeningSeatRepository;
+
+    @Autowired
+    private SeatRepository seatRepository;
+
+    @Autowired
     private TestDataFactory testDataFactory;
 
     @DynamicPropertySource
@@ -62,6 +74,8 @@ public class ScreeningIntegrationTest {
     private Movie monster;
     private Movie interstellar;
     private Movie kingkong;
+    private Screening screening;
+    private Theater theater;
 
     @BeforeEach
     void setUp() {
@@ -69,7 +83,7 @@ public class ScreeningIntegrationTest {
         interstellar = testDataFactory.createMovie("인터스텔라");
         kingkong = testDataFactory.createMovie("킹콩");
 
-        Theater theater = theaterRepository.findById(1L)
+        theater = theaterRepository.findById(1L)
                 .orElseThrow();
 
         LocalDateTime monsterStartTime1 = LocalDateTime.of(2026, 11, 11, 8, 0);
@@ -77,7 +91,10 @@ public class ScreeningIntegrationTest {
         LocalDateTime interstellarStartTime = LocalDateTime.of(2026, 11, 11, 20, 0);
         LocalDateTime kingkongStartTime = LocalDateTime.of(2026, 11, 11, 23, 0);
 
-        testDataFactory.createScreening(monster, theater, monsterStartTime1, 1);
+        screening = testDataFactory.createScreening(monster, theater, monsterStartTime1, 1);
+
+        testDataFactory.initializeScreeningSeat(screening, theater);
+
         testDataFactory.createScreening(monster, theater, monsterStartTime2, 2);
         testDataFactory.createScreening(interstellar, theater, interstellarStartTime, 1);
         testDataFactory.createScreening(kingkong, theater, kingkongStartTime, 1);
@@ -160,6 +177,58 @@ public class ScreeningIntegrationTest {
         void 파라미터_타입_다름_400반환() throws Exception {
             mockMvc.perform(MockMvcRequestBuilders.get("/api/screenings/{movieId}", monster.getId())
                             .param("date", "20261111"))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 상영회차별_좌석현황_조회 {
+        @Test
+        void 조회_성공() throws Exception {
+            Seat seat = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 3)
+                    .orElseThrow();
+
+            ScreeningSeat reservedSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
+                    .orElseThrow();
+
+            reservedSeat.blockScreeningSeat();
+            reservedSeat.reserveScreeningSeat();
+
+            mockMvc.perform(get("/api/screenings/{screeningId}/seats", screening.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].rowLabel").value("A"))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].colNumber").value(1))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].status").value(ScreeningSeatStatus.AVAILABLE.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].rowLabel").value("A"))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].colNumber").value(2))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].status").value(ScreeningSeatStatus.AVAILABLE.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].rowLabel").value("A"))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].colNumber").value(3))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].status").value(ScreeningSeatStatus.RESERVED.name()))
+                    .andDo(document("screening-seat-list",
+                            pathParameters(
+                                    parameterWithName("screeningId").description("조회할 상영회차의 식별자 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("status").description("HTTP 응답 코드"),
+                                    fieldWithPath("message").description("응답 메시지"),
+                                    fieldWithPath("data.screeningId").description("상영회차 식별자 ID"),
+                                    fieldWithPath("data.basePrice").description("상영관별 좌석의 기본 가격"),
+                                    fieldWithPath("data.screeningSeatInfos[].screeningSeatId").description("상영회차별 좌석 식별자 ID"),
+                                    fieldWithPath("data.screeningSeatInfos[].rowLabel").description("행"),
+                                    fieldWithPath("data.screeningSeatInfos[].colNumber").description("열"),
+                                    fieldWithPath("data.screeningSeatInfos[].seatType").description("좌석 종류"),
+                                    fieldWithPath("data.screeningSeatInfos[].status").description("좌석 상태")
+                            )
+                    ))
+                    .andDo(print());
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/screenings/{screeningId}/seats", "1L"))
                     .andExpect(status().isBadRequest())
                     .andDo(print());
         }

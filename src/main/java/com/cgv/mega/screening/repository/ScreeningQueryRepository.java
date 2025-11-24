@@ -1,13 +1,11 @@
 package com.cgv.mega.screening.repository;
 
-import com.cgv.mega.screening.dto.MovieScreeningResponse;
-import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
-import com.cgv.mega.screening.dto.ScreeningTimeDto;
+import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 import com.cgv.mega.screening.enums.ScreeningStatus;
+import com.cgv.mega.theater.entity.QTheater;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +18,7 @@ import java.util.List;
 import static com.cgv.mega.movie.entity.QMovie.movie;
 import static com.cgv.mega.screening.entity.QScreening.screening;
 import static com.cgv.mega.screening.entity.QScreeningSeat.screeningSeat;
+import static com.cgv.mega.seat.entity.QSeat.seat;
 import static com.cgv.mega.theater.entity.QTheater.theater;
 
 @Repository
@@ -115,6 +114,28 @@ public class ScreeningQueryRepository {
         return raw.stream()
                 .map(MovieScreeningResponse.MovieScreeningInfo::withMovieEndTime)
                 .toList();
+    }
+
+    public List<ScreeningSeatDto> getScreeningSeat(Long screeningId) {
+        return jpaQueryFactory
+                .select(Projections.constructor(ScreeningSeatDto.class,
+                        screeningSeat.id,
+                        seat.rowLabel,
+                        seat.colNumber,
+                        seat.type,
+                        screeningSeat.status,
+                        theater.basePrice
+                ))
+                .from(screeningSeat)
+                .join(screeningSeat.seat, seat)
+                .join(screening.theater, theater)
+                .where(
+                        screeningSeat.screening.id.eq(screeningId)
+                )
+                .orderBy(seat.rowLabel.asc(),
+                        seat.colNumber.asc()
+                )
+                .fetch();
     }
 
     private BooleanExpression withInTime(LocalDate date) {

@@ -2,14 +2,18 @@ package com.cgv.mega.screening.service;
 
 import com.cgv.mega.common.enums.ErrorCode;
 import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.common.enums.SeatType;
 import com.cgv.mega.common.enums.TheaterType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.repository.MovieRepository;
 import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.entity.Screening;
+import com.cgv.mega.screening.entity.ScreeningSeat;
+import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 import com.cgv.mega.screening.repository.ScreeningQueryRepository;
 import com.cgv.mega.screening.repository.ScreeningRepository;
+import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.seat.entity.SeatFixture;
 import com.cgv.mega.seat.repository.SeatRepository;
@@ -36,6 +40,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -53,6 +58,9 @@ class ScreeningServiceTest {
 
     @Mock
     private TheaterRepository theaterRepository;
+
+    @Mock
+    private ScreeningSeatRepository screeningSeatRepository;
 
     @Mock
     private SeatRepository seatRepository;
@@ -333,6 +341,150 @@ class ScreeningServiceTest {
 
             assertThat(response.movieScreeningInfos())
                     .hasSize(1);
+        }
+    }
+
+    @Nested
+    class 해당_상영회차_좌석_현황_조회 {
+        @Test
+        void 조회_성공() {
+            List<ScreeningSeatDto> screeningSeat = List.of(
+                    new ScreeningSeatDto(0L, "A", 1, SeatType.NORMAL, ScreeningSeatStatus.AVAILABLE, 10000),
+                    new ScreeningSeatDto(1L, "A", 2, SeatType.NORMAL, ScreeningSeatStatus.BLOCKED, 10000),
+                    new ScreeningSeatDto(2L, "A", 3, SeatType.NORMAL, ScreeningSeatStatus.FIXING, 10000),
+                    new ScreeningSeatDto(3L, "A", 4, SeatType.NORMAL, ScreeningSeatStatus.RESERVED, 10000),
+                    new ScreeningSeatDto(4L, "A", 5, SeatType.NORMAL, ScreeningSeatStatus.AVAILABLE, 10000),
+                    new ScreeningSeatDto(5L, "A", 6, SeatType.NORMAL, ScreeningSeatStatus.RESERVED, 10000)
+            );
+
+            given(screeningQueryRepository.getScreeningSeat(1L)).willReturn(screeningSeat);
+
+            ScreeningSeatResponse response = screeningService.getScreeningSeatStatus(1L);
+
+            List<ScreeningSeatResponse.ScreeningSeatInfo> screeningSeatInfos = response.screeningSeatInfos();
+
+            assertThat(response.basePrice()).isEqualTo(screeningSeat.get(0).basePrice());
+            assertThat(response.screeningId()).isEqualTo(1L);
+            assertThat(screeningSeatInfos).hasSize(6);
+
+            assertThat(screeningSeatInfos.get(0).rowLabel()).isEqualTo("A");
+            assertThat(screeningSeatInfos.get(0).colNumber()).isEqualTo(1);
+            assertThat(screeningSeatInfos.get(0).status()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
+
+            assertThat(screeningSeatInfos.get(1).rowLabel()).isEqualTo("A");
+            assertThat(screeningSeatInfos.get(1).colNumber()).isEqualTo(2);
+            assertThat(screeningSeatInfos.get(1).status()).isEqualTo(ScreeningSeatStatus.BLOCKED);
+
+            assertThat(screeningSeatInfos.get(2).rowLabel()).isEqualTo("A");
+            assertThat(screeningSeatInfos.get(2).colNumber()).isEqualTo(3);
+            assertThat(screeningSeatInfos.get(2).status()).isEqualTo(ScreeningSeatStatus.FIXING);
+
+            assertThat(screeningSeatInfos.get(3).rowLabel()).isEqualTo("A");
+            assertThat(screeningSeatInfos.get(3).colNumber()).isEqualTo(4);
+            assertThat(screeningSeatInfos.get(3).status()).isEqualTo(ScreeningSeatStatus.RESERVED);
+        }
+
+        @Test
+        void 좌석_없음_404반환() {
+            given(screeningQueryRepository.getScreeningSeat(1L)).willReturn(Collections.emptyList());
+
+            assertThatThrownBy(() -> screeningService.getScreeningSeatStatus(1L))
+                    .isInstanceOf(CustomException.class)
+                    .satisfies(exception -> {
+                        CustomException ex = (CustomException) exception;
+
+                        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.SEAT_NOT_FOUND);
+                        assertThat(ex.getErrorCode().getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
+                    });
+        }
+    }
+
+    @Nested
+    class 좌석_수리_상태변경_테스트 {
+        ScreeningSeat screeningSeat;
+
+        @BeforeEach
+        void setUp() {
+            Screening screening = Screening.createScreening(
+                    movie, theater,
+                    LocalDateTime.of(2026, 11, 11, 11, 0),
+                    LocalDateTime.of(2026, 11, 11, 14, 0),
+                    1
+            );
+
+            Seat seat = SeatFixture.createSeat(theater, "A", 1, SeatType.NORMAL);
+
+            screeningSeat = ScreeningSeat.createScreeningSeat(
+                    screening, seat
+            );
+        }
+
+        @Test
+        void 수리중_표시_성공() {
+            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
+
+            screeningService.fixingScreeningSeat(1L);
+
+            assertThat(screeningSeat.getStatus()).isEqualTo(ScreeningSeatStatus.FIXING);
+        }
+
+        @Test
+        void 수리중_표시_실패_409반환() {
+            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
+            screeningSeat.blockScreeningSeat();
+
+            assertThatThrownBy(() -> screeningService.fixingScreeningSeat(1L))
+                    .isInstanceOf(CustomException.class)
+                    .satisfies(ex -> {
+                        CustomException exception = (CustomException) ex;
+
+                        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.SCREENING_SEAT_CANNOT_UPDATE);
+                    });
+        }
+    }
+
+    @Nested
+    class 좌석_정상_상태변경_테스트 {
+        ScreeningSeat screeningSeat;
+
+        @BeforeEach
+        void setUp() {
+            Screening screening = Screening.createScreening(
+                    movie, theater,
+                    LocalDateTime.of(2026, 11, 11, 11, 0),
+                    LocalDateTime.of(2026, 11, 11, 14, 0),
+                    1
+            );
+
+            Seat seat = SeatFixture.createSeat(theater, "A", 1, SeatType.NORMAL);
+
+            screeningSeat = ScreeningSeat.createScreeningSeat(
+                    screening, seat
+            );
+        }
+
+        @Test
+        void 정상_표시_성공() {
+            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
+            screeningSeat.fixScreeningSeat();
+
+            screeningService.restoringScreeningSeat(1L);
+
+            assertThat(screeningSeat.getStatus()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
+        }
+
+        @Test
+        void 정상_표시_실패_409반환() {
+            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
+            screeningSeat.blockScreeningSeat();
+
+            assertThatThrownBy(() -> screeningService.restoringScreeningSeat(1L))
+                    .isInstanceOf(CustomException.class)
+                    .satisfies(ex -> {
+                        CustomException exception = (CustomException) ex;
+
+                        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.SCREENING_SEAT_CANNOT_UPDATE);
+                    });
         }
     }
 }
