@@ -33,6 +33,28 @@ include::{snippets}/screening-movie-screening-list-admin/response-fields.adoc[]
 
 ---
 
+=== 특정 좌석 수리 상태 변경 API (관리자 전용)
+특정 좌석에 대해서 수리 상태로 변경합니다.
+
+include::{snippets}/screening-seat-fixing-admin/http-request.adoc[]
+include::{snippets}/screening-seat-fixing-admin/http-response.adoc[]
+include::{snippets}/screening-seat-fixing-admin/path-parameters.adoc[]
+include::{snippets}/screening-seat-fixing-admin/request-headers.adoc[]
+include::{snippets}/screening-seat-fixing-admin/response-fields.adoc[]
+
+---
+
+=== 특정 좌석 정상 상태 변경 API (관리자 전용)
+특정 좌석에 대해서 예약 가능 상태로 변경합니다.
+
+include::{snippets}/screening-seat-restore-admin/http-request.adoc[]
+include::{snippets}/screening-seat-restore-admin/http-response.adoc[]
+include::{snippets}/screening-seat-restore-admin/path-parameters.adoc[]
+include::{snippets}/screening-seat-restore-admin/request-headers.adoc[]
+include::{snippets}/screening-seat-restore-admin/response-fields.adoc[]
+
+---
+
 === 상영 예정인 영화 목록 조회 API
 해당 날짜에 상영 예정인 영화 목록을 조회합니다.
 
@@ -51,3 +73,13 @@ include::{snippets}/screening-movie-screening-list/http-response.adoc[]
 include::{snippets}/screening-movie-screening-list/path-parameters.adoc[]
 include::{snippets}/screening-movie-screening-list/query-parameters.adoc[]
 include::{snippets}/screening-movie-screening-list/response-fields.adoc[]
+
+---
+
+=== 좌석 현황 조회 API
+해당 상영회차의 좌석 현황을 조회합니다.
+
+include::{snippets}/screening-seat-list/http-request.adoc[]
+include::{snippets}/screening-seat-list/http-response.adoc[]
+include::{snippets}/screening-seat-list/path-parameters.adoc[]
+include::{snippets}/screening-seat-list/response-fields.adoc[]
