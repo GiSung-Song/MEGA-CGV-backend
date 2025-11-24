@@ -328,7 +328,7 @@ public class AdminScreeningIntegrationTest {
             mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/fix", screeningSeat.getId())
                             .header("Authorization", adminToken))
                     .andExpect(status().isOk())
-                    .andDo(document("screening-seat-fixing",
+                    .andDo(document("screening-seat-fixing-admin",
                             requestHeaders(
                                     headerWithName("Authorization").description("JWT Access Token (Bearer)")
                             ),
@@ -388,7 +388,7 @@ public class AdminScreeningIntegrationTest {
             mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/restore", screeningSeat.getId())
                             .header("Authorization", adminToken))
                     .andExpect(status().isOk())
-                    .andDo(document("screening-seat-fixing",
+                    .andDo(document("screening-seat-restore-admin",
                             requestHeaders(
                                     headerWithName("Authorization").description("JWT Access Token (Bearer)")
                             ),
