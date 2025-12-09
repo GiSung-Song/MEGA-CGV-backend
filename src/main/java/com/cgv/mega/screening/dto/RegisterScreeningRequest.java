@@ -1,6 +1,6 @@
 package com.cgv.mega.screening.dto;
 
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;

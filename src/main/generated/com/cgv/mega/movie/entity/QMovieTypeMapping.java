@@ -24,7 +24,7 @@ public class QMovieTypeMapping extends EntityPathBase<MovieTypeMapping> {
 
     public final QMovie movie;
 
-    public final EnumPath<com.cgv.mega.common.enums.MovieType> type = createEnum("type", com.cgv.mega.common.enums.MovieType.class);
+    public final EnumPath<com.cgv.mega.movie.enums.MovieType> type = createEnum("type", com.cgv.mega.movie.enums.MovieType.class);
 
     public QMovieTypeMapping(String variable) {
         this(MovieTypeMapping.class, forVariable(variable), INITS);

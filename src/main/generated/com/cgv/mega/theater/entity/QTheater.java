@@ -21,8 +21,6 @@ public class QTheater extends EntityPathBase<Theater> {
 
     public final com.cgv.mega.common.entity.QBaseTimeEntity _super = new com.cgv.mega.common.entity.QBaseTimeEntity(this);
 
-    public final NumberPath<Integer> basePrice = createNumber("basePrice", Integer.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
@@ -32,7 +30,7 @@ public class QTheater extends EntityPathBase<Theater> {
 
     public final NumberPath<Integer> totalSeat = createNumber("totalSeat", Integer.class);
 
-    public final EnumPath<com.cgv.mega.common.enums.TheaterType> type = createEnum("type", com.cgv.mega.common.enums.TheaterType.class);
+    public final EnumPath<com.cgv.mega.theater.enums.TheaterType> type = createEnum("type", com.cgv.mega.theater.enums.TheaterType.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

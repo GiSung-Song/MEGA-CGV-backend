@@ -4,17 +4,22 @@ import com.cgv.mega.common.enums.ErrorCode;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.repository.MovieRepository;
+import com.cgv.mega.reservation.entity.ReservationGroup;
+import com.cgv.mega.reservation.repository.ReservationGroupRepository;
+import com.cgv.mega.reservation.service.ReservationService;
 import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.entity.Screening;
-import com.cgv.mega.screening.entity.ScreeningSeat;
+import com.cgv.mega.screening.enums.DisplayScreeningSeatStatus;
+import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.screening.repository.ScreeningQueryRepository;
 import com.cgv.mega.screening.repository.ScreeningRepository;
-import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.theater.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,24 +27,25 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ScreeningService {
 
+    private final ReservationService reservationService;
     private final ScreeningRepository screeningRepository;
     private final ScreeningQueryRepository screeningQueryRepository;
     private final MovieRepository movieRepository;
     private final TheaterRepository theaterRepository;
     private final SeatRepository seatRepository;
-    private final ScreeningSeatRepository screeningSeatRepository;
+    private final ReservationGroupRepository reservationGroupRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private static final LocalTime THEATER_OPEN_TIME = LocalTime.of(5, 0);
     private static final LocalTime LAST_SCREENING_START_TIME = LocalTime.of(1, 0);
     private static final Duration CLEANING_TIME = Duration.ofMinutes(10);
+    private static final int BASE_PRICE = 1000;
 
     // 상영 등록 가능 시간 조회(관리자용)
     @Transactional(readOnly = true)
@@ -131,7 +137,7 @@ public class ScreeningService {
 
         // 상영 Entity 생성
         Screening screening = Screening.createScreening(
-                movie, theater, request.startTime(), endTime, sequence
+                movie, theater, request.startTime(), endTime, sequence, request.movieType()
         );
 
         // 상영 회차-좌석 생성
@@ -141,25 +147,32 @@ public class ScreeningService {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
 
-        screening.initializeSeats(seats);
+        screening.initializeSeats(seats, BASE_PRICE);
 
         // 저장
         screeningRepository.save(screening);
     }
 
-    // TODO: 상영 삭제(관리자용)
-    public void deleteScreening(Long screeningId) {
+    // 상영 취소(관리자용)
+    @Transactional
+    public void cancelScreening(Long screeningId) {
         // 이미 상영 중 이거나 종료된 상영이면 삭제 불가
+        Screening screening = screeningRepository.findById(screeningId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SCREENING_NOT_FOUND));
 
-        // 이미 취소된 상영이면 삭제 불가 (중복)
+        // 취소할 수 없는 상태 throw
+        if (screening.getStatus() == ScreeningStatus.ENDED) {
+            throw new CustomException(ErrorCode.SCREENING_CANCEL_NOT_ALLOWED);
+        }
 
-        // 해당 상영에 해당하는 예약 조회
+        // 해당 상영에 해당하는 예약 존재 하는지 체크
+        List<ReservationGroup> reservationGroupList = reservationGroupRepository.findAllByScreeningId(screeningId);
 
-        // 결제 환불
+        for (ReservationGroup reservationGroup : reservationGroupList) {
+            reservationService.cancelReservationByScreeningCancel(reservationGroup);
+        }
 
-        // 상영 상태 변경
-
-        // 좌석 상태 복원
+        screening.cancelScreening();
     }
 
     // 해당 날짜의 상영 영화 목록
@@ -197,36 +210,48 @@ public class ScreeningService {
             throw new CustomException(ErrorCode.SEAT_NOT_FOUND);
         }
 
-        int basePrice = rows.get(0).basePrice();
-
-        List<ScreeningSeatResponse.ScreeningSeatInfo> screeningSeatInfos = rows.stream()
-                .map(r -> new ScreeningSeatResponse.ScreeningSeatInfo(
-                        r.screeningSeatId(),
-                        r.rowLabel(),
-                        r.colNumber(),
-                        r.seatType(),
-                        r.status()
-                ))
+        List<String> keys = rows.stream()
+                .map(r -> "seat:" + r.screeningSeatId())
                 .toList();
 
-        return new ScreeningSeatResponse(screeningId, basePrice, screeningSeatInfos);
-    }
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
 
-    // 해당 좌석 상태 변경 -> 수리중 (관리자용)
-    @Transactional
-    public void fixingScreeningSeat(Long screeningSeatId) {
-        ScreeningSeat screeningSeat = screeningSeatRepository.findById(screeningSeatId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+        Map<Long, Boolean> holdMap = new HashMap<>();
 
-        screeningSeat.fixScreeningSeat();
-    }
+        for (int i = 0; i < rows.size(); i++) {
+            Long screeningSeatId = rows.get(i).screeningSeatId();
+            boolean isHold = values.get(i) != null;
+            holdMap.put(screeningSeatId, isHold);
+        }
 
-    // 수리 완료 (관리자용)
-    @Transactional
-    public void restoringScreeningSeat(Long screeningSeatId) {
-        ScreeningSeat screeningSeat = screeningSeatRepository.findById(screeningSeatId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SEAT_NOT_FOUND));
+        List<ScreeningSeatResponse.ScreeningSeatInfo> screeningSeatInfos = rows.stream()
+                .map(r -> {
+                    DisplayScreeningSeatStatus status;
 
-        screeningSeat.restoreScreeningSeat();
+                    if (r.status() == ScreeningSeatStatus.RESERVED) {
+                        status = DisplayScreeningSeatStatus.RESERVED;
+
+                    } else if (r.status() == ScreeningSeatStatus.FIXING) {
+                        status = DisplayScreeningSeatStatus.FIXING;
+
+                    } else if (holdMap.get(r.screeningSeatId())) {
+                        status = DisplayScreeningSeatStatus.HOLD;
+
+                    } else {
+                        status = DisplayScreeningSeatStatus.AVAILABLE;
+                    }
+
+                    return new ScreeningSeatResponse.ScreeningSeatInfo(
+                            r.screeningSeatId(),
+                            r.rowLabel(),
+                            r.colNumber(),
+                            r.seatType(),
+                            status,
+                            r.price()
+                    );
+                })
+                .toList();
+
+        return new ScreeningSeatResponse(screeningId, screeningSeatInfos);
     }
 }

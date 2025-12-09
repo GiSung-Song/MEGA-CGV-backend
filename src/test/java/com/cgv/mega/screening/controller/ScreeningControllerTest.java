@@ -1,11 +1,11 @@
 package com.cgv.mega.screening.controller;
 
-import com.cgv.mega.common.enums.SeatType;
 import com.cgv.mega.screening.dto.MovieScreeningResponse;
 import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
 import com.cgv.mega.screening.dto.ScreeningSeatResponse;
-import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.screening.enums.DisplayScreeningSeatStatus;
 import com.cgv.mega.screening.service.ScreeningService;
+import com.cgv.mega.seat.enums.SeatType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,11 +108,11 @@ class ScreeningControllerTest {
         @Test
         void 조회_성공() throws Exception {
             ScreeningSeatResponse response = new ScreeningSeatResponse(
-                    1L, 15000,
+                    1L,
                     List.of(new ScreeningSeatResponse.ScreeningSeatInfo(
-                                    1L, "A", 1, SeatType.NORMAL, ScreeningSeatStatus.AVAILABLE),
-                            new ScreeningSeatResponse.ScreeningSeatInfo(2L, "A", 2, SeatType.NORMAL, ScreeningSeatStatus.FIXING),
-                            new ScreeningSeatResponse.ScreeningSeatInfo(3L, "A", 3, SeatType.NORMAL, ScreeningSeatStatus.BLOCKED)
+                                    1L, "A", 1, SeatType.NORMAL, DisplayScreeningSeatStatus.AVAILABLE, 15000),
+                            new ScreeningSeatResponse.ScreeningSeatInfo(2L, "A", 2, SeatType.NORMAL, DisplayScreeningSeatStatus.FIXING, 15000),
+                            new ScreeningSeatResponse.ScreeningSeatInfo(3L, "A", 3, SeatType.NORMAL, DisplayScreeningSeatStatus.HOLD, 15000)
                     ));
 
             given(screeningService.getScreeningSeatStatus(1L)).willReturn(response);
@@ -121,13 +121,13 @@ class ScreeningControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.screeningSeatInfos[0].rowLabel").value("A"))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[0].colNumber").value(1))
-                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].status").value(ScreeningSeatStatus.AVAILABLE.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].status").value(DisplayScreeningSeatStatus.AVAILABLE.name()))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[1].rowLabel").value("A"))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[1].colNumber").value(2))
-                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].status").value(ScreeningSeatStatus.FIXING.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].status").value(DisplayScreeningSeatStatus.FIXING.name()))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[2].rowLabel").value("A"))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[2].colNumber").value(3))
-                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].status").value(ScreeningSeatStatus.BLOCKED.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].status").value(DisplayScreeningSeatStatus.HOLD.name()))
                     .andDo(print());
         }
 

@@ -24,6 +24,8 @@ public class QScreeningSeat extends EntityPathBase<ScreeningSeat> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Integer> price = createNumber("price", Integer.class);
+
     public final QScreening screening;
 
     public final com.cgv.mega.seat.entity.QSeat seat;

@@ -15,10 +15,6 @@ public record MovieScreeningResponse(
             LocalDateTime endTime,
             int sequence
     ) {
-        public LocalDateTime movieEndTime() {
-            return endTime.minusMinutes(10);
-        }
-
         public MovieScreeningInfo withMovieEndTime() {
             return new MovieScreeningInfo(
                     screeningId,

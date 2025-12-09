@@ -35,7 +35,7 @@ public class QSeat extends EntityPathBase<Seat> {
 
     public final com.cgv.mega.theater.entity.QTheater theater;
 
-    public final EnumPath<com.cgv.mega.common.enums.SeatType> type = createEnum("type", com.cgv.mega.common.enums.SeatType.class);
+    public final EnumPath<com.cgv.mega.seat.enums.SeatType> type = createEnum("type", com.cgv.mega.seat.enums.SeatType.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

@@ -2,7 +2,7 @@ package com.cgv.mega.screening.repository;
 
 import com.cgv.mega.common.config.JpaConfig;
 import com.cgv.mega.common.config.QueryDslConfig;
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;
@@ -100,20 +100,20 @@ class ScreeningQueryRepositoryTest {
         LocalDateTime startTime1 = LocalDateTime.of(2026, 11, 11, 6, 00);
         LocalDateTime endTime1 = startTime1.plusMinutes(movie.getDuration()).plusMinutes(15);
 
-        screening1 = Screening.createScreening(movie, theater, startTime1, endTime1, 1);
-        screening1.initializeSeats(seats);
+        screening1 = Screening.createScreening(movie, theater, startTime1, endTime1, 1, MovieType.TWO_D);
+        screening1.initializeSeats(seats, 1000);
 
         LocalDateTime startTime2 = startTime1.plusHours(3);
         LocalDateTime endTime2 = startTime2.plusMinutes(movie.getDuration()).plusMinutes(15);
 
-        screening2 = Screening.createScreening(movie, theater, startTime2, endTime2, 2);
-        screening2.initializeSeats(seats);
+        screening2 = Screening.createScreening(movie, theater, startTime2, endTime2, 2, MovieType.TWO_D);
+        screening2.initializeSeats(seats, 1000);
 
         LocalDateTime startTime3 = startTime1.plusHours(10);
         LocalDateTime endTime3 = startTime3.plusMinutes(movie.getDuration()).plusMinutes(15);
 
-        screening3 = Screening.createScreening(movie, theater, startTime3, endTime3, 3);
-        screening3.initializeSeats(seats);
+        screening3 = Screening.createScreening(movie, theater, startTime3, endTime3, 3, MovieType.TWO_D);
+        screening3.initializeSeats(seats, 1000);
 
         screeningRepository.saveAll(List.of(screening1, screening2, screening3));
     }
@@ -189,13 +189,10 @@ class ScreeningQueryRepositoryTest {
         ScreeningSeat reservedSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening1.getId(), seat.getId())
                 .orElseThrow();
 
-        reservedSeat.blockScreeningSeat();
         reservedSeat.reserveScreeningSeat();
 
         List<ScreeningSeatDto> screeningSeat = screeningQueryRepository.getScreeningSeat(screening1.getId());
 
-        int basePrice = screeningSeat.get(0).basePrice();
-        int theaterBasePrice = theater.getBasePrice();
 
         assertThat(screeningSeat.get(0).rowLabel()).isEqualTo("A");
         assertThat(screeningSeat.get(0).colNumber()).isEqualTo(1);
@@ -204,6 +201,5 @@ class ScreeningQueryRepositoryTest {
         assertThat(screeningSeat.get(1).rowLabel()).isEqualTo("A");
         assertThat(screeningSeat.get(1).colNumber()).isEqualTo(2);
         assertThat(screeningSeat.get(1).status()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
-        assertThat(basePrice).isEqualTo(theaterBasePrice);
     }
 }

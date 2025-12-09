@@ -1,16 +1,15 @@
 -- ========================================
 -- 상영관(theater) 기본 데이터
 -- ========================================
-INSERT INTO theaters (id, name, total_seat, type, base_price, created_at, updated_at)
+INSERT INTO theaters (id, name, total_seat, type, created_at, updated_at)
 VALUES
-    (1, '1관', 50, 'TWO_D'  , 15000, NOW(), NOW()),
-    (2, '2관', 50, 'FOUR_DX', 20000, NOW(), NOW()),
-    (3, '3관', 30, 'IMAX'   , 17000, NOW(), NOW()),
-    (4, '4관', 20, 'SCREENX', 25000, NOW(), NOW())
+    (1, '1관', 50, 'TWO_D'  , NOW(), NOW()),
+    (2, '2관', 50, 'FOUR_DX', NOW(), NOW()),
+    (3, '3관', 30, 'IMAX'   , NOW(), NOW()),
+    (4, '4관', 20, 'SCREENX', NOW(), NOW())
 ON DUPLICATE KEY UPDATE
     total_seat = VALUES(total_seat),
     type       = VALUES(type),
-    base_price = VALUES(base_price),
     updated_at = NOW();
 
 

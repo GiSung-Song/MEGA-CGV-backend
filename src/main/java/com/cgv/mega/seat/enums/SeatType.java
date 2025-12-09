@@ -1,4 +1,4 @@
-package com.cgv.mega.common.enums;
+package com.cgv.mega.seat.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

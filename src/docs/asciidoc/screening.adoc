@@ -33,25 +33,14 @@ include::{snippets}/screening-movie-screening-list-admin/response-fields.adoc[]
 
 ---
 
-=== 특정 좌석 수리 상태 변경 API (관리자 전용)
-특정 좌석에 대해서 수리 상태로 변경합니다.
+=== 특정 상영회차 취소 API (관리자 전용)
+특정 상영 회차를 취소합니다.
 
-include::{snippets}/screening-seat-fixing-admin/http-request.adoc[]
-include::{snippets}/screening-seat-fixing-admin/http-response.adoc[]
-include::{snippets}/screening-seat-fixing-admin/path-parameters.adoc[]
-include::{snippets}/screening-seat-fixing-admin/request-headers.adoc[]
-include::{snippets}/screening-seat-fixing-admin/response-fields.adoc[]
-
----
-
-=== 특정 좌석 정상 상태 변경 API (관리자 전용)
-특정 좌석에 대해서 예약 가능 상태로 변경합니다.
-
-include::{snippets}/screening-seat-restore-admin/http-request.adoc[]
-include::{snippets}/screening-seat-restore-admin/http-response.adoc[]
-include::{snippets}/screening-seat-restore-admin/path-parameters.adoc[]
-include::{snippets}/screening-seat-restore-admin/request-headers.adoc[]
-include::{snippets}/screening-seat-restore-admin/response-fields.adoc[]
+include::{snippets}/screening-cancel-admin/http-request.adoc[]
+include::{snippets}/screening-cancel-admin/http-response.adoc[]
+include::{snippets}/screening-cancel-admin/path-parameters.adoc[]
+include::{snippets}/screening-cancel-admin/request-headers.adoc[]
+include::{snippets}/screening-cancel-admin/response-fields.adoc[]
 
 ---
 

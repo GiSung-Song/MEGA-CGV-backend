@@ -2,7 +2,7 @@ package com.cgv.mega.common.security;
 
 import com.cgv.mega.auth.dto.JwtPayloadDto;
 import com.cgv.mega.common.enums.Role;
-import com.cgv.mega.common.enums.TokenStatus;
+import com.cgv.mega.auth.enums.TokenStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

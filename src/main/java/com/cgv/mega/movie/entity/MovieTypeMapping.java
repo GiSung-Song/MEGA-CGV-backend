@@ -1,6 +1,6 @@
 package com.cgv.mega.movie.entity;
 
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import jakarta.persistence.*;
 import lombok.*;
 

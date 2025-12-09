@@ -1,24 +1,27 @@
 package com.cgv.mega.screening.service;
 
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.common.enums.MovieType;
-import com.cgv.mega.common.enums.SeatType;
-import com.cgv.mega.common.enums.TheaterType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.movie.repository.MovieRepository;
+import com.cgv.mega.reservation.entity.ReservationGroup;
+import com.cgv.mega.reservation.repository.ReservationGroupRepository;
+import com.cgv.mega.reservation.service.ReservationService;
 import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.entity.Screening;
-import com.cgv.mega.screening.entity.ScreeningSeat;
+import com.cgv.mega.screening.enums.DisplayScreeningSeatStatus;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.screening.repository.ScreeningQueryRepository;
 import com.cgv.mega.screening.repository.ScreeningRepository;
-import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.seat.entity.SeatFixture;
+import com.cgv.mega.seat.enums.SeatType;
 import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.theater.entity.TheaterFixture;
+import com.cgv.mega.theater.enums.TheaterType;
 import com.cgv.mega.theater.repository.TheaterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,22 +30,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ScreeningServiceTest {
@@ -60,10 +61,19 @@ class ScreeningServiceTest {
     private TheaterRepository theaterRepository;
 
     @Mock
-    private ScreeningSeatRepository screeningSeatRepository;
+    private SeatRepository seatRepository;
 
     @Mock
-    private SeatRepository seatRepository;
+    private ReservationService reservationService;
+
+    @Mock
+    private ReservationGroupRepository reservationGroupRepository;
+
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, Object> valueOperations;
 
     @InjectMocks
     private ScreeningService screeningService;
@@ -76,7 +86,7 @@ class ScreeningServiceTest {
         movie = Movie.createMovie("혹성탈출", 150, "혹성탈출 설명", "escape.png");
         ReflectionTestUtils.setField(movie, "id", 1L);
 
-        theater = TheaterFixture.createTheater(1L, "1관", 50, TheaterType.SCREEN_X, 20000);
+        theater = TheaterFixture.createTheater(1L, "1관", 50, TheaterType.SCREEN_X);
     }
 
     @Nested
@@ -350,38 +360,50 @@ class ScreeningServiceTest {
         void 조회_성공() {
             List<ScreeningSeatDto> screeningSeat = List.of(
                     new ScreeningSeatDto(0L, "A", 1, SeatType.NORMAL, ScreeningSeatStatus.AVAILABLE, 10000),
-                    new ScreeningSeatDto(1L, "A", 2, SeatType.NORMAL, ScreeningSeatStatus.BLOCKED, 10000),
+                    new ScreeningSeatDto(1L, "A", 2, SeatType.NORMAL, ScreeningSeatStatus.RESERVED, 10000),
                     new ScreeningSeatDto(2L, "A", 3, SeatType.NORMAL, ScreeningSeatStatus.FIXING, 10000),
                     new ScreeningSeatDto(3L, "A", 4, SeatType.NORMAL, ScreeningSeatStatus.RESERVED, 10000),
                     new ScreeningSeatDto(4L, "A", 5, SeatType.NORMAL, ScreeningSeatStatus.AVAILABLE, 10000),
                     new ScreeningSeatDto(5L, "A", 6, SeatType.NORMAL, ScreeningSeatStatus.RESERVED, 10000)
             );
 
+            List<Object> redisValues = Arrays.asList(
+                    "user",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
             given(screeningQueryRepository.getScreeningSeat(1L)).willReturn(screeningSeat);
+
+            given(redisTemplate.opsForValue()).willReturn(valueOperations);
+
+            given(valueOperations.multiGet(anyList())).willReturn(redisValues);
 
             ScreeningSeatResponse response = screeningService.getScreeningSeatStatus(1L);
 
             List<ScreeningSeatResponse.ScreeningSeatInfo> screeningSeatInfos = response.screeningSeatInfos();
 
-            assertThat(response.basePrice()).isEqualTo(screeningSeat.get(0).basePrice());
             assertThat(response.screeningId()).isEqualTo(1L);
             assertThat(screeningSeatInfos).hasSize(6);
 
             assertThat(screeningSeatInfos.get(0).rowLabel()).isEqualTo("A");
             assertThat(screeningSeatInfos.get(0).colNumber()).isEqualTo(1);
-            assertThat(screeningSeatInfos.get(0).status()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
+            assertThat(screeningSeatInfos.get(0).status()).isEqualTo(DisplayScreeningSeatStatus.HOLD);
 
             assertThat(screeningSeatInfos.get(1).rowLabel()).isEqualTo("A");
             assertThat(screeningSeatInfos.get(1).colNumber()).isEqualTo(2);
-            assertThat(screeningSeatInfos.get(1).status()).isEqualTo(ScreeningSeatStatus.BLOCKED);
+            assertThat(screeningSeatInfos.get(1).status()).isEqualTo(DisplayScreeningSeatStatus.RESERVED);
 
             assertThat(screeningSeatInfos.get(2).rowLabel()).isEqualTo("A");
             assertThat(screeningSeatInfos.get(2).colNumber()).isEqualTo(3);
-            assertThat(screeningSeatInfos.get(2).status()).isEqualTo(ScreeningSeatStatus.FIXING);
+            assertThat(screeningSeatInfos.get(2).status()).isEqualTo(DisplayScreeningSeatStatus.FIXING);
 
             assertThat(screeningSeatInfos.get(3).rowLabel()).isEqualTo("A");
             assertThat(screeningSeatInfos.get(3).colNumber()).isEqualTo(4);
-            assertThat(screeningSeatInfos.get(3).status()).isEqualTo(ScreeningSeatStatus.RESERVED);
+            assertThat(screeningSeatInfos.get(3).status()).isEqualTo(DisplayScreeningSeatStatus.RESERVED);
         }
 
         @Test
@@ -400,90 +422,65 @@ class ScreeningServiceTest {
     }
 
     @Nested
-    class 좌석_수리_상태변경_테스트 {
-        ScreeningSeat screeningSeat;
-
-        @BeforeEach
-        void setUp() {
-            Screening screening = Screening.createScreening(
-                    movie, theater,
-                    LocalDateTime.of(2026, 11, 11, 11, 0),
-                    LocalDateTime.of(2026, 11, 11, 14, 0),
-                    1
+    class 상영_취소 {
+        @Test
+        void 상영_취소() {
+            Screening screening = Screening.createScreening(movie, theater,
+                    LocalDateTime.of(2026, 11, 11, 10, 0),
+                    LocalDateTime.of(2026, 11, 11, 13, 0),
+                    1, MovieType.TWO_D
             );
 
-            Seat seat = SeatFixture.createSeat(theater, "A", 1, SeatType.NORMAL);
+            ReflectionTestUtils.setField(screening, "id", 50L);
 
-            screeningSeat = ScreeningSeat.createScreeningSeat(
-                    screening, seat
-            );
+            ReservationGroup rg1 = ReservationGroup.createReservationGroup(1L);
+            ReservationGroup rg2 = ReservationGroup.createReservationGroup(2L);
+
+            given(screeningRepository.findById(50L)).willReturn(Optional.of(screening));
+            given(reservationGroupRepository.findAllByScreeningId(50L)).willReturn(List.of(rg1, rg2));
+
+            willDoNothing().given(reservationService).cancelReservationByScreeningCancel(any(ReservationGroup.class));
+
+            screeningService.cancelScreening(screening.getId());
+
+            assertThat(screening.getStatus()).isEqualTo(ScreeningStatus.CANCELED);
         }
 
         @Test
-        void 수리중_표시_성공() {
-            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
+        void 상영_없음_404반환() {
+            given(screeningRepository.findById(50L)).willReturn(Optional.empty());
 
-            screeningService.fixingScreeningSeat(1L);
-
-            assertThat(screeningSeat.getStatus()).isEqualTo(ScreeningSeatStatus.FIXING);
-        }
-
-        @Test
-        void 수리중_표시_실패_409반환() {
-            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
-            screeningSeat.blockScreeningSeat();
-
-            assertThatThrownBy(() -> screeningService.fixingScreeningSeat(1L))
+            assertThatThrownBy(() -> screeningService.cancelScreening(50L))
                     .isInstanceOf(CustomException.class)
-                    .satisfies(ex -> {
-                        CustomException exception = (CustomException) ex;
+                    .satisfies(exception -> {
+                        CustomException ex = (CustomException) exception;
 
-                        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.SCREENING_SEAT_CANNOT_UPDATE);
+                        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.SCREENING_NOT_FOUND);
+                        assertThat(ex.getErrorCode().getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
                     });
         }
-    }
-
-    @Nested
-    class 좌석_정상_상태변경_테스트 {
-        ScreeningSeat screeningSeat;
-
-        @BeforeEach
-        void setUp() {
-            Screening screening = Screening.createScreening(
-                    movie, theater,
-                    LocalDateTime.of(2026, 11, 11, 11, 0),
-                    LocalDateTime.of(2026, 11, 11, 14, 0),
-                    1
-            );
-
-            Seat seat = SeatFixture.createSeat(theater, "A", 1, SeatType.NORMAL);
-
-            screeningSeat = ScreeningSeat.createScreeningSeat(
-                    screening, seat
-            );
-        }
 
         @Test
-        void 정상_표시_성공() {
-            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
-            screeningSeat.fixScreeningSeat();
+        void 상영_취소_불가_상태_409반환() {
+            Screening screening = Screening.createScreening(movie, theater,
+                    LocalDateTime.of(2026, 11, 11, 10, 0),
+                    LocalDateTime.of(2026, 11, 11, 13, 0),
+                    1, MovieType.TWO_D
+            );
 
-            screeningService.restoringScreeningSeat(1L);
+            screening.markEnded();
 
-            assertThat(screeningSeat.getStatus()).isEqualTo(ScreeningSeatStatus.AVAILABLE);
-        }
+            ReflectionTestUtils.setField(screening, "id", 50L);
 
-        @Test
-        void 정상_표시_실패_409반환() {
-            given(screeningSeatRepository.findById(anyLong())).willReturn(Optional.of(screeningSeat));
-            screeningSeat.blockScreeningSeat();
+            given(screeningRepository.findById(50L)).willReturn(Optional.of(screening));
 
-            assertThatThrownBy(() -> screeningService.restoringScreeningSeat(1L))
+            assertThatThrownBy(() -> screeningService.cancelScreening(screening.getId()))
                     .isInstanceOf(CustomException.class)
-                    .satisfies(ex -> {
-                        CustomException exception = (CustomException) ex;
+                    .satisfies(exception -> {
+                        CustomException ex = (CustomException) exception;
 
-                        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.SCREENING_SEAT_CANNOT_UPDATE);
+                        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.SCREENING_CANCEL_NOT_ALLOWED);
+                        assertThat(ex.getErrorCode().getStatus()).isEqualTo(HttpStatus.CONFLICT);
                     });
         }
     }

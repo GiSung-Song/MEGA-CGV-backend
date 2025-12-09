@@ -1,15 +1,13 @@
 package com.cgv.mega.movie.entity;
 
 import com.cgv.mega.common.entity.BaseTimeEntity;
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.movie.enums.MovieStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity

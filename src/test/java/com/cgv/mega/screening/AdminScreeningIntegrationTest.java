@@ -1,12 +1,22 @@
 package com.cgv.mega.screening;
 
-import com.cgv.mega.common.enums.MovieType;
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieType;
+import com.cgv.mega.payment.dto.PortOneCancelRequest;
+import com.cgv.mega.payment.dto.RefundResult;
+import com.cgv.mega.payment.entity.Payment;
+import com.cgv.mega.payment.enums.PaymentStatus;
+import com.cgv.mega.payment.repository.PaymentRepository;
+import com.cgv.mega.payment.service.PortOneClient;
+import com.cgv.mega.reservation.entity.ReservationGroup;
+import com.cgv.mega.reservation.enums.ReservationStatus;
+import com.cgv.mega.reservation.repository.ReservationGroupRepository;
 import com.cgv.mega.screening.dto.RegisterScreeningRequest;
 import com.cgv.mega.screening.entity.Screening;
 import com.cgv.mega.screening.entity.ScreeningSeat;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.screening.repository.ScreeningRepository;
 import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
@@ -25,18 +35,22 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -76,6 +90,15 @@ public class AdminScreeningIntegrationTest {
     @Autowired
     private ScreeningSeatRepository screeningSeatRepository;
 
+    @Autowired
+    private ReservationGroupRepository reservationGroupRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @MockitoBean
+    private PortOneClient portOneClient;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         TestContainerManager.startRedis();
@@ -86,6 +109,7 @@ public class AdminScreeningIntegrationTest {
         TestContainerManager.registerElasticsearch(registry);
     }
 
+    private User user;
     private String userToken;
     private String adminToken;
 
@@ -97,7 +121,7 @@ public class AdminScreeningIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        User user = testDataFactory.createUser("user", "a@b.com", "01012345678");
+        user = testDataFactory.createUser("user", "a@b.com", "01012345678");
         User admin = testDataFactory.createUser("admin", "c@d.com", "01098765432");
 
         testDataFactory.setAdmin(admin);
@@ -117,13 +141,13 @@ public class AdminScreeningIntegrationTest {
         LocalDateTime interstellarStartTime = LocalDateTime.of(2026, 11, 11, 20, 0);
         LocalDateTime kingkongStartTime = LocalDateTime.of(2026, 11, 11, 23, 0);
 
-        screening = testDataFactory.createScreening(monster, theater, monsterStartTime1, 1);
+        screening = testDataFactory.createScreening(monster, theater, monsterStartTime1, 1, MovieType.TWO_D);
 
         testDataFactory.initializeScreeningSeat(screening, theater);
 
-        testDataFactory.createScreening(monster, theater, monsterStartTime2, 2);
-        testDataFactory.createScreening(interstellar, theater, interstellarStartTime, 1);
-        testDataFactory.createScreening(kingkong, theater, kingkongStartTime, 1);
+        testDataFactory.createScreening(monster, theater, monsterStartTime2, 2, MovieType.TWO_D);
+        testDataFactory.createScreening(interstellar, theater, interstellarStartTime, 1, MovieType.TWO_D);
+        testDataFactory.createScreening(kingkong, theater, kingkongStartTime, 1, MovieType.TWO_D);
     }
 
     @Nested
@@ -426,6 +450,108 @@ public class AdminScreeningIntegrationTest {
                     .orElseThrow();
 
             mockMvc.perform(MockMvcRequestBuilders.patch("/api/admin/screenings/seats/{screeningSeatId}/restore", screeningSeat.getId())
+                            .header("Authorization", userToken))
+                    .andExpect(status().isForbidden())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 상영_취소_테스트 {
+        private Payment payment;
+        private ReservationGroup reservationGroup;
+
+        @BeforeEach
+        void setUp() {
+            Seat seat1 = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 1)
+                    .orElseThrow();
+
+            ScreeningSeat ss1 = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat1.getId())
+                    .orElseThrow();
+
+            Seat seat2 = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 2)
+                    .orElseThrow();
+
+            ScreeningSeat ss2 = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat2.getId())
+                    .orElseThrow();
+
+            reservationGroup = ReservationGroup.createReservationGroup(user.getId());
+            reservationGroup.addReservation(ss1);
+            reservationGroup.addReservation(ss2);
+
+            reservationGroup.successReservation();
+
+            reservationGroupRepository.save(reservationGroup);
+
+            ss1.reserveScreeningSeat();
+            ss2.reserveScreeningSeat();
+
+            payment = Payment.createPayment(
+                    reservationGroup, user.getName(), user.getPhoneNumber(),
+                    user.getEmail(), "merchant-uid", BigDecimal.valueOf(2000)
+            );
+
+            payment.successPayment(
+                    "payment-id",
+                    BigDecimal.valueOf(2000),
+                    "pg-provider",
+                    "pay-method",
+                    "card-name",
+                    0,
+                    LocalDateTime.now()
+            );
+
+            paymentRepository.save(payment);
+        }
+
+        @Test
+        void 상영_취소_성공() throws Exception {
+            RefundResult result = new RefundResult(
+                    true, BigDecimal.valueOf(2000), null
+            );
+
+            given(portOneClient.refundPayment(anyString(), any(PortOneCancelRequest.class)))
+                    .willReturn(result);
+
+            mockMvc.perform(delete("/api/admin/screenings/{screeningId}", screening.getId())
+                    .header("Authorization", adminToken))
+                    .andExpect(status().isOk())
+                    .andDo(document("screening-cancel-admin",
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT Access Token (Bearer)")
+                            ),
+                            pathParameters(
+                                    parameterWithName("screeningId").description("상영회차 식별자 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("status").description("HTTP 응답 코드"),
+                                    fieldWithPath("message").description("응답 메시지")
+                            )
+                    ))
+                    .andDo(print());
+
+            Payment cancelledPayment = paymentRepository.findById(payment.getId())
+                    .orElseThrow();
+
+            ReservationGroup cancelledReservationGroup = reservationGroupRepository.findById(reservationGroup.getId())
+                    .orElseThrow();
+
+            Screening cancelledScreening = screeningRepository.findById(screening.getId())
+                    .orElseThrow();
+
+            assertThat(cancelledPayment.getRefundAmount()).isEqualTo(BigDecimal.valueOf(reservationGroup.getTotalPrice()));
+            assertThat(cancelledPayment.getStatus()).isEqualTo(PaymentStatus.CANCELLED);
+
+            assertThat(cancelledReservationGroup.getStatus()).isEqualTo(ReservationStatus.CANCELLED);
+
+            assertThat(cancelledScreening.getStatus()).isEqualTo(ScreeningStatus.CANCELED);
+        }
+
+        @Test
+        void 권한_없음_403반환() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.patch("/api/admin/screenings/{screeningId}", screening.getId())
                             .header("Authorization", userToken))
                     .andExpect(status().isForbidden())
                     .andDo(print());

@@ -2,9 +2,10 @@ package com.cgv.mega.screening;
 
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.screening.entity.Screening;
 import com.cgv.mega.screening.entity.ScreeningSeat;
-import com.cgv.mega.screening.enums.ScreeningSeatStatus;
+import com.cgv.mega.screening.enums.DisplayScreeningSeatStatus;
 import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.seat.repository.SeatRepository;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -54,6 +57,9 @@ public class ScreeningIntegrationTest {
 
     @Autowired
     private ScreeningSeatRepository screeningSeatRepository;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     private SeatRepository seatRepository;
@@ -91,13 +97,13 @@ public class ScreeningIntegrationTest {
         LocalDateTime interstellarStartTime = LocalDateTime.of(2026, 11, 11, 20, 0);
         LocalDateTime kingkongStartTime = LocalDateTime.of(2026, 11, 11, 23, 0);
 
-        screening = testDataFactory.createScreening(monster, theater, monsterStartTime1, 1);
+        screening = testDataFactory.createScreening(monster, theater, monsterStartTime1, 1, MovieType.TWO_D);
 
         testDataFactory.initializeScreeningSeat(screening, theater);
 
-        testDataFactory.createScreening(monster, theater, monsterStartTime2, 2);
-        testDataFactory.createScreening(interstellar, theater, interstellarStartTime, 1);
-        testDataFactory.createScreening(kingkong, theater, kingkongStartTime, 1);
+        testDataFactory.createScreening(monster, theater, monsterStartTime2, 2, MovieType.TWO_D);
+        testDataFactory.createScreening(interstellar, theater, interstellarStartTime, 1, MovieType.TWO_D);
+        testDataFactory.createScreening(kingkong, theater, kingkongStartTime, 1, MovieType.TWO_D);
     }
 
     @Nested
@@ -190,23 +196,31 @@ public class ScreeningIntegrationTest {
                             theater.getId(), "A", 3)
                     .orElseThrow();
 
+            Seat seat2 = seatRepository.findByTheaterIdAndRowLabelAndColNumber(
+                            theater.getId(), "A", 2)
+                    .orElseThrow();
+
             ScreeningSeat reservedSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat.getId())
                     .orElseThrow();
 
-            reservedSeat.blockScreeningSeat();
+            ScreeningSeat holdSeat = screeningSeatRepository.findByScreeningIdAndSeatId(screening.getId(), seat2.getId())
+                    .orElseThrow();
+
+            redisTemplate.opsForValue().set("seat:" + holdSeat.getId(), "user", Duration.ofMinutes(5));
+
             reservedSeat.reserveScreeningSeat();
 
             mockMvc.perform(get("/api/screenings/{screeningId}/seats", screening.getId()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.screeningSeatInfos[0].rowLabel").value("A"))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[0].colNumber").value(1))
-                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].status").value(ScreeningSeatStatus.AVAILABLE.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[0].status").value(DisplayScreeningSeatStatus.AVAILABLE.name()))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[1].rowLabel").value("A"))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[1].colNumber").value(2))
-                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].status").value(ScreeningSeatStatus.AVAILABLE.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[1].status").value(DisplayScreeningSeatStatus.HOLD.name()))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[2].rowLabel").value("A"))
                     .andExpect(jsonPath("$.data.screeningSeatInfos[2].colNumber").value(3))
-                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].status").value(ScreeningSeatStatus.RESERVED.name()))
+                    .andExpect(jsonPath("$.data.screeningSeatInfos[2].status").value(DisplayScreeningSeatStatus.RESERVED.name()))
                     .andDo(document("screening-seat-list",
                             pathParameters(
                                     parameterWithName("screeningId").description("조회할 상영회차의 식별자 ID")
@@ -215,12 +229,12 @@ public class ScreeningIntegrationTest {
                                     fieldWithPath("status").description("HTTP 응답 코드"),
                                     fieldWithPath("message").description("응답 메시지"),
                                     fieldWithPath("data.screeningId").description("상영회차 식별자 ID"),
-                                    fieldWithPath("data.basePrice").description("상영관별 좌석의 기본 가격"),
                                     fieldWithPath("data.screeningSeatInfos[].screeningSeatId").description("상영회차별 좌석 식별자 ID"),
                                     fieldWithPath("data.screeningSeatInfos[].rowLabel").description("행"),
                                     fieldWithPath("data.screeningSeatInfos[].colNumber").description("열"),
                                     fieldWithPath("data.screeningSeatInfos[].seatType").description("좌석 종류"),
-                                    fieldWithPath("data.screeningSeatInfos[].status").description("좌석 상태")
+                                    fieldWithPath("data.screeningSeatInfos[].status").description("좌석 상태"),
+                                    fieldWithPath("data.screeningSeatInfos[].price").description("좌석의 가격")
                             )
                     ))
                     .andDo(print());

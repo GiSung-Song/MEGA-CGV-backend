@@ -1,9 +1,11 @@
 package com.cgv.mega.screening.repository;
 
-import com.cgv.mega.screening.dto.*;
+import com.cgv.mega.screening.dto.MovieScreeningResponse;
+import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
+import com.cgv.mega.screening.dto.ScreeningSeatDto;
+import com.cgv.mega.screening.dto.ScreeningTimeDto;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 import com.cgv.mega.screening.enums.ScreeningStatus;
-import com.cgv.mega.theater.entity.QTheater;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -89,6 +91,10 @@ public class ScreeningQueryRepository {
                 ? withInTime(date)
                 : null;
 
+        BooleanExpression adminCondition = (date != null)
+                ? screening.status.eq(ScreeningStatus.SCHEDULED)
+                : null;
+
         List<MovieScreeningResponse.MovieScreeningInfo> raw = jpaQueryFactory
                 .select(Projections.constructor(MovieScreeningResponse.MovieScreeningInfo.class,
                         screening.id,
@@ -106,6 +112,7 @@ public class ScreeningQueryRepository {
                 .join(screening.theater, theater)
                 .where(
                         screening.movie.id.eq(movieId),
+                        adminCondition,
                         dateCondition
                 )
                 .orderBy(screening.startTime.asc())
@@ -124,7 +131,7 @@ public class ScreeningQueryRepository {
                         seat.colNumber,
                         seat.type,
                         screeningSeat.status,
-                        theater.basePrice
+                        screeningSeat.price
                 ))
                 .from(screeningSeat)
                 .join(screeningSeat.seat, seat)

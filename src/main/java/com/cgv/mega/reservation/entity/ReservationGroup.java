@@ -1,7 +1,7 @@
 package com.cgv.mega.reservation.entity;
 
 import com.cgv.mega.common.entity.BaseTimeEntity;
-import com.cgv.mega.common.enums.ReservationStatus;
+import com.cgv.mega.reservation.enums.ReservationStatus;
 import com.cgv.mega.screening.entity.ScreeningSeat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -38,7 +38,7 @@ public class ReservationGroup extends BaseTimeEntity {
     private ReservationStatus status;
 
     @OneToMany(mappedBy = "reservationGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Reservation> reservations = new HashSet<>();
+    private List<Reservation> reservations = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private ReservationGroup(Long userId) {
@@ -52,15 +52,41 @@ public class ReservationGroup extends BaseTimeEntity {
                 .build();
     }
 
-    public void addReservation(ScreeningSeat screeningSeat, int price) {
-        Reservation reservation = Reservation.createReservation(this, screeningSeat, price);
+    public void addReservation(ScreeningSeat screeningSeat) {
+        Reservation reservation = Reservation.createReservation(this, screeningSeat);
 
         if (this.reservations.add(reservation)) {
-            this.totalPrice += price;
+            this.totalPrice = calculateTotalPrice();
         }
     }
 
-    public void updateReservationStatus(ReservationStatus status) {
-        this.status = status;
+    public void successReservation() {
+        this.status = ReservationStatus.PAID;
+    }
+
+    public void cancelAndReleaseSeats() {
+        if (this.status == ReservationStatus.CANCELLED) {
+            return;
+        }
+
+        this.status = ReservationStatus.CANCELLED;
+
+        for (Reservation reservation : reservations) {
+            reservation.releaseSeat();
+        }
+    }
+
+    public void cancel() {
+        if (this.status == ReservationStatus.CANCELLED) {
+            return;
+        }
+
+        this.status = ReservationStatus.CANCELLED;
+    }
+
+    private int calculateTotalPrice() {
+        return this.reservations.stream()
+                .mapToInt(r -> r.getScreeningSeat().getPrice())
+                .sum();
     }
 }
