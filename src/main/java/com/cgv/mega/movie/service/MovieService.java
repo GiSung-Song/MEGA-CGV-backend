@@ -2,7 +2,7 @@ package com.cgv.mega.movie.service;
 
 import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;

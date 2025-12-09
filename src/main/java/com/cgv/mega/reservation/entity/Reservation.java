@@ -32,21 +32,22 @@ public class Reservation {
             foreignKey = @ForeignKey(name = "fk_reservations_screening_seat"))
     private ScreeningSeat screeningSeat;
 
-    @Column(nullable = false)
-    private int price;
-
     @Builder(access = AccessLevel.PRIVATE)
-    private Reservation(ReservationGroup reservationGroup, ScreeningSeat screeningSeat, int price) {
+    private Reservation(ReservationGroup reservationGroup, ScreeningSeat screeningSeat) {
         this.reservationGroup = reservationGroup;
         this.screeningSeat = screeningSeat;
-        this.price = price;
     }
 
-    public static Reservation createReservation(ReservationGroup reservationGroup, ScreeningSeat screeningSeat, int price) {
+    public static Reservation createReservation(ReservationGroup reservationGroup, ScreeningSeat screeningSeat) {
         return Reservation.builder()
                 .reservationGroup(reservationGroup)
                 .screeningSeat(screeningSeat)
-                .price(price)
                 .build();
+    }
+
+    public void releaseSeat() {
+        if (this.screeningSeat != null) {
+            this.screeningSeat.cancelScreeningSeat();
+        }
     }
 }

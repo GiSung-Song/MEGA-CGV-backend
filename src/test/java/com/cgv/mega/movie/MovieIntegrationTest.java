@@ -1,6 +1,6 @@
 package com.cgv.mega.movie;
 
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;

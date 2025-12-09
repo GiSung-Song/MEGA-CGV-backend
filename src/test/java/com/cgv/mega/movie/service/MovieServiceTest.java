@@ -2,7 +2,7 @@ package com.cgv.mega.movie.service;
 
 import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.entity.GenreFixture;
@@ -26,13 +26,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 

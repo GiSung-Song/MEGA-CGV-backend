@@ -61,7 +61,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
 
                         // 영화 상영 목록, 상영중인 영화 목록, 상영회차별 좌석 현황 API
-                        .requestMatchers(HttpMethod.GET, "/api/screenings/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/screenings/movies",
+                                "/api/screenings/*/seats",
+                                "/api/screenings/*").permitAll()
 
                         // ADMIN 전용 API
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

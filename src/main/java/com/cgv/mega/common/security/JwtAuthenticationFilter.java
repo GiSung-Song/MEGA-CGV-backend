@@ -1,7 +1,7 @@
 package com.cgv.mega.common.security;
 
 import com.cgv.mega.auth.dto.JwtPayloadDto;
-import com.cgv.mega.common.enums.TokenStatus;
+import com.cgv.mega.auth.enums.TokenStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             new PermitPass(HttpMethod.POST, "/api/auth/refresh"),
             new PermitPass(HttpMethod.POST, "/api/users"),
             new PermitPass(HttpMethod.GET, "/api/movies/**"),
-            new PermitPass(HttpMethod.GET, "/api/screenings/**")
+            new PermitPass(HttpMethod.GET, "/api/screenings/movies"),
+            new PermitPass(HttpMethod.GET, "/api/screenings/*"),
+            new PermitPass(HttpMethod.GET, "/api/screenings/*/seats")
     );
 
     @Override

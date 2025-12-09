@@ -20,3 +20,7 @@ jwt:
     expiration: 1800000
   refresh:
     expiration: 1209600000
+
+portone:
+  api-url: https://api.portone.io
+  api-secret: ${PORTONE_API_SECRET}

@@ -40,6 +40,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("com.github.ben-manes.caffeine:caffeine")
 
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("me.paulschwarz:spring-dotenv:3.0.0")
+
     // ES
     implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
 
@@ -57,6 +60,9 @@ dependencies {
     annotationProcessor("com.querydsl:querydsl-apt:${querydslVersion}:jakarta")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+
+    // web client
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
     // lombok
     compileOnly("org.projectlombok:lombok")

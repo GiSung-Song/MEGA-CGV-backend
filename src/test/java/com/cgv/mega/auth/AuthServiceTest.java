@@ -4,7 +4,7 @@ import com.cgv.mega.auth.dto.JwtPayloadDto;
 import com.cgv.mega.auth.dto.LoginRequest;
 import com.cgv.mega.auth.dto.TokenResponse;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.common.enums.TokenStatus;
+import com.cgv.mega.auth.enums.TokenStatus;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.common.security.JwtTokenProvider;
 import com.cgv.mega.user.entity.User;

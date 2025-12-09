@@ -1,6 +1,6 @@
 package com.cgv.mega.screening.dto;
 
-import com.cgv.mega.common.enums.SeatType;
+import com.cgv.mega.seat.enums.SeatType;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 
 public record ScreeningSeatDto(
@@ -9,6 +9,6 @@ public record ScreeningSeatDto(
         int colNumber,
         SeatType seatType,
         ScreeningSeatStatus status,
-        int basePrice
+        int price
 ) {
 }

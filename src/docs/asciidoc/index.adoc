@@ -22,3 +22,15 @@ include::movie.adoc[]
 
 == 상영 API
 include::screening.adoc[]
+
+---
+
+== 좌석 API
+include::screening-seat.adoc[]
+
+---
+
+== 예약 API
+include::reservation.adoc[]
+
+---

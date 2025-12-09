@@ -1,6 +1,6 @@
 package com.cgv.mega.seat.entity;
 
-import com.cgv.mega.common.enums.SeatType;
+import com.cgv.mega.seat.enums.SeatType;
 import com.cgv.mega.theater.entity.Theater;
 import org.springframework.test.util.ReflectionTestUtils;
 

@@ -1,7 +1,10 @@
 package com.cgv.mega.screening.entity;
 
 import com.cgv.mega.common.entity.BaseTimeEntity;
+import com.cgv.mega.common.enums.ErrorCode;
+import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.seat.entity.Seat;
 import com.cgv.mega.theater.entity.Theater;
@@ -52,32 +55,46 @@ public class Screening extends BaseTimeEntity {
     @Column(nullable = false)
     private ScreeningStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "movie_type")
+    private MovieType movieType;
+
     @OneToMany(mappedBy = "screening", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ScreeningSeat> screeningSeats = new HashSet<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Screening(Movie movie, Theater theater, LocalDateTime startTime, LocalDateTime endTime, int sequence) {
+    private Screening(Movie movie, Theater theater, LocalDateTime startTime, LocalDateTime endTime, int sequence, MovieType movieType) {
         this.movie = movie;
         this.theater = theater;
         this.startTime = startTime;
         this.endTime = endTime;
         this.sequence = sequence;
         this.status = ScreeningStatus.SCHEDULED;
+        this.movieType = movieType;
     }
 
-    public static Screening createScreening(Movie movie, Theater theater, LocalDateTime startTime, LocalDateTime endTime, int sequence) {
+    public static Screening createScreening(Movie movie, Theater theater, LocalDateTime startTime,
+                                            LocalDateTime endTime, int sequence, MovieType movieType) {
         return Screening.builder()
                 .movie(movie)
                 .theater(theater)
                 .startTime(startTime)
                 .endTime(endTime)
                 .sequence(sequence)
+                .movieType(movieType)
                 .build();
     }
 
-    public void initializeSeats(Set<Seat> seats) {
+    public void initializeSeats(Set<Seat> seats, int basePrice) {
+        double theaterPrice = this.theater.getType().getMultiplier();
+        double movieTypePrice = this.movieType.getMultiplier();
+
         for (Seat seat : seats) {
-            this.screeningSeats.add(ScreeningSeat.createScreeningSeat(this, seat));
+            double seatTypePrice = seat.getType().getMultiplier();
+
+            int price = (int) (basePrice * theaterPrice * movieTypePrice * seatTypePrice);
+
+            this.screeningSeats.add(ScreeningSeat.createScreeningSeat(this, seat, price));
         }
     }
 
@@ -92,5 +109,17 @@ public class Screening extends BaseTimeEntity {
     public boolean isEnded() {
         return this.status == ScreeningStatus.ENDED
                 || LocalDateTime.now().isAfter(this.endTime);
+    }
+
+    public void validateReservable(LocalDateTime now) {
+        // 예약 상태 확인
+        if (this.getStatus() != ScreeningStatus.SCHEDULED) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE_STATUS);
+        }
+
+        // 상영 시작 10분 전까지 예약 가능
+        if (!now.isBefore(this.getStartTime().minusMinutes(10))) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_AVAILABLE_TIME);
+        }
     }
 }

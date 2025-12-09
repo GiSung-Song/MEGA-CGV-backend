@@ -1,9 +1,10 @@
 package com.cgv.mega.screening.controller;
 
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.screening.dto.AvailableScreeningResponse;
 import com.cgv.mega.screening.dto.MovieScreeningResponse;
 import com.cgv.mega.screening.dto.RegisterScreeningRequest;
+import com.cgv.mega.screening.service.ScreeningSeatService;
 import com.cgv.mega.screening.service.ScreeningService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
@@ -41,6 +42,9 @@ class AdminScreeningControllerTest {
 
     @MockitoBean
     private ScreeningService screeningService;
+
+    @MockitoBean
+    private ScreeningSeatService screeningSeatService;
 
     @Nested
     class 상영_가능_시간_조회 {
@@ -146,7 +150,7 @@ class AdminScreeningControllerTest {
     class 특정_좌석_수리중_상태로_변경 {
         @Test
         void 변경_성공() throws Exception {
-            willDoNothing().given(screeningService).fixingScreeningSeat(anyLong());
+            willDoNothing().given(screeningSeatService).fixingScreeningSeat(anyLong());
 
             mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/fix", 1L))
                     .andExpect(status().isOk())
@@ -165,7 +169,7 @@ class AdminScreeningControllerTest {
     class 특정_좌석_예약가능_상태로_변경 {
         @Test
         void 변경_성공() throws Exception {
-            willDoNothing().given(screeningService).restoringScreeningSeat(anyLong());
+            willDoNothing().given(screeningSeatService).restoringScreeningSeat(anyLong());
 
             mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/restore", 1L))
                     .andExpect(status().isOk())
@@ -175,6 +179,25 @@ class AdminScreeningControllerTest {
         @Test
         void 경로_변수_오류_400반환() throws Exception {
             mockMvc.perform(patch("/api/admin/screenings/seats/{screeningSeatId}/restore", "1L"))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 상영_취소 {
+        @Test
+        void 취소_성공() throws Exception {
+            willDoNothing().given(screeningService).cancelScreening(anyLong());
+
+            mockMvc.perform(delete("/api/admin/screenings/{screeningId}", 1L))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+        }
+
+        @Test
+        void 경로_변수_오류_400반환() throws Exception {
+            mockMvc.perform(delete("/api/admin/screenings/{screeningId}", "1L"))
                     .andExpect(status().isBadRequest())
                     .andDo(print());
         }

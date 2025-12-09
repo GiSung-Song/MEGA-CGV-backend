@@ -1,7 +1,7 @@
 package com.cgv.mega.theater.entity;
 
 import com.cgv.mega.common.entity.BaseTimeEntity;
-import com.cgv.mega.common.enums.TheaterType;
+import com.cgv.mega.theater.enums.TheaterType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,7 +31,4 @@ public class Theater extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private TheaterType type;
-
-    @Column(nullable = false, name = "base_price")
-    private int basePrice;
 }

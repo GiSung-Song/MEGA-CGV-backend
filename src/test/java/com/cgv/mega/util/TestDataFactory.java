@@ -4,9 +4,9 @@ import com.cgv.mega.auth.dto.JwtPayloadDto;
 import com.cgv.mega.common.enums.Role;
 import com.cgv.mega.common.security.JwtTokenProvider;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.movie.repository.MovieRepository;
 import com.cgv.mega.screening.entity.Screening;
-import com.cgv.mega.screening.entity.ScreeningSeat;
 import com.cgv.mega.screening.repository.ScreeningRepository;
 import com.cgv.mega.screening.repository.ScreeningSeatRepository;
 import com.cgv.mega.seat.entity.Seat;
@@ -19,14 +19,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Component
 @Profile("test")
-@Transactional
 public class TestDataFactory {
 
     @Autowired
@@ -53,27 +51,30 @@ public class TestDataFactory {
     public User createUser(String name, String email, String phoneNumber) {
         User user = User.createUser(name, email, passwordEncoder.encode("rawPassword"), phoneNumber);
 
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 
     public Movie createMovie(String title) {
         Movie movie = Movie.createMovie(title, 150, "test-description", "poster.png");
 
-        return movieRepository.save(movie);
+        return movieRepository.saveAndFlush(movie);
     }
 
-    public Screening createScreening(Movie movie, Theater theater, LocalDateTime startTime, int sequence) {
+    public Screening createScreening(Movie movie, Theater theater, LocalDateTime startTime, int sequence, MovieType movieType) {
         LocalDateTime endTime = startTime.plusMinutes(160);
 
-        Screening screening = Screening.createScreening(movie, theater, startTime, endTime, sequence);
+        Screening screening = Screening.createScreening(movie, theater, startTime, endTime, sequence, movieType);
 
-        return screeningRepository.save(screening);
+        return screeningRepository.saveAndFlush(screening);
     }
 
     public void initializeScreeningSeat(Screening screening, Theater theater) {
         Set<Seat> seats = seatRepository.findByTheaterId(theater.getId());
 
-        screening.initializeSeats(seats);
+        screening.initializeSeats(seats, 1000);
+
+        screeningSeatRepository.saveAll(screening.getScreeningSeats());
+        screeningSeatRepository.flush();
     }
 
     public void setAdmin(User user) {

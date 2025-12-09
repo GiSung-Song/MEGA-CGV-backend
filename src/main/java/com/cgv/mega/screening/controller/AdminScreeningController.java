@@ -4,6 +4,7 @@ import com.cgv.mega.common.response.CustomResponse;
 import com.cgv.mega.screening.dto.AvailableScreeningResponse;
 import com.cgv.mega.screening.dto.MovieScreeningResponse;
 import com.cgv.mega.screening.dto.RegisterScreeningRequest;
+import com.cgv.mega.screening.service.ScreeningSeatService;
 import com.cgv.mega.screening.service.ScreeningService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 public class AdminScreeningController {
 
     private final ScreeningService screeningService;
+    private final ScreeningSeatService screeningSeatService;
 
     @GetMapping
     public ResponseEntity<CustomResponse<AvailableScreeningResponse>> getAvailableScreeningTime(
@@ -40,7 +42,16 @@ public class AdminScreeningController {
         screeningService.registerScreening(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CustomResponse.of());
+                .body(CustomResponse.of(HttpStatus.CREATED));
+    }
+
+    @DeleteMapping("/{screeningId}")
+    public ResponseEntity<CustomResponse<Void>> cancelScreening(
+            @PathVariable("screeningId") Long screeningId
+    ) {
+        screeningService.cancelScreening(screeningId);
+
+        return ResponseEntity.ok(CustomResponse.of());
     }
 
     @GetMapping("/{movieId}")
@@ -56,7 +67,7 @@ public class AdminScreeningController {
     public ResponseEntity<CustomResponse<Void>> fixSeat(
             @PathVariable("screeningSeatId") Long screeningSeatId
     ) {
-        screeningService.fixingScreeningSeat(screeningSeatId);
+        screeningSeatService.fixingScreeningSeat(screeningSeatId);
 
         return ResponseEntity.ok(CustomResponse.of());
     }
@@ -65,7 +76,7 @@ public class AdminScreeningController {
     public ResponseEntity<CustomResponse<Void>> restoreSeat(
             @PathVariable("screeningSeatId") Long screeningSeatId
     ) {
-        screeningService.restoringScreeningSeat(screeningSeatId);
+        screeningSeatService.restoringScreeningSeat(screeningSeatId);
 
         return ResponseEntity.ok(CustomResponse.of());
     }

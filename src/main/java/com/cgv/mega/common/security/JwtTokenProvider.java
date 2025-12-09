@@ -2,7 +2,7 @@ package com.cgv.mega.common.security;
 
 import com.cgv.mega.auth.dto.JwtPayloadDto;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.common.enums.TokenStatus;
+import com.cgv.mega.auth.enums.TokenStatus;
 import com.cgv.mega.common.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

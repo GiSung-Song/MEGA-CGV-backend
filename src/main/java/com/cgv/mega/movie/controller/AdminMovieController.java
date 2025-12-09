@@ -28,7 +28,7 @@ public class AdminMovieController {
         movieService.registerMovie(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CustomResponse.of());
+                .body(CustomResponse.of(HttpStatus.CREATED));
     }
 
     @PatchMapping("/{movieId}")

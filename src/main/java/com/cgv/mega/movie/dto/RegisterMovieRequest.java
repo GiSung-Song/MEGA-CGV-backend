@@ -1,6 +1,6 @@
 package com.cgv.mega.movie.dto;
 
-import com.cgv.mega.common.enums.MovieType;
+import com.cgv.mega.movie.enums.MovieType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

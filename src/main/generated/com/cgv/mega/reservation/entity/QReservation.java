@@ -24,8 +24,6 @@ public class QReservation extends EntityPathBase<Reservation> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Integer> price = createNumber("price", Integer.class);
-
     public final QReservationGroup reservationGroup;
 
     public final com.cgv.mega.screening.entity.QScreeningSeat screeningSeat;

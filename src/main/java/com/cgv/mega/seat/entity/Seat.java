@@ -1,7 +1,7 @@
 package com.cgv.mega.seat.entity;
 
 import com.cgv.mega.common.entity.BaseTimeEntity;
-import com.cgv.mega.common.enums.SeatType;
+import com.cgv.mega.seat.enums.SeatType;
 import com.cgv.mega.theater.entity.Theater;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

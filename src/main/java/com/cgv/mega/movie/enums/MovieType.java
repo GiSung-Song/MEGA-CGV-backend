@@ -1,15 +1,13 @@
-package com.cgv.mega.common.enums;
+package com.cgv.mega.movie.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TheaterType {
-    TWO_D("2D관", 1.0),
-    FOUR_DX("4DX관", 1.2),
-    IMAX("IMAX관", 1.3),
-    SCREEN_X("SCREEN X관", 1.5)
+public enum MovieType {
+    TWO_D("2D", 1.0),
+    THREE_D("3D", 1.1)
     ;
 
     private final String value;

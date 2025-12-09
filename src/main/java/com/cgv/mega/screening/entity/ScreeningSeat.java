@@ -40,22 +40,27 @@ public class ScreeningSeat {
     @Column(length = 20, nullable = false)
     private ScreeningSeatStatus status;
 
+    @Column(nullable = false)
+    private int price;
+
     @Builder(access = AccessLevel.PRIVATE)
-    private ScreeningSeat(Screening screening, Seat seat) {
+    private ScreeningSeat(Screening screening, Seat seat, int price) {
         this.screening = screening;
         this.seat = seat;
+        this.price = price;
         this.status = ScreeningSeatStatus.AVAILABLE;
     }
 
-    public static ScreeningSeat createScreeningSeat(Screening screening, Seat seat) {
+    public static ScreeningSeat createScreeningSeat(Screening screening, Seat seat, int price) {
         return ScreeningSeat.builder()
                 .screening(screening)
                 .seat(seat)
+                .price(price)
                 .build();
     }
 
     public void reserveScreeningSeat() {
-        if (this.status != ScreeningSeatStatus.BLOCKED) {
+        if (this.status != ScreeningSeatStatus.AVAILABLE) {
             throw new CustomException(ErrorCode.SCREENING_SEAT_NOT_AVAILABLE);
         }
 
@@ -71,19 +76,11 @@ public class ScreeningSeat {
     }
 
     public void cancelScreeningSeat() {
-        if (this.status != ScreeningSeatStatus.RESERVED && this.status != ScreeningSeatStatus.BLOCKED) {
-            throw new CustomException(ErrorCode.SCREENING_SEAT_NOT_RESERVED);
+        if (this.status == ScreeningSeatStatus.AVAILABLE) {
+            return;
         }
 
         this.status = ScreeningSeatStatus.AVAILABLE;
-    }
-
-    public void blockScreeningSeat() {
-        if (this.status != ScreeningSeatStatus.AVAILABLE) {
-            throw new CustomException(ErrorCode.SCREENING_SEAT_NOT_AVAILABLE);
-        }
-
-        this.status = ScreeningSeatStatus.BLOCKED;
     }
 
     public void fixScreeningSeat() {
