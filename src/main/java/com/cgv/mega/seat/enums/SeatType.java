@@ -1,5 +1,6 @@
 package com.cgv.mega.seat.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,8 @@ public enum SeatType {
     ROOM("방", 1.5)
     ;
 
+    @JsonValue
     private final String korean;
+
     private final double multiplier;
 }

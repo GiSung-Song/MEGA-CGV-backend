@@ -35,7 +35,7 @@ public class CacheConfig {
 
     @Bean
     public CacheManager caffeineCacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager("theaters", "genres");
+        CaffeineCacheManager manager = new CaffeineCacheManager("theaters");
         manager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(1000)
                 .expireAfterWrite(10, TimeUnit.MINUTES));

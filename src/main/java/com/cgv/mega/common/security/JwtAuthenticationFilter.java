@@ -30,7 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             new PermitPass(HttpMethod.GET, "/api/movies/**"),
             new PermitPass(HttpMethod.GET, "/api/screenings/movies"),
             new PermitPass(HttpMethod.GET, "/api/screenings/*"),
-            new PermitPass(HttpMethod.GET, "/api/screenings/*/seats")
+            new PermitPass(HttpMethod.GET, "/api/screenings/*/seats"),
+            new PermitPass(HttpMethod.GET, "/api/theaters")
     );
 
     @Override

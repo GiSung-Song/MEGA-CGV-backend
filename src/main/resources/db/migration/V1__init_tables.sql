@@ -79,7 +79,7 @@ CREATE TABLE theaters
 
 	CONSTRAINT uq_theaters_name UNIQUE (name),
 
-	CONSTRAINT chk_theaters_type   CHECK (type IN ('TWO_D', 'FOUR_DX', 'IMAX', 'SCREENX'))
+	CONSTRAINT chk_theaters_type   CHECK (type IN ('TWO_D', 'FOUR_DX', 'IMAX', 'SCREEN_X'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 좌석
