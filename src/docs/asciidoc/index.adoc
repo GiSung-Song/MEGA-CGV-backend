@@ -5,18 +5,23 @@
 :doctype: book
 :icons: font
 
-== 인증 API
-include::auth.adoc[]
-
----
-
 == 사용자 API
 include::user.adoc[]
 
 ---
 
+== 인증 API
+include::auth.adoc[]
+
+---
+
 == 영화 API
 include::movie.adoc[]
+
+---
+
+== 상영관 API
+include::theater.adoc[]
 
 ---
 

@@ -1,5 +1,6 @@
 package com.cgv.mega.theater.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +13,8 @@ public enum TheaterType {
     SCREEN_X("SCREEN X관", 1.5)
     ;
 
+    @JsonValue
     private final String value;
+
     private final double multiplier;
 }

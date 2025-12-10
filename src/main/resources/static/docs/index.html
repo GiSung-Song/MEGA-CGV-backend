@@ -446,13 +446,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_인증_api">인증 API</a>
-<ul class="sectlevel2">
-<li><a href="#_로그인_api">로그인 API</a></li>
-<li><a href="#_로그아웃_api">로그아웃 API</a></li>
-<li><a href="#_토큰_재발급_api">토큰 재발급 API</a></li>
-</ul>
-</li>
 <li><a href="#_사용자_api">사용자 API</a>
 <ul class="sectlevel2">
 <li><a href="#_회원가입_api">회원가입 API</a></li>
@@ -462,12 +455,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_회원정보_조회_api">회원정보 조회 API</a></li>
 </ul>
 </li>
+<li><a href="#_인증_api">인증 API</a>
+<ul class="sectlevel2">
+<li><a href="#_로그인_api">로그인 API</a></li>
+<li><a href="#_로그아웃_api">로그아웃 API</a></li>
+<li><a href="#_토큰_재발급_api">토큰 재발급 API</a></li>
+</ul>
+</li>
 <li><a href="#_영화_api">영화 API</a>
 <ul class="sectlevel2">
 <li><a href="#_영화_등록_api_관리자_전용">영화 등록 API (관리자 전용)</a></li>
 <li><a href="#_영화_삭제_api_관리자_전용">영화 삭제 API (관리자 전용)</a></li>
 <li><a href="#_영화_목록_조회_api_관리자_전용">영화 목록 조회 API (관리자 전용)</a></li>
 <li><a href="#_영화_상세_정보_조회_api">영화 상세 정보 조회 API</a></li>
+</ul>
+</li>
+<li><a href="#_상영관_api">상영관 API</a>
+<ul class="sectlevel2">
+<li><a href="#_상영관_목록_조회_api">상영관 목록 조회 API</a></li>
 </ul>
 </li>
 <li><a href="#_상영_api">상영 API</a>
@@ -502,282 +507,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_인증_api"><a class="link" href="#_인증_api">인증 API</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_로그인_api"><a class="link" href="#_로그인_api">로그인 API</a></h3>
-<div class="paragraph">
-<p>이메일과 비밀번호를 사용하여 로그인합니다.
-성공 시 Access Token과 Refresh Token이 발급됩니다.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/login HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Content-Length: 44
-Host: api.megacgv.com
-
-{"email":"a@b.com","password":"rawPassword"}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-X-Request-ID: 25f2ed05-4ba3-4bdd-91df-82c6b94421bd
-Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI4MTM1NywiaWF0IjoxNzY1Mjc3NzU3fQ.vJTiUF11xiMKMdjCmjo0GNXb-UYMS8kqtxG-Tj51C58; Path=/api/auth/refresh; Max-Age=1209600; Expires=Tue, 23 Dec 2025 10:55:57 GMT; Secure; HttpOnly
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 0
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-Strict-Transport-Security: max-age=31536000 ; includeSubDomains
-X-Frame-Options: DENY
-Content-Length: 451
-
-{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI3OTU1NywiaWF0IjoxNzY1Mjc3NzU3fQ.AJVAEJyHBXA7exduCSPoO4Q90Z1FEYnIHnUY3t1QO-8","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI4MTM1NywiaWF0IjoxNzY1Mjc3NzU3fQ.vJTiUF11xiMKMdjCmjo0GNXb-UYMS8kqtxG-Tj51C58"}}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>password</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">비밀번호</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.refreshToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Refresh Token</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-<div class="sect2">
-<h3 id="_로그아웃_api"><a class="link" href="#_로그아웃_api">로그아웃 API</a></h3>
-<div class="paragraph">
-<p>Access Token을 사용하여 로그아웃합니다.
-서버는 Refresh Token 쿠키를 삭제합니다.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/logout HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI3OTU1NSwiaWF0IjoxNzY1Mjc3NzU1fQ.Sos_pCxZWPt0BhljOVl3YsRfwHYH0ILKYgDx1emvNH4
-Host: api.megacgv.com
-Content-Type: application/x-www-form-urlencoded</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-X-Request-ID: d87f11e9-c524-4c98-b1d1-c5760a338487
-Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; HttpOnly
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 0
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-Strict-Transport-Security: max-age=31536000 ; includeSubDomains
-X-Frame-Options: DENY
-Content-Length: 33
-
-{"status":200,"message":"성공"}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token (Bearer)</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-<div class="sect2">
-<h3 id="_토큰_재발급_api"><a class="link" href="#_토큰_재발급_api">토큰 재발급 API</a></h3>
-<div class="paragraph">
-<p>만료된 Access Token 대신 Refresh Token을 사용하여 새 Access Token을 발급받습니다.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/refresh HTTP/1.1
-Host: api.megacgv.com
-Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI4MTM1NiwiaWF0IjoxNzY1Mjc3NzU2fQ.3fNmy7deb1Np-OJsZBd9A4aNKhovwkMW2fBc6Lv5tB8
-Content-Type: application/x-www-form-urlencoded</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-X-Request-ID: c25f632e-bd0d-421b-8f21-1662a8d33027
-Content-Type: application/json
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 0
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-Strict-Transport-Security: max-age=31536000 ; includeSubDomains
-X-Frame-Options: DENY
-Content-Length: 266
-
-{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI3OTU1NiwiaWF0IjoxNzY1Mjc3NzU2fQ.-GShwyh0phBb8RzTZsq6bLfIkDD1zPlfFroE7BrqK7U","refreshToken":null}}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refreshToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Refresh Token</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">새로운 JWT Access Token</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.refreshToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Refresh Token</p></td>
-</tr>
-</tbody>
-</table>
-<hr>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="_사용자_api"><a class="link" href="#_사용자_api">사용자 API</a></h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -801,7 +530,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 47829211-542b-47a6-ae9f-fc1a78b9b827
+X-Request-ID: 0b023662-774e-44ae-9b8a-91fbc05db7a6
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -887,7 +616,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/users/me HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NCIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1OTksImlhdCI6MTc2NTI3Nzc5OX0.fPOFLHsoe7XoCWshnZ-TnD8z5MxqZjluF1S1ivaijlQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NCIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUyMTksImlhdCI6MTc2NTM1MzQxOX0.OQPsCTvD8zoQKlBHkoyL61Sqthjrb9krYWjkLt6P_I4
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -897,7 +626,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 882bb2cb-ffb3-4095-bae9-311ca8799f41
+X-Request-ID: 4582d222-2337-4fef-a744-2b196bfad565
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -966,7 +695,7 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/users/me/password HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NiIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1OTksImlhdCI6MTc2NTI3Nzc5OX0.fhgStvxcBv1GcZU8Eczz9x2K-ZiqVl1CB3ctEQIL6dQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NiIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUyMTksImlhdCI6MTc2NTM1MzQxOX0.PMSjiJET_DRRfaADu27RCU4Q4WJwrb4sxGg1gDE2_6c
 Content-Length: 61
 Host: api.megacgv.com
 
@@ -979,7 +708,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 7cf4d484-8eb5-4af9-8683-849e6ec33aca
+X-Request-ID: ce07f209-4bbe-4a0b-a143-a45a5a6a5e3e
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1074,7 +803,7 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/users/me/phone-number HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0MyIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1OTgsImlhdCI6MTc2NTI3Nzc5OH0.f4T-YT9d6zWSrOZs_VJhtO1d4S4GML3mWkaLvLiNUJQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0MyIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUyMTksImlhdCI6MTc2NTM1MzQxOX0.et2m58JNxdpoqJQ4mXD1aBUr3uPrTFDHUJvZArJIV0M
 Content-Length: 29
 Host: api.megacgv.com
 
@@ -1087,7 +816,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: a55bcbc6-1da0-48ec-8de2-ba4d85df961e
+X-Request-ID: fcb804ad-0a1b-4f8f-b7d2-df9990e8cd10
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1176,7 +905,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/users/me HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1OTksImlhdCI6MTc2NTI3Nzc5OX0.FJc2cMvdpUMkqLTuDEo4iNVAZ5qjxMltZjS6jGLy_0U
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NSIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUyMTksImlhdCI6MTc2NTM1MzQxOX0.YQXltD2uzIcm0nUvzWjUKKeOJnRWVkckNp541cECACg
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -1186,7 +915,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: df136e52-3c38-47d0-8261-ba524ede21fa
+X-Request-ID: 3ad3b199-6592-4117-8c6f-a35d427f1034
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1264,6 +993,282 @@ Content-Length: 102
 </div>
 </div>
 <div class="sect1">
+<h2 id="_인증_api"><a class="link" href="#_인증_api">인증 API</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_로그인_api"><a class="link" href="#_로그인_api">로그인 API</a></h3>
+<div class="paragraph">
+<p>이메일과 비밀번호를 사용하여 로그인합니다.
+성공 시 Access Token과 Refresh Token이 발급됩니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/login HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 44
+Host: api.megacgv.com
+
+{"email":"a@b.com","password":"rawPassword"}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: 033b78e0-1cbc-47e2-8683-a73700d0ef35
+Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1Njk3NywiaWF0IjoxNzY1MzUzMzc3fQ.FezcW5z8_PTeybtY5Y86kRRywqvYHtHMg--hDqG8Ask; Path=/api/auth/refresh; Max-Age=1209600; Expires=Wed, 24 Dec 2025 07:56:17 GMT; Secure; HttpOnly
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 451
+
+{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1NTE3NywiaWF0IjoxNzY1MzUzMzc3fQ.AT86uTcfyfCarsUqyDegetQlDT5iFtxL7JTtTrHHPqA","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1Njk3NywiaWF0IjoxNzY1MzUzMzc3fQ.FezcW5z8_PTeybtY5Y86kRRywqvYHtHMg--hDqG8Ask"}}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 이메일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">비밀번호</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Refresh Token</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_로그아웃_api"><a class="link" href="#_로그아웃_api">로그아웃 API</a></h3>
+<div class="paragraph">
+<p>Access Token을 사용하여 로그아웃합니다.
+서버는 Refresh Token 쿠키를 삭제합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/logout HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1NTE3NSwiaWF0IjoxNzY1MzUzMzc1fQ.PFs-AKxJQZIWykNlgNiVVIr7pkdn-iMDpJioc-z3DMs
+Host: api.megacgv.com
+Content-Type: application/x-www-form-urlencoded</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: 81840051-3725-4f03-a4bc-ae6e750fb20e
+Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; HttpOnly
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 33
+
+{"status":200,"message":"성공"}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token (Bearer)</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_토큰_재발급_api"><a class="link" href="#_토큰_재발급_api">토큰 재발급 API</a></h3>
+<div class="paragraph">
+<p>만료된 Access Token 대신 Refresh Token을 사용하여 새 Access Token을 발급받습니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/auth/refresh HTTP/1.1
+Host: api.megacgv.com
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1Njk3NiwiaWF0IjoxNzY1MzUzMzc2fQ.SbZVYYBgZ-YWOWwyseguRxjfJk0NjxBVNC8-0cpB68U
+Content-Type: application/x-www-form-urlencoded</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: 639b7f9a-3bb7-4648-b4e5-f47b93f5bf8f
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 266
+
+{"status":200,"message":"성공","data":{"accessToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1NTE3NiwiaWF0IjoxNzY1MzUzMzc2fQ.qq92m81ul5PDEtVer3e4r4qGZ4GDfnPABXi9ULj4UU4","refreshToken":null}}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Refresh Token</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">새로운 JWT Access Token</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Refresh Token</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_영화_api"><a class="link" href="#_영화_api">영화 API</a></h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -1275,11 +1280,11 @@ Content-Length: 102
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/admin/movies HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImVtYWlsIjoiY0BkLmNvbSIsImV4cCI6MTc2NTI3OTU2MywiaWF0IjoxNzY1Mjc3NzYzfQ._RVBpsgiwXJL39MUAFDdfEurdDAR2NNNJcEYH6hw7gs
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2NTM1NTE4MywiaWF0IjoxNzY1MzUzMzgzfQ.uhEkBgOqWffHk7VuNc7aY1WVWm69hQYWRPT-sk_7K8E
 Content-Length: 153
 Host: api.megacgv.com
 
-{"title":"인터스텔라","duration":150,"description":"인터스텔라 설명","posterUrl":"poster.png","types":["TWO_D","THREE_D"],"genreIds":[3,2,1]}</code></pre>
+{"title":"인터스텔라","duration":150,"description":"인터스텔라 설명","posterUrl":"poster.png","types":["TWO_D","THREE_D"],"genreIds":[1,3,2]}</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1288,7 +1293,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 65d89eb4-efb1-4533-957d-60d30c4b8ab1
+X-Request-ID: 11d54535-a4b3-496e-a460-f276f0411703
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1402,7 +1407,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/admin/movies/7 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImVtYWlsIjoiY0BkLmNvbSIsImV4cCI6MTc2NTI3OTU2MSwiaWF0IjoxNzY1Mjc3NzYxfQ.gxhHdVFVV5tHx8DqUBmOHGIjAI62dtjnoTts7aZMkuI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2NTM1NTE4MiwiaWF0IjoxNzY1MzUzMzgyfQ.6tlTRRfM9HnygZaj73k-fzrm-TfFceOoOejwbFihpkI
 Host: api.megacgv.com
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -1413,7 +1418,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 5a75c5c1-1e99-4740-8478-2e572aced2a4
+X-Request-ID: 40bf27a4-7f56-4cc3-8af6-3e62fe9b403a
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1500,7 +1505,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/admin/movies?keyword=%ED%98%B9%EC%84%B1&amp;page=0&amp;size=10 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1IiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZW1haWwiOiJjQGQuY29tIiwiZXhwIjoxNzY1Mjc5NTU5LCJpYXQiOjE3NjUyNzc3NTl9.v8eRSUCAtNJZAPuPn1YP6kX2n6eSny5a74W36uCSeiE
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1IiwiZW1haWwiOiJjQGQuY29tIiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZXhwIjoxNzY1MzU1MTc5LCJpYXQiOjE3NjUzNTMzNzl9.29DP-0vmoPm01OF--1DXGzyFqmDMywKyTG6XjnvYsik
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -1510,7 +1515,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 29be1fd8-140d-49bd-82cd-074b315d913d
+X-Request-ID: bec74e90-5753-4199-a23f-5984829e5829
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1663,7 +1668,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: d0cf90b8-9d1a-4b2e-b95e-92fc17167a6b
+X-Request-ID: 1eb1d9e4-fb9b-4484-b171-0d83472c6538
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1760,6 +1765,96 @@ Content-Length: 186
 </div>
 </div>
 <div class="sect1">
+<h2 id="_상영관_api"><a class="link" href="#_상영관_api">상영관 API</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_상영관_목록_조회_api"><a class="link" href="#_상영관_목록_조회_api">상영관 목록 조회 API</a></h3>
+<div class="paragraph">
+<p>상영관 목록을 조회합니다.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/theaters HTTP/1.1
+Host: api.megacgv.com</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+X-Request-ID: e7f90516-0906-4e47-be32-ccf376ef81ad
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Length: 571
+
+{"status":200,"message":"성공","data":{"theaterInfoList":[{"theaterId":1,"theaterName":"1관","theaterType":"2D관","totalSeat":50,"seatCount":{"일반":40,"프리미엄":7,"방":3}},{"theaterId":2,"theaterName":"2관","theaterType":"4DX관","totalSeat":50,"seatCount":{"일반":40,"프리미엄":7,"방":3}},{"theaterId":3,"theaterName":"3관","theaterType":"IMAX관","totalSeat":30,"seatCount":{"일반":20,"프리미엄":5,"방":5}},{"theaterId":4,"theaterName":"4관","theaterType":"SCREEN X관","totalSeat":20,"seatCount":{"일반":10,"프리미엄":5,"방":5}}]}}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.theaterInfoList[].theaterId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영관 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.theaterInfoList[].theaterName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영관 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.theaterInfoList[].theaterType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상영관 타입</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.theaterInfoList[].totalSeat</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 좌석 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.theaterInfoList[].seatCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">좌석 타입별 좌석 수 (key: 좌석 타입, value: 좌석 개수)</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_상영_api"><a class="link" href="#_상영_api">상영 API</a></h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -1770,7 +1865,7 @@ Content-Length: 186
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/admin/screenings?movieId=52&amp;theaterId=1&amp;date=2026-11-11 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNiIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImVtYWlsIjoiY0BkLmNvbSIsImV4cCI6MTc2NTI3OTU4OCwiaWF0IjoxNzY1Mjc3Nzg4fQ.sCVG0giYRpq_xFkGOa1MtFCmdx38t5ze-l5-QjrLCj8
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNiIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2NTM1NTIwOCwiaWF0IjoxNzY1MzUzNDA4fQ.bb-eW7Sq6xTEPaliAylIqzfPVRyz7uJzuDsaMd-Q4Fw
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -1780,7 +1875,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: e2c5d93f-2bff-43a9-b1df-1fc754c6814d
+X-Request-ID: 44c775cf-d650-4270-a1f4-50e9a2969c2e
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1880,7 +1975,7 @@ Content-Length: 588
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/admin/screenings HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMCIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImVtYWlsIjoiY0BkLmNvbSIsImV4cCI6MTc2NTI3OTU4NywiaWF0IjoxNzY1Mjc3Nzg3fQ.mQzN6PGuMRx9LPI3ogh-YC0bopd-bJnuu3KYFtSu7DU
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMCIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2NTM1NTIwNywiaWF0IjoxNzY1MzUzNDA3fQ.bO_4JvID_oLiTL1Bbq9OeIHIBvb49KM9558QF7xW1Cs
 Content-Length: 82
 Host: api.megacgv.com
 
@@ -1893,7 +1988,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 523c66b5-bd4c-4c1f-a91b-561ea24e4343
+X-Request-ID: 3b47c7d1-491a-4865-9c2a-d53ab42fd752
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -1997,7 +2092,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/admin/screenings/31 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMiIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImVtYWlsIjoiY0BkLmNvbSIsImV4cCI6MTc2NTI3OTU4NSwiaWF0IjoxNzY1Mjc3Nzg1fQ.cD78vZVJLOHJoK5yIDZFPKrTQl5SxeMxEsJWTfvvugs
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMiIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2NTM1NTIwNSwiaWF0IjoxNzY1MzUzNDA1fQ.CADAuyMQPA2f7_CR4QWmtPhWM69yPeLTYsY0NePTexs
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -2007,7 +2102,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 2e60ad1f-a0ca-4007-9e31-aaf7cc967606
+X-Request-ID: a8ea008d-7565-4f47-a63f-4a579cf123b0
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2129,7 +2224,7 @@ Content-Length: 363
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/admin/screenings/1 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZW1haWwiOiJjQGQuY29tIiwiZXhwIjoxNzY1Mjc5NTgwLCJpYXQiOjE3NjUyNzc3ODB9.GtnSJYGbVNfj58k2jYIRCVX_i3UnOYbjC99DN9SyTiQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZW1haWwiOiJjQGQuY29tIiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZXhwIjoxNzY1MzU1MjAxLCJpYXQiOjE3NjUzNTM0MDF9.4hHKWgdt8GOlPcFAJ3AULIMR_2doZSKJmlsoOCKMBDg
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -2139,7 +2234,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 4a5d5ed7-feb1-43de-ae1e-4f9dbbb59280
+X-Request-ID: 4fe943a8-97f8-4fe4-9748-582066957a72
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2235,7 +2330,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 27d68b73-acd3-4999-8340-f215e4675968
+X-Request-ID: 411c5a42-bcab-4478-ba46-0f40ca160b25
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2327,7 +2422,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 0016efa6-7ba7-497e-8ab8-c22c3a1b1d1f
+X-Request-ID: 5c09c7c0-3c2f-4918-b161-295cb11f5af2
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2458,7 +2553,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 6b35054e-1fe4-47d0-8e62-d11e0777ad71
+X-Request-ID: 5f93dc53-c5cf-4fb7-9b2e-ae290f3fb49a
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2467,9 +2562,9 @@ Pragma: no-cache
 Expires: 0
 Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
-Content-Length: 5481
+Content-Length: 5513
 
-{"status":200,"message":"성공","data":{"screeningId":78,"screeningSeatInfos":[{"screeningSeatId":1030,"rowLabel":"A","colNumber":1,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1034,"rowLabel":"A","colNumber":2,"seatType":"NORMAL","status":"HOLD","price":1000},{"screeningSeatId":1038,"rowLabel":"A","colNumber":3,"seatType":"NORMAL","status":"RESERVED","price":1000},{"screeningSeatId":1042,"rowLabel":"A","colNumber":4,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1046,"rowLabel":"A","colNumber":5,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1050,"rowLabel":"A","colNumber":6,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1004,"rowLabel":"A","colNumber":7,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1008,"rowLabel":"A","colNumber":8,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1012,"rowLabel":"A","colNumber":9,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1016,"rowLabel":"A","colNumber":10,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1029,"rowLabel":"B","colNumber":1,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1033,"rowLabel":"B","colNumber":2,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1037,"rowLabel":"B","colNumber":3,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1041,"rowLabel":"B","colNumber":4,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1045,"rowLabel":"B","colNumber":5,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1049,"rowLabel":"B","colNumber":6,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1003,"rowLabel":"B","colNumber":7,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1007,"rowLabel":"B","colNumber":8,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1011,"rowLabel":"B","colNumber":9,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1015,"rowLabel":"B","colNumber":10,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1028,"rowLabel":"C","colNumber":1,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1032,"rowLabel":"C","colNumber":2,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1036,"rowLabel":"C","colNumber":3,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1040,"rowLabel":"C","colNumber":4,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1044,"rowLabel":"C","colNumber":5,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1048,"rowLabel":"C","colNumber":6,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1002,"rowLabel":"C","colNumber":7,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1006,"rowLabel":"C","colNumber":8,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1010,"rowLabel":"C","colNumber":9,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1014,"rowLabel":"C","colNumber":10,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1027,"rowLabel":"D","colNumber":1,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1031,"rowLabel":"D","colNumber":2,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1035,"rowLabel":"D","colNumber":3,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1039,"rowLabel":"D","colNumber":4,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1043,"rowLabel":"D","colNumber":5,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1047,"rowLabel":"D","colNumber":6,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1001,"rowLabel":"D","colNumber":7,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1005,"rowLabel":"D","colNumber":8,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1009,"rowLabel":"D","colNumber":9,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1013,"rowLabel":"D","colNumber":10,"seatType":"NORMAL","status":"AVAILABLE","price":1000},{"screeningSeatId":1017,"rowLabel":"E","colNumber":1,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1018,"rowLabel":"E","colNumber":2,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1019,"rowLabel":"E","colNumber":3,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1020,"rowLabel":"E","colNumber":4,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1021,"rowLabel":"E","colNumber":5,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1022,"rowLabel":"E","colNumber":6,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1023,"rowLabel":"E","colNumber":7,"seatType":"PREMIUM","status":"AVAILABLE","price":1300},{"screeningSeatId":1024,"rowLabel":"F","colNumber":1,"seatType":"ROOM","status":"AVAILABLE","price":1500},{"screeningSeatId":1025,"rowLabel":"F","colNumber":2,"seatType":"ROOM","status":"AVAILABLE","price":1500},{"screeningSeatId":1026,"rowLabel":"F","colNumber":3,"seatType":"ROOM","status":"AVAILABLE","price":1500}]}}</code></pre>
+{"status":200,"message":"성공","data":{"screeningId":78,"screeningSeatInfos":[{"screeningSeatId":1030,"rowLabel":"A","colNumber":1,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1034,"rowLabel":"A","colNumber":2,"seatType":"일반","status":"HOLD","price":1000},{"screeningSeatId":1038,"rowLabel":"A","colNumber":3,"seatType":"일반","status":"RESERVED","price":1000},{"screeningSeatId":1042,"rowLabel":"A","colNumber":4,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1046,"rowLabel":"A","colNumber":5,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1050,"rowLabel":"A","colNumber":6,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1004,"rowLabel":"A","colNumber":7,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1008,"rowLabel":"A","colNumber":8,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1012,"rowLabel":"A","colNumber":9,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1016,"rowLabel":"A","colNumber":10,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1029,"rowLabel":"B","colNumber":1,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1033,"rowLabel":"B","colNumber":2,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1037,"rowLabel":"B","colNumber":3,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1041,"rowLabel":"B","colNumber":4,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1045,"rowLabel":"B","colNumber":5,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1049,"rowLabel":"B","colNumber":6,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1003,"rowLabel":"B","colNumber":7,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1007,"rowLabel":"B","colNumber":8,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1011,"rowLabel":"B","colNumber":9,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1015,"rowLabel":"B","colNumber":10,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1028,"rowLabel":"C","colNumber":1,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1032,"rowLabel":"C","colNumber":2,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1036,"rowLabel":"C","colNumber":3,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1040,"rowLabel":"C","colNumber":4,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1044,"rowLabel":"C","colNumber":5,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1048,"rowLabel":"C","colNumber":6,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1002,"rowLabel":"C","colNumber":7,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1006,"rowLabel":"C","colNumber":8,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1010,"rowLabel":"C","colNumber":9,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1014,"rowLabel":"C","colNumber":10,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1027,"rowLabel":"D","colNumber":1,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1031,"rowLabel":"D","colNumber":2,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1035,"rowLabel":"D","colNumber":3,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1039,"rowLabel":"D","colNumber":4,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1043,"rowLabel":"D","colNumber":5,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1047,"rowLabel":"D","colNumber":6,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1001,"rowLabel":"D","colNumber":7,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1005,"rowLabel":"D","colNumber":8,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1009,"rowLabel":"D","colNumber":9,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1013,"rowLabel":"D","colNumber":10,"seatType":"일반","status":"AVAILABLE","price":1000},{"screeningSeatId":1017,"rowLabel":"E","colNumber":1,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1018,"rowLabel":"E","colNumber":2,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1019,"rowLabel":"E","colNumber":3,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1020,"rowLabel":"E","colNumber":4,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1021,"rowLabel":"E","colNumber":5,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1022,"rowLabel":"E","colNumber":6,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1023,"rowLabel":"E","colNumber":7,"seatType":"프리미엄","status":"AVAILABLE","price":1300},{"screeningSeatId":1024,"rowLabel":"F","colNumber":1,"seatType":"방","status":"AVAILABLE","price":1500},{"screeningSeatId":1025,"rowLabel":"F","colNumber":2,"seatType":"방","status":"AVAILABLE","price":1500},{"screeningSeatId":1026,"rowLabel":"F","colNumber":3,"seatType":"방","status":"AVAILABLE","price":1500}]}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -2567,7 +2662,7 @@ Content-Length: 5481
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/admin/screenings/seats/312/fix HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNCIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImVtYWlsIjoiY0BkLmNvbSIsImV4cCI6MTc2NTI3OTU4MywiaWF0IjoxNzY1Mjc3NzgzfQ.sL76Kq8HGBmCflWAfgcQq9CJREkwhByVK-Hr4tDyMXI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNCIsImVtYWlsIjoiY0BkLmNvbSIsIm5hbWUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc2NTM1NTIwNCwiaWF0IjoxNzY1MzUzNDA0fQ.OitPTdv09Hl8R10H3-jtJzTyy5jYxTjDQ6Eq16YIggw
 Host: api.megacgv.com
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -2578,7 +2673,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: a292b273-d4e6-4737-b196-9a1b11059087
+X-Request-ID: 90032bb6-42c0-4e36-86cb-ad2aa2f4f815
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2665,7 +2760,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /api/admin/screenings/seats/193/restore HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZW1haWwiOiJjQGQuY29tIiwiZXhwIjoxNzY1Mjc5NTgyLCJpYXQiOjE3NjUyNzc3ODJ9.3FLFQFBPTBDCIeT-LyVdAa9q5wymVp7UYTMskzKyDB0
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiZW1haWwiOiJjQGQuY29tIiwibmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiZXhwIjoxNzY1MzU1MjAyLCJpYXQiOjE3NjUzNTM0MDJ9.DxgGomQe4xjQ73UnUgDT8gIJEF0YpnNZdu1r8ukaSaU
 Host: api.megacgv.com
 Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
@@ -2676,7 +2771,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 18db7b94-9051-41c1-afaa-7908826489a5
+X-Request-ID: d2da80d1-5ce2-4583-ac7d-fe327d3b905f
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2764,11 +2859,11 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/screenings/104/seats/hold HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1OTUsImlhdCI6MTc2NTI3Nzc5NX0.S4myCQvdRzk8Ns-VKJEFCIph58Mt4q_vphZhzpIlUWA
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzOSIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUyMTUsImlhdCI6MTc2NTM1MzQxNX0._5fSIeY9en2NN04_Uxqj8JK276rsDabJmP5818K_wEk
 Content-Length: 37
 Host: api.megacgv.com
 
-{"screeningSeatIds":[1436,1428,1432]}</code></pre>
+{"screeningSeatIds":[1428,1432,1436]}</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2777,7 +2872,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 25fd776e-ed8b-4c81-93db-3629b03a885d
+X-Request-ID: 6328293c-4731-43aa-a28b-d99b6bdb72fa
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -2886,11 +2981,11 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/screenings/102/seats/hold HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNyIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1OTUsImlhdCI6MTc2NTI3Nzc5NX0.9aB1ccmp1BElSKE_xOjvct8ZjzJIy9eZVtKyO8ojsWw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNyIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUyMTQsImlhdCI6MTc2NTM1MzQxNH0.VbAcvYkp8Im1GOGoL23xhFcVNTwDOg8vzfPOLfyvu5A
 Content-Length: 37
 Host: api.megacgv.com
 
-{"screeningSeatIds":[1346,1338,1342]}</code></pre>
+{"screeningSeatIds":[1338,1342,1346]}</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2899,7 +2994,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 2ec17a5f-9d7c-4e0e-bce2-c92515db3997
+X-Request-ID: bea8f188-e606-4d7f-b458-481f646e8e8e
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -3013,7 +3108,7 @@ Content-Length: 33
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/reservations/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoiYUBiLmNvbSIsImV4cCI6MTc2NTI3OTU3NSwiaWF0IjoxNzY1Mjc3Nzc1fQ.2-A0kSCEEZeKFQcT0tVLIbr8Z28rJsj_UDSvEBvnmhA
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhQGIuY29tIiwibmFtZSI6InVzZXIiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2NTM1NTE5NiwiaWF0IjoxNzY1MzUzMzk2fQ.f2l9LCej3fWdN0TbO4-ziqGgjgkuS5jVjNOli23J3JE
 Content-Length: 26
 Host: api.megacgv.com
 
@@ -3026,7 +3121,7 @@ Host: api.megacgv.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 5302eabc-7220-40bd-9b1c-7d830922b79f
+X-Request-ID: ae37d96d-a9dc-4f53-be54-50075494050a
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -3037,7 +3132,7 @@ Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
 Content-Length: 142
 
-{"status":201,"message":"성공","data":{"reservationGroupId":1,"merchantUid":"megacgv-20251209195616056-1-R1AYUNNJ5X","expectedAmount":2000}}</code></pre>
+{"status":201,"message":"성공","data":{"reservationGroupId":1,"merchantUid":"megacgv-20251210165637339-1-L0UODE7XML","expectedAmount":2000}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -3149,7 +3244,7 @@ Content-Length: 142
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/reservations HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMyIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1NzMsImlhdCI6MTc2NTI3Nzc3M30.kohBpkbzuTOXkKpyuXu7wMbFin0i3t9GQt_Lw2vbOH4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMyIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUxOTUsImlhdCI6MTc2NTM1MzM5NX0.flDftah8hTBOgd1m_NtezZaXOck2r-8eqDu65EAxbYc
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -3159,7 +3254,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: a300e1e9-8ae0-4f73-a5ad-27b008bea41e
+X-Request-ID: 503bd2d3-3ea6-4713-a073-b55936a96d0a
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -3170,7 +3265,7 @@ Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
 Content-Length: 769
 
-{"status":200,"message":"성공","data":{"content":[{"reservationGroupId":5,"title":"괴물","movieType":"2D","startTime":"2026-11-11T08:00:00","theaterName":"1관","theaterType":"2D관","seats":[{"seatNumber":"A1","seatType":"일반"},{"seatNumber":"A2","seatType":"일반"}],"reservationStatus":"결제 대기","totalPrice":2000,"posterUrl":"poster.png","updatedAt":"2025-12-09T19:56:14"},{"reservationGroupId":6,"title":"괴물","movieType":"2D","startTime":"2026-11-11T08:00:00","theaterName":"1관","theaterType":"2D관","seats":[{"seatNumber":"A3","seatType":"일반"}],"reservationStatus":"결제 완료","totalPrice":1000,"posterUrl":"poster.png","updatedAt":"2025-12-09T19:56:14"}],"pageInfo":{"page":0,"size":10,"totalElements":2,"totalPages":1,"last":true}}}</code></pre>
+{"status":200,"message":"성공","data":{"content":[{"reservationGroupId":5,"title":"괴물","movieType":"2D","startTime":"2026-11-11T08:00:00","theaterName":"1관","theaterType":"2D관","seats":[{"seatNumber":"A1","seatType":"일반"},{"seatNumber":"A2","seatType":"일반"}],"reservationStatus":"결제 대기","totalPrice":2000,"posterUrl":"poster.png","updatedAt":"2025-12-10T16:56:35"},{"reservationGroupId":6,"title":"괴물","movieType":"2D","startTime":"2026-11-11T08:00:00","theaterName":"1관","theaterType":"2D관","seats":[{"seatNumber":"A3","seatType":"일반"}],"reservationStatus":"결제 완료","totalPrice":1000,"posterUrl":"poster.png","updatedAt":"2025-12-10T16:56:35"}],"pageInfo":{"page":0,"size":10,"totalElements":2,"totalPages":1,"last":true}}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -3335,7 +3430,7 @@ Content-Length: 769
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/reservations/3 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMCIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1NzIsImlhdCI6MTc2NTI3Nzc3Mn0.h5eLeATyt_KsEPpNaurfDO0ZMqXSoxlADbL7OasY4LY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMCIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUxOTMsImlhdCI6MTc2NTM1MzM5M30.HOpZEYLCSsqDLlS4AxR7gin16rbIENfEiKfTvH8EyVY
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -3345,7 +3440,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 43d4f466-ab79-4d6a-bd53-76ce939904a4
+X-Request-ID: fd3e7dd8-be7d-416a-a493-c68a8a3885c4
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -3432,7 +3527,7 @@ Content-Length: 33
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/reservations/2 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJlbWFpbCI6ImFAYi5jb20iLCJleHAiOjE3NjUyNzk1NzEsImlhdCI6MTc2NTI3Nzc3MX0.baYXMPAoD-IU1WhQ0VPl9LMtwGs_fwyE4YI1x0f0iEo
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOSIsImVtYWlsIjoiYUBiLmNvbSIsIm5hbWUiOiJ1c2VyIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3NjUzNTUxOTIsImlhdCI6MTc2NTM1MzM5Mn0.uB0LpykVF9z1YGlYTHG24dSQdpmrbXkPVFpWXVjEZVw
 Host: api.megacgv.com</code></pre>
 </div>
 </div>
@@ -3442,7 +3537,7 @@ Host: api.megacgv.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-X-Request-ID: 0d17aed8-06f9-4e03-bd1a-6282597efa05
+X-Request-ID: 2f03650f-1cc4-4a02-83bd-3558981c827f
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 X-XSS-Protection: 0
@@ -3453,7 +3548,7 @@ Strict-Transport-Security: max-age=31536000 ; includeSubDomains
 X-Frame-Options: DENY
 Content-Length: 730
 
-{"status":200,"message":"성공","data":{"movieId":11,"title":"괴물","movieType":"2D","posterUrl":"poster.png","duration":150,"screeningId":2,"startTime":"2026-11-11T08:00:00","endTime":"2026-11-11T10:30:00","theaterId":1,"theaterName":"1관","theaterType":"2D관","seatInfos":[{"seatNumber":"A1","seatType":"일반"},{"seatNumber":"A2","seatType":"일반"}],"reservationGroupId":2,"reservationStatus":"결제 완료","reservationCreatedAt":"2025-12-09T19:56:12","reservationCancelledAt":null,"paymentStatus":"결제 완료","paymentMethod":"pay-method","paymentAmount":2000.00,"refundAmount":null,"merchantUid":"merchant-uid","paymentId":"payment-id","buyerName":"user","buyerPhoneNumber":"01012345678","buyerEmail":"a@b.com"}}</code></pre>
+{"status":200,"message":"성공","data":{"movieId":11,"title":"괴물","movieType":"2D","posterUrl":"poster.png","duration":150,"screeningId":2,"startTime":"2026-11-11T08:00:00","endTime":"2026-11-11T10:30:00","theaterId":1,"theaterName":"1관","theaterType":"2D관","seatInfos":[{"seatNumber":"A1","seatType":"일반"},{"seatNumber":"A2","seatType":"일반"}],"reservationGroupId":2,"reservationStatus":"결제 완료","reservationCreatedAt":"2025-12-10T16:56:33","reservationCancelledAt":null,"paymentStatus":"결제 완료","paymentMethod":"pay-method","paymentAmount":2000.00,"refundAmount":null,"merchantUid":"merchant-uid","paymentId":"payment-id","buyerName":"user","buyerPhoneNumber":"01012345678","buyerEmail":"a@b.com"}}</code></pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -3658,7 +3753,7 @@ Content-Length: 730
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2025-12-09 19:54:37 +0900
+Last updated 2025-12-10 16:51:40 +0900
 </div>
 </div>
 </body>

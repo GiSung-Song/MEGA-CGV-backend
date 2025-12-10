@@ -6,7 +6,7 @@ VALUES
     (1, '1관', 50, 'TWO_D'  , NOW(), NOW()),
     (2, '2관', 50, 'FOUR_DX', NOW(), NOW()),
     (3, '3관', 30, 'IMAX'   , NOW(), NOW()),
-    (4, '4관', 20, 'SCREENX', NOW(), NOW())
+    (4, '4관', 20, 'SCREEN_X', NOW(), NOW())
 ON DUPLICATE KEY UPDATE
     total_seat = VALUES(total_seat),
     type       = VALUES(type),
