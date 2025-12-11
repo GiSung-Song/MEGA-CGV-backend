@@ -2,7 +2,6 @@ package com.cgv.mega.common.security;
 
 import com.cgv.mega.auth.dto.JwtPayloadDto;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.auth.enums.TokenStatus;
 import com.cgv.mega.common.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -57,16 +56,22 @@ public class JwtTokenProvider {
         return parseTokenToClaims(token).getExpiration();
     }
 
-    public TokenStatus getTokenStatus(String token) {
+    // 토큰 만료 여부
+    public boolean isTokenExpired(String token) {
+        try {
+            return parseTokenToClaims(token).getExpiration().before(new Date());
+        } catch (CustomException e) {
+            return true;
+        }
+    }
+
+    // 토큰 유효성 검사
+    public boolean validateToken(String token) {
         try {
             parseTokenToClaims(token);
-            return TokenStatus.VALID;
+            return true;
         } catch (CustomException e) {
-            if (e.getErrorCode() == ErrorCode.JWT_TOKEN_EXPIRED) {
-                return TokenStatus.EXPIRED;
-            }
-
-            return TokenStatus.INVALID;
+            return false;
         }
     }
 

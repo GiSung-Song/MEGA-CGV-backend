@@ -1,6 +1,5 @@
 package com.cgv.mega.common.config;
 
-import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -15,6 +14,6 @@ public class QueryDslConfig {
 
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
-        return new JPAQueryFactory(JPQLTemplates.DEFAULT, entityManager);
+        return new JPAQueryFactory(entityManager);
     }
 }

@@ -13,7 +13,7 @@ services:
       - "3306:3306"
     command:
       --character-set-server=utf8mb4
-      --collation-server=utf8mb4_0900_ai_ci
+      --collation-server=utf8mb4_u900_ai_ci
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -26,24 +26,6 @@ services:
     volumes:
       - redis_data:/data
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - "9200:9200"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-
 volumes:
   mysql_data:
   redis_data:
-  es_data:

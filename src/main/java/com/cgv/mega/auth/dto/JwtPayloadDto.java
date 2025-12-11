@@ -13,19 +13,21 @@ public record JwtPayloadDto(
         String name,
         Role role
 ) {
-    public JwtPayloadDto {
-        if (userId == null) throw new CustomException(ErrorCode.JWT_USER_ID_IS_NULL);
-        if (email == null) throw new CustomException(ErrorCode.JWT_EMAIL_IS_NULL);
-        if (name == null) throw new CustomException(ErrorCode.JWT_NAME_IS_NULL);
-        if (role == null) throw new CustomException(ErrorCode.JWT_ROLE_IS_NULL);
-    }
-
     public Map<String, Object> toClaims() {
+        validate();
+
         return Map.of(
                 "email", email,
                 "name", name,
                 "role", role.name()
         );
+    }
+
+    public void validate() {
+        if (userId == null) throw new CustomException(ErrorCode.JWT_USER_ID_IS_NULL);
+        if (email == null) throw new CustomException(ErrorCode.JWT_NAME_IS_NULL);
+        if (name == null) throw new CustomException(ErrorCode.JWT_NAME_IS_NULL);
+        if (role == null) throw new CustomException(ErrorCode.JWT_ROLE_IS_NULL);
     }
 
     public static JwtPayloadDto fromClaims(Claims claims) {
