@@ -1,9 +1,11 @@
 package com.cgv.mega.screening.controller;
 
+import com.cgv.mega.screening.dto.MovieScreeningForAdminResponse;
 import com.cgv.mega.screening.dto.MovieScreeningResponse;
 import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
 import com.cgv.mega.screening.dto.ScreeningSeatResponse;
 import com.cgv.mega.screening.enums.DisplayScreeningSeatStatus;
+import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.screening.service.ScreeningService;
 import com.cgv.mega.seat.enums.SeatType;
 import org.junit.jupiter.api.Nested;
@@ -69,20 +71,20 @@ class ScreeningControllerTest {
         @Test
         void 조회_성공() throws Exception {
             MovieScreeningResponse response = new MovieScreeningResponse(
-                    List.of(new MovieScreeningResponse.MovieScreeningInfo(
+                    List.of(new MovieScreeningResponse.MovieInfo(
                             0L, 1L, "1관", Long.valueOf(50),
                             LocalDateTime.of(2026, 11, 11, 8, 0),
                             LocalDateTime.of(2026, 11, 11, 11, 0),
-                            1))
+                            1, ScreeningStatus.SCHEDULED, true))
             );
 
-            given(screeningService.getMovieScreenings(anyLong(), any())).willReturn(response);
+            given(screeningService.getMovieScreeningsForUser(anyLong(), any())).willReturn(response);
 
             mockMvc.perform(get("/api/screenings/{movieId}", 1L)
                             .param("date", "2026-11-11"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.movieScreeningInfos[0].theaterName").value("1관"))
-                    .andExpect(jsonPath("$.data.movieScreeningInfos[0].remainSeat").value("50"))
+                    .andExpect(jsonPath("$.data.movieInfoList[0].theaterName").value("1관"))
+                    .andExpect(jsonPath("$.data.movieInfoList[0].remainSeatCount").value("50"))
                     .andDo(print());
         }
 

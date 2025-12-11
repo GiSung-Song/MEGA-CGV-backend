@@ -123,7 +123,9 @@ CREATE TABLE screenings
 	CONSTRAINT uq_screenings_sequence UNIQUE (movie_id, sequence),
 
     CONSTRAINT chk_screenings_status     CHECK (status IN ('SCHEDULED', 'CANCELED', 'ENDED')),
-    CONSTRAINT chk_screenings_movie_type CHECK (movie_type IN ('TWO_D', 'THREE_D'))
+    CONSTRAINT chk_screenings_movie_type CHECK (movie_type IN ('TWO_D', 'THREE_D')),
+
+    INDEX idx_screenings_status_start (status, start_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 상영-좌석 관계 테이블

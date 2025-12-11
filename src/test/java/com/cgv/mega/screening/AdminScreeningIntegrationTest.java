@@ -317,7 +317,8 @@ public class AdminScreeningIntegrationTest {
                                     fieldWithPath("data.movieScreeningInfos[].remainSeat").description("남은 좌석 수"),
                                     fieldWithPath("data.movieScreeningInfos[].startTime").description("영화 시작 시간"),
                                     fieldWithPath("data.movieScreeningInfos[].endTime").description("영화 종료 시간"),
-                                    fieldWithPath("data.movieScreeningInfos[].sequence").description("영화 상영 회차")
+                                    fieldWithPath("data.movieScreeningInfos[].sequence").description("영화 상영 회차"),
+                                    fieldWithPath("data.movieScreeningInfos[].status").description("상영 상태")
                             )
                     ))
                     .andDo(print());

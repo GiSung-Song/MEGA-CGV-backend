@@ -320,17 +320,18 @@ class ScreeningServiceTest {
     class 특정_영화_상영_목록_조회 {
         @Test
         void 조회_성공() {
-            List<MovieScreeningResponse.MovieScreeningInfo> list =
-                    List.of(new MovieScreeningResponse.MovieScreeningInfo(0L, 1L, "1관", Long.valueOf(50),
+            List<MovieScreeningInfoDto> list =
+                    List.of(new MovieScreeningInfoDto(0L, 1L, "1관", Long.valueOf(50),
                             LocalDateTime.of(2026, 11, 11, 15, 0),
                             LocalDateTime.of(2026, 11, 11, 18, 0),
-                            1));
+                            1, ScreeningStatus.SCHEDULED));
 
-            given(screeningQueryRepository.getMovieScreeningList(1L, LocalDate.of(2026, 11, 11))).willReturn(list);
+            given(screeningQueryRepository.getMovieScreeningListForUser(1L, LocalDate.of(2026, 11, 11)))
+                    .willReturn(list);
 
-            MovieScreeningResponse response = screeningService.getMovieScreenings(1L, LocalDate.of(2026, 11, 11));
+            MovieScreeningResponse response = screeningService.getMovieScreeningsForUser(1L, LocalDate.of(2026, 11, 11));
 
-            assertThat(response.movieScreeningInfos())
+            assertThat(response.movieInfoList())
                     .hasSize(1);
         }
     }
@@ -339,15 +340,15 @@ class ScreeningServiceTest {
     class 특정_영화_상영_목록_조회_관리자용 {
         @Test
         void 조회_성공() {
-            List<MovieScreeningResponse.MovieScreeningInfo> list =
-                    List.of(new MovieScreeningResponse.MovieScreeningInfo(0L, 1L, "1관", Long.valueOf(50),
+            List<MovieScreeningForAdminResponse.MovieScreeningInfo> list =
+                    List.of(new MovieScreeningForAdminResponse.MovieScreeningInfo(0L, 1L, "1관", Long.valueOf(50),
                             LocalDateTime.of(2026, 11, 11, 15, 0),
                             LocalDateTime.of(2026, 11, 11, 18, 0),
-                            1));
+                            1, ScreeningStatus.SCHEDULED));
 
-            given(screeningQueryRepository.getMovieScreeningList(1L, null)).willReturn(list);
+            given(screeningQueryRepository.getMovieScreeningListForAdmin(1L)).willReturn(list);
 
-            MovieScreeningResponse response = screeningService.getMovieScreeningsForAdmin(1L);
+            MovieScreeningForAdminResponse response = screeningService.getMovieScreeningsForAdmin(1L);
 
             assertThat(response.movieScreeningInfos())
                     .hasSize(1);

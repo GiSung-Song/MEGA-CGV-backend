@@ -2,8 +2,9 @@ package com.cgv.mega.screening.controller;
 
 import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.screening.dto.AvailableScreeningResponse;
-import com.cgv.mega.screening.dto.MovieScreeningResponse;
+import com.cgv.mega.screening.dto.MovieScreeningForAdminResponse;
 import com.cgv.mega.screening.dto.RegisterScreeningRequest;
+import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.cgv.mega.screening.service.ScreeningSeatService;
 import com.cgv.mega.screening.service.ScreeningService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -121,12 +122,12 @@ class AdminScreeningControllerTest {
     class 특정_영화의_상영회차_목록_조회 {
         @Test
         void 조회_성공() throws Exception {
-            MovieScreeningResponse response = new MovieScreeningResponse(
-                    List.of(new MovieScreeningResponse.MovieScreeningInfo(
+            MovieScreeningForAdminResponse response = new MovieScreeningForAdminResponse(
+                    List.of(new MovieScreeningForAdminResponse.MovieScreeningInfo(
                             0L, 1L, "1관", Long.valueOf(50),
                             LocalDateTime.of(2026, 11, 11, 8, 0),
                             LocalDateTime.of(2026, 11, 11, 11, 0),
-                            1))
+                            1, ScreeningStatus.SCHEDULED))
             );
 
             given(screeningService.getMovieScreeningsForAdmin(anyLong())).willReturn(response);
