@@ -1,6 +1,7 @@
 package com.cgv.mega.common.security;
 
 import com.cgv.mega.auth.dto.JwtPayloadDto;
+import com.cgv.mega.auth.enums.TokenStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final List<PermitPass> PASS_PATHS = List.of(
             new PermitPass(HttpMethod.POST, "/api/auth/login"),
             new PermitPass(HttpMethod.POST, "/api/auth/refresh"),
-            new PermitPass(HttpMethod.POST, "/api/users")
+            new PermitPass(HttpMethod.POST, "/api/users"),
+            new PermitPass(HttpMethod.GET, "/api/movies/**"),
+            new PermitPass(HttpMethod.GET, "/api/screenings/movies"),
+            new PermitPass(HttpMethod.GET, "/api/screenings/*"),
+            new PermitPass(HttpMethod.GET, "/api/screenings/*/seats"),
+            new PermitPass(HttpMethod.GET, "/api/theaters")
     );
 
     @Override
@@ -42,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (hasToken) {
             String accessToken = requestHeader.substring(7);
 
-            if (!jwtTokenProvider.validateToken(accessToken) || isLogout(accessToken)) {
+            if (!(jwtTokenProvider.getTokenStatus(accessToken) == TokenStatus.VALID) || isLogout(accessToken)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

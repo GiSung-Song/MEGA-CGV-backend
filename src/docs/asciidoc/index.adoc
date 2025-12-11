@@ -1,0 +1,41 @@
+= MegaCGV REST API 문서
+:toc: left
+:toclevels: 2
+:sectlinks:
+:doctype: book
+:icons: font
+
+== 사용자 API
+include::user.adoc[]
+
+---
+
+== 인증 API
+include::auth.adoc[]
+
+---
+
+== 영화 API
+include::movie.adoc[]
+
+---
+
+== 상영관 API
+include::theater.adoc[]
+
+---
+
+== 상영 API
+include::screening.adoc[]
+
+---
+
+== 좌석 API
+include::screening-seat.adoc[]
+
+---
+
+== 예약 API
+include::reservation.adoc[]
+
+---

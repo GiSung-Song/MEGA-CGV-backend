@@ -1,0 +1,10 @@
+:snippets: ../../../build/generated-snippets
+
+=== 상영관 목록 조회 API
+상영관 목록을 조회합니다.
+
+include::{snippets}/theater-list/http-request.adoc[]
+include::{snippets}/theater-list/http-response.adoc[]
+include::{snippets}/theater-list/response-fields.adoc[]
+
+---

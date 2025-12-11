@@ -1,0 +1,25 @@
+spring:
+  data:
+    redis:
+      host: localhost
+
+    elasticsearch:
+      repositories:
+        enabled: true
+
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 5s
+    socket-timeout: 10s
+
+jwt:
+  secretKey: gisung-mega-cgv-project-test-jwt-secret-key
+  access:
+    expiration: 1800000
+
+  refresh:
+    expiration: 3600000
+
+portone:
+  api-url: https://api.portone.io
+  api-secret: ${PORTONE_API_SECRET}

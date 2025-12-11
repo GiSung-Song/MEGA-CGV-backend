@@ -9,23 +9,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -42,19 +44,35 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            JwtAuthenticationFilter jwtAuthenticationFilter,
                                            RequestTraceFilter requestTraceFilter) throws Exception {
         http
-                .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // 인증 관련 API
+                        // 토큰 관련 API
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
 
-                        // 사용자 관련 API
+                        // 영화 상세 정보 조회 API
+                        .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
+
+                        // 상영관 목록 API
+                        .requestMatchers(HttpMethod.GET, "/api/theaters").permitAll()
+
+                        // 영화 상영 목록, 상영중인 영화 목록, 상영회차별 좌석 현황 API
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/screenings/movies",
+                                "/api/screenings/*/seats",
+                                "/api/screenings/*").permitAll()
+
+                        // ADMIN 전용 API
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // 회원가입 API
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
                         .anyRequest().authenticated()

@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    active: local
-
   datasource:
     url: jdbc:mysql://localhost:3306/megacgv?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true
     username: root
@@ -12,9 +9,18 @@ spring:
       host: localhost
       port: 6379
 
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 3s
+    socket-timeout: 10s
+
 jwt:
   secretKey: LOCAL_JWT_SECRET_KEY_ON_MEGA_CGV_PROJECT_BY_GISUNG
   access:
     expiration: 1800000
   refresh:
     expiration: 1209600000
+
+portone:
+  api-url: https://api.portone.io
+  api-secret: ${PORTONE_API_SECRET}
