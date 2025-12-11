@@ -145,10 +145,10 @@ public class ScreeningIntegrationTest {
             mockMvc.perform(get("/api/screenings/{movieId}", monster.getId())
                             .param("date", "2026-11-11"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.movieScreeningInfos[0].startTime").value("2026-11-11T08:00:00"))
-                    .andExpect(jsonPath("$.data.movieScreeningInfos[0].endTime").value("2026-11-11T10:30:00"))
-                    .andExpect(jsonPath("$.data.movieScreeningInfos[1].startTime").value("2026-11-11T11:00:00"))
-                    .andExpect(jsonPath("$.data.movieScreeningInfos[1].endTime").value("2026-11-11T13:30:00"))
+                    .andExpect(jsonPath("$.data.movieInfoList[0].startTime").value("2026-11-11T08:00:00"))
+                    .andExpect(jsonPath("$.data.movieInfoList[0].endTime").value("2026-11-11T10:30:00"))
+                    .andExpect(jsonPath("$.data.movieInfoList[1].startTime").value("2026-11-11T11:00:00"))
+                    .andExpect(jsonPath("$.data.movieInfoList[1].endTime").value("2026-11-11T13:30:00"))
                     .andDo(document("screening-movie-screening-list",
                             pathParameters(
                                     parameterWithName("movieId").description("조회할 영화의 ID")
@@ -159,13 +159,15 @@ public class ScreeningIntegrationTest {
                             responseFields(
                                     fieldWithPath("status").description("HTTP 응답 코드"),
                                     fieldWithPath("message").description("응답 메시지"),
-                                    fieldWithPath("data.movieScreeningInfos[].screeningId").description("상영 식별자 ID"),
-                                    fieldWithPath("data.movieScreeningInfos[].theaterId").description("상영관 식별자 ID"),
-                                    fieldWithPath("data.movieScreeningInfos[].theaterName").description("상영관 이름"),
-                                    fieldWithPath("data.movieScreeningInfos[].remainSeat").description("남은 좌석 수"),
-                                    fieldWithPath("data.movieScreeningInfos[].startTime").description("영화 시작 시간"),
-                                    fieldWithPath("data.movieScreeningInfos[].endTime").description("영화 종료 시간"),
-                                    fieldWithPath("data.movieScreeningInfos[].sequence").description("영화 상영 회차")
+                                    fieldWithPath("data.movieInfoList[].screeningId").description("상영 식별자 ID"),
+                                    fieldWithPath("data.movieInfoList[].theaterId").description("상영관 식별자 ID"),
+                                    fieldWithPath("data.movieInfoList[].theaterName").description("상영관 이름"),
+                                    fieldWithPath("data.movieInfoList[].remainSeatCount").description("남은 좌석 수"),
+                                    fieldWithPath("data.movieInfoList[].startTime").description("영화 시작 시간"),
+                                    fieldWithPath("data.movieInfoList[].endTime").description("영화 종료 시간"),
+                                    fieldWithPath("data.movieInfoList[].sequence").description("영화 상영 회차"),
+                                    fieldWithPath("data.movieInfoList[].status").description("상영 상태"),
+                                    fieldWithPath("data.movieInfoList[].reservable").description("예약 가능 여부")
                             )
                     ))
                     .andDo(print());

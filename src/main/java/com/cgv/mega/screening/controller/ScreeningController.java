@@ -32,7 +32,7 @@ public class ScreeningController {
             @PathVariable("movieId") Long movieId,
             @RequestParam LocalDate date
     ) {
-        MovieScreeningResponse response = screeningService.getMovieScreenings(movieId, date);
+        MovieScreeningResponse response = screeningService.getMovieScreeningsForUser(movieId, date);
 
         return ResponseEntity.ok(CustomResponse.of(response));
     }

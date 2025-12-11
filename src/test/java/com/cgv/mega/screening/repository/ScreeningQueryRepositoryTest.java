@@ -8,10 +8,7 @@ import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.repository.MovieRepository;
-import com.cgv.mega.screening.dto.MovieScreeningResponse;
-import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
-import com.cgv.mega.screening.dto.ScreeningSeatDto;
-import com.cgv.mega.screening.dto.ScreeningTimeDto;
+import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.entity.Screening;
 import com.cgv.mega.screening.entity.ScreeningSeat;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
@@ -167,7 +164,7 @@ class ScreeningQueryRepositoryTest {
 
     @Test
     void 특정_영화_상영_일정_조회() {
-        List<MovieScreeningResponse.MovieScreeningInfo> movieScreeningList = screeningQueryRepository.getMovieScreeningList(
+        List<MovieScreeningInfoDto> movieScreeningListForUser = screeningQueryRepository.getMovieScreeningListForUser(
                 movie.getId(), LocalDate.of(2026, 11, 11)
         );
 
@@ -175,7 +172,7 @@ class ScreeningQueryRepositoryTest {
         LocalDateTime startTime2 = startTime1.plusHours(3);
         LocalDateTime startTime3 = startTime1.plusHours(10);
 
-        assertThat(movieScreeningList).hasSize(3)
+        assertThat(movieScreeningListForUser).hasSize(3)
                 .extracting(ms -> ms.startTime())
                 .containsExactly(startTime1, startTime2, startTime3);
     }

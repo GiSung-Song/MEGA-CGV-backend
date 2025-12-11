@@ -1,9 +1,6 @@
 package com.cgv.mega.screening.repository;
 
-import com.cgv.mega.screening.dto.MovieScreeningResponse;
-import com.cgv.mega.screening.dto.ScreeningDateMovieResponse;
-import com.cgv.mega.screening.dto.ScreeningSeatDto;
-import com.cgv.mega.screening.dto.ScreeningTimeDto;
+import com.cgv.mega.screening.dto.*;
 import com.cgv.mega.screening.enums.ScreeningSeatStatus;
 import com.cgv.mega.screening.enums.ScreeningStatus;
 import com.querydsl.core.types.Projections;
@@ -80,23 +77,14 @@ public class ScreeningQueryRepository {
                 .from(screening)
                 .join(screening.movie, movie)
                 .where(
-                        withInTime(date),
-                        screening.status.eq(ScreeningStatus.SCHEDULED)
+                        withInTime(date)
                 )
                 .fetch();
     }
 
-    public List<MovieScreeningResponse.MovieScreeningInfo> getMovieScreeningList(Long movieId, LocalDate date) {
-        BooleanExpression dateCondition = (date != null)
-                ? withInTime(date)
-                : null;
-
-        BooleanExpression adminCondition = (date != null)
-                ? screening.status.eq(ScreeningStatus.SCHEDULED)
-                : null;
-
-        List<MovieScreeningResponse.MovieScreeningInfo> raw = jpaQueryFactory
-                .select(Projections.constructor(MovieScreeningResponse.MovieScreeningInfo.class,
+    public List<MovieScreeningForAdminResponse.MovieScreeningInfo> getMovieScreeningListForAdmin(Long movieId) {
+        List<MovieScreeningForAdminResponse.MovieScreeningInfo> raw = jpaQueryFactory
+                .select(Projections.constructor(MovieScreeningForAdminResponse.MovieScreeningInfo.class,
                         screening.id,
                         theater.id,
                         theater.name,
@@ -106,21 +94,51 @@ public class ScreeningQueryRepository {
                                         screeningSeat.status.eq(ScreeningSeatStatus.AVAILABLE)),
                         screening.startTime,
                         screening.endTime,
-                        screening.sequence
+                        screening.sequence,
+                        screening.status
                 ))
                 .from(screening)
                 .join(screening.theater, theater)
                 .where(
-                        screening.movie.id.eq(movieId),
-                        adminCondition,
-                        dateCondition
+                        screening.movie.id.eq(movieId)
                 )
                 .orderBy(screening.startTime.asc())
                 .fetch();
 
         return raw.stream()
-                .map(MovieScreeningResponse.MovieScreeningInfo::withMovieEndTime)
+                .map(MovieScreeningForAdminResponse.MovieScreeningInfo::withMovieEndTime)
                 .toList();
+    }
+
+    public List<MovieScreeningInfoDto> getMovieScreeningListForUser(Long movieId, LocalDate date) {
+        BooleanExpression dateCondition = (date != null)
+                ? withInTime(date)
+                : null;
+
+        List<MovieScreeningInfoDto> row = jpaQueryFactory
+                .select(Projections.constructor(MovieScreeningInfoDto.class,
+                        screening.id,
+                        theater.id,
+                        theater.name,
+                        JPAExpressions.select(screeningSeat.id.count())
+                                .from(screeningSeat)
+                                .where(screeningSeat.screening.id.eq(screening.id),
+                                        screeningSeat.status.eq(ScreeningSeatStatus.AVAILABLE)),
+                        screening.startTime,
+                        screening.endTime,
+                        screening.sequence,
+                        screening.status
+                ))
+                .from(screening)
+                .join(screening.theater, theater)
+                .where(
+                        screening.movie.id.eq(movieId),
+                        dateCondition
+                )
+                .orderBy(screening.startTime.asc())
+                .fetch();
+
+        return row;
     }
 
     public List<ScreeningSeatDto> getScreeningSeat(Long screeningId) {

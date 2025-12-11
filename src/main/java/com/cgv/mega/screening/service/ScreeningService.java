@@ -19,6 +19,8 @@ import com.cgv.mega.seat.repository.SeatRepository;
 import com.cgv.mega.theater.entity.Theater;
 import com.cgv.mega.theater.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +100,10 @@ public class ScreeningService {
 
     // 상영 추가(관리자용)
     @Transactional
+    @CacheEvict(
+            cacheNames = "screeningMovies",
+            key = "'screeningMovies:' + #request.startTime.toLocalDate()"
+    )
     public void registerScreening(RegisterScreeningRequest request) {
         // 시작 시간이 현재 시간보다 이전이면 throw
         if (request.startTime().isBefore(LocalDateTime.now().minusMinutes(1))) {
@@ -177,6 +183,10 @@ public class ScreeningService {
 
     // 해당 날짜의 상영 영화 목록
     @Transactional(readOnly = true)
+    @Cacheable(
+            cacheNames = "screeningMovies",
+            key = "'srceeningMovies:' + #date.toString()"
+    )
     public ScreeningDateMovieResponse getScreeningMovies(LocalDate date) {
         List<ScreeningDateMovieResponse.MovieInfo> screeningMovieList = screeningQueryRepository.getScreeningMovieList(date);
 
@@ -185,20 +195,20 @@ public class ScreeningService {
 
     // 특정 영화의 상영 목록
     @Transactional(readOnly = true)
-    public MovieScreeningResponse getMovieScreenings(Long movieId, LocalDate date) {
+    public MovieScreeningResponse getMovieScreeningsForUser(Long movieId, LocalDate date) {
         // 해당 날짜 및 영화의 상영 목록 조회 - 잔여 좌석 포함
-        List<MovieScreeningResponse.MovieScreeningInfo> movieScreeningList = screeningQueryRepository.getMovieScreeningList(movieId, date);
+        List<MovieScreeningInfoDto> infoDtoList = screeningQueryRepository.getMovieScreeningListForUser(movieId, date);
 
-        return new MovieScreeningResponse(movieScreeningList);
+        return MovieScreeningResponse.from(infoDtoList);
     }
 
     // 특정 영화의 상영 목록 (관리자용)
     @Transactional(readOnly = true)
-    public MovieScreeningResponse getMovieScreeningsForAdmin(Long movieId) {
+    public MovieScreeningForAdminResponse getMovieScreeningsForAdmin(Long movieId) {
         // 해당 영화의 상영 목록 조회 - 잔여 좌석 포함
-        List<MovieScreeningResponse.MovieScreeningInfo> movieScreeningList = screeningQueryRepository.getMovieScreeningList(movieId, null);
+        List<MovieScreeningForAdminResponse.MovieScreeningInfo> movieScreeningList = screeningQueryRepository.getMovieScreeningListForAdmin(movieId);
 
-        return new MovieScreeningResponse(movieScreeningList);
+        return new MovieScreeningForAdminResponse(movieScreeningList);
     }
 
     // 해당 상영회차의 좌석 현황 조회
@@ -253,5 +263,14 @@ public class ScreeningService {
                 .toList();
 
         return new ScreeningSeatResponse(screeningId, screeningSeatInfos);
+    }
+
+    @Transactional
+    public void endPastScreenings() {
+        LocalDateTime now = LocalDateTime.now();
+        ScreeningStatus ended = ScreeningStatus.ENDED;
+        ScreeningStatus scheduled = ScreeningStatus.SCHEDULED;
+
+        screeningRepository.updateStatusToEnded(now, ended, scheduled);
     }
 }

@@ -2,7 +2,7 @@ package com.cgv.mega.screening.controller;
 
 import com.cgv.mega.common.response.CustomResponse;
 import com.cgv.mega.screening.dto.AvailableScreeningResponse;
-import com.cgv.mega.screening.dto.MovieScreeningResponse;
+import com.cgv.mega.screening.dto.MovieScreeningForAdminResponse;
 import com.cgv.mega.screening.dto.RegisterScreeningRequest;
 import com.cgv.mega.screening.service.ScreeningSeatService;
 import com.cgv.mega.screening.service.ScreeningService;
@@ -55,10 +55,10 @@ public class AdminScreeningController {
     }
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<CustomResponse<MovieScreeningResponse>> getMovieScreenings(
+    public ResponseEntity<CustomResponse<MovieScreeningForAdminResponse>> getMovieScreenings(
             @PathVariable("movieId") Long moveId
     ) {
-        MovieScreeningResponse response = screeningService.getMovieScreeningsForAdmin(moveId);
+        MovieScreeningForAdminResponse response = screeningService.getMovieScreeningsForAdmin(moveId);
 
         return ResponseEntity.ok(CustomResponse.of(response));
     }

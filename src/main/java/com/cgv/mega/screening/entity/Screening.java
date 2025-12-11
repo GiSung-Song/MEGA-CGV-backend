@@ -18,7 +18,8 @@ import java.util.Set;
 @Entity
 @Table(
         name = "screenings",
-        uniqueConstraints = @UniqueConstraint(name = "uq_screenings_sequence", columnNames = {"movie_id", "sequence"})
+        uniqueConstraints = @UniqueConstraint(name = "uq_screenings_sequence", columnNames = {"movie_id", "sequence"}),
+        indexes = @Index(name = "idx_screenings_status_start", columnList = "status, start_time")
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
