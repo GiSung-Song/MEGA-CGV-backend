@@ -78,9 +78,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 인증 실패 시 401 반환
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
                         })
                 )
                 .addFilterBefore(requestTraceFilter, UsernamePasswordAuthenticationFilter.class)
