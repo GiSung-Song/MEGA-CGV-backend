@@ -3,6 +3,7 @@ package com.cgv.mega.movie.controller;
 import co.elastic.clients.elasticsearch.ml.Page;
 import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.response.CustomResponse;
+import com.cgv.mega.movie.dto.MovieInfoResponse;
 import com.cgv.mega.movie.dto.MovieListResponse;
 import com.cgv.mega.movie.dto.RegisterMovieRequest;
 import com.cgv.mega.movie.service.MovieService;
@@ -29,6 +30,13 @@ public class AdminMovieController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CustomResponse.of(HttpStatus.CREATED));
+    }
+
+    @GetMapping("/{movieId}")
+    public ResponseEntity<CustomResponse<MovieInfoResponse>> getMovieDetail(@PathVariable("movieId") Long movieId) {
+        MovieInfoResponse movieInfo = movieService.getMovieInfoForAdmin(movieId);
+
+        return ResponseEntity.ok(CustomResponse.of(movieInfo));
     }
 
     @PatchMapping("/{movieId}")

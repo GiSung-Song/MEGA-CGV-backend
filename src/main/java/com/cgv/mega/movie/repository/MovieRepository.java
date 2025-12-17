@@ -1,6 +1,9 @@
 package com.cgv.mega.movie.repository;
 
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +21,15 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
          where m.id = :movieId
     """)
     Optional<Movie> findByIdWithGenresAndTypes(@Param("movieId") Long moveId);
+
+    @Query("""
+        select distinct m
+          from Movie m
+          left join fetch m.movieGenres mg
+          left join fetch mg.genre g
+          left join fetch m.movieTypes mt
+         where m.id = :movieId
+           and m.status = :status
+    """)
+    Optional<Movie> findByIdWithGenresAndTypesForUser(@Param("movieId") Long moveId, MovieStatus status);
 }

@@ -145,11 +145,11 @@ class ReservationRepositoryTest {
 
         payment1 = Payment.createPayment(
                 reservationGroup1, user.getName(), user.getPhoneNumber(), user.getEmail(),
-                "merchant-uid-1", BigDecimal.valueOf(500.00));
+                "payment-uid-1", BigDecimal.valueOf(500.00));
 
         payment2 = Payment.createPayment(
                 reservationGroup2, user.getName(), user.getPhoneNumber(), user.getEmail(),
-                "merchant-uid-2", BigDecimal.valueOf(1000.00));
+                "payment-uid-2", BigDecimal.valueOf(1000.00));
 
         paymentRepository.saveAll(List.of(payment1, payment2));
     }
@@ -162,7 +162,7 @@ class ReservationRepositoryTest {
 
         assertThat(reservationDetail.buyerEmail()).isEqualTo(user.getEmail());
         assertThat(reservationDetail.title()).isEqualTo(movie.getTitle());
-        assertThat(reservationDetail.merchantUid()).isEqualTo(payment1.getMerchantUid());
+        assertThat(reservationDetail.paymentId()).isEqualTo(payment1.getPaymentId());
     }
 
     @Test

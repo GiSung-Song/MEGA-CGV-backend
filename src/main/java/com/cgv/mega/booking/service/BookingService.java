@@ -33,6 +33,6 @@ public class BookingService {
         ReservationGroup reservationGroup = reservationService.createReservation(userId, screeningId, request);
         Payment payment = paymentService.createPayment(reservationGroup, buyerInfoDto);
 
-        return new BookingResponse(reservationGroup.getId(), payment.getMerchantUid(), payment.getExpectedAmount());
+        return new BookingResponse(reservationGroup.getId(), payment.getPaymentId(), payment.getExpectedAmount());
     }
 }

@@ -102,7 +102,7 @@ class PaymentServiceTest {
             verify(paymentRepository).save(any(Payment.class));
 
             assertThat(payment.getExpectedAmount()).isEqualTo(BigDecimal.valueOf(reservationGroup.getTotalPrice()));
-            assertThat(payment.getMerchantUid()).isNotNull();
+            assertThat(payment.getPaymentId()).isNotNull();
         }
     }
 
@@ -116,20 +116,18 @@ class PaymentServiceTest {
         void setUp() {
             payment = Payment.createPayment(reservationGroup,
                     "테스터", "01012341234", "a@b.com",
-                    "merchant-uid", BigDecimal.valueOf(reservationGroup.getTotalPrice())
+                    "payment-id", BigDecimal.valueOf(reservationGroup.getTotalPrice())
             );
 
             response = new PortOnePaymentResponse(
-                    new PortOnePaymentResponse.Payment(
-                            "payment-id", "merchant-uid", "PAID",
+                            "payment-id", "order-uid", "PAID",
                             new PortOnePaymentResponse.Amount(BigDecimal.valueOf(reservationGroup.getTotalPrice()), BigDecimal.ZERO),
                             new PortOnePaymentResponse.Method("card", "SAMSUNG", "123412341234", 0),
                             null, null, null
-                    )
             );
 
             request = new PaymentCompleteRequest(
-                    payment.getMerchantUid(), response.payment().id(), response.payment().amount().total(), reservationGroup.getId()
+                    payment.getPaymentId(), response.amount().total(), reservationGroup.getId()
             );
         }
 
@@ -137,14 +135,14 @@ class PaymentServiceTest {
         void 검증_성공() {
             given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
                     .willReturn(Optional.of(reservationGroup));
-            given(paymentRepository.findByMerchantUid(payment.getMerchantUid())).willReturn(Optional.of(payment));
+            given(paymentRepository.findByPaymentId(payment.getPaymentId())).willReturn(Optional.of(payment));
             given(portOneClient.getPaymentInfo(request.paymentId())).willReturn(response);
 
             paymentService.verifyAndCompletePayment(userId, request);
 
-            assertThat(payment.getPaymentId()).isEqualTo(response.payment().id());
-            assertThat(payment.getPaidAmount()).isEqualTo(response.payment().amount().total());
-            assertThat(payment.getPgProvider()).isEqualTo(response.payment().method().provider());
+            assertThat(payment.getPaymentId()).isEqualTo(response.id());
+            assertThat(payment.getPaidAmount()).isEqualTo(response.amount().total());
+            assertThat(payment.getPgProvider()).isEqualTo(response.method().provider());
             assertThat(payment.getStatus()).isEqualTo(PaymentStatus.COMPLETED);
             assertThat(reservationGroup.getStatus()).isEqualTo(ReservationStatus.PAID);
         }
@@ -168,7 +166,7 @@ class PaymentServiceTest {
             given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
                     .willReturn(Optional.of(reservationGroup));
 
-            given(paymentRepository.findByMerchantUid(request.merchantUid()))
+            given(paymentRepository.findByPaymentId(request.paymentId()))
                     .willReturn(Optional.empty());
 
             assertThatThrownBy(() -> paymentService.verifyAndCompletePayment(userId, request))
@@ -187,12 +185,12 @@ class PaymentServiceTest {
 
             Payment fakePayment = Payment.createPayment(rg,
                     "테스터", "01012341234", "a@b.com",
-                    "merchant-uid", BigDecimal.valueOf(50000)
+                    "payment-uid", BigDecimal.valueOf(50000)
             );
 
             given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
                     .willReturn(Optional.of(reservationGroup));
-            given(paymentRepository.findByMerchantUid(payment.getMerchantUid())).willReturn(Optional.of(fakePayment));
+            given(paymentRepository.findByPaymentId(payment.getPaymentId())).willReturn(Optional.of(fakePayment));
 
             assertThatThrownBy(() -> paymentService.verifyAndCompletePayment(userId, request))
                     .isInstanceOf(CustomException.class)
@@ -206,42 +204,15 @@ class PaymentServiceTest {
         @Test
         void 거래_고유ID_다름_409반환() {
             response = new PortOnePaymentResponse(
-                    new PortOnePaymentResponse.Payment(
-                            "payment-idddd", "merchant-uid", "PAID",
+                            "payment-idddd", "order-uid", "PAID",
                             new PortOnePaymentResponse.Amount(BigDecimal.valueOf(reservationGroup.getTotalPrice()), BigDecimal.ZERO),
                             new PortOnePaymentResponse.Method("card", "SAMSUNG", "123412341234", 0),
                             null, null, null
-                    )
             );
 
             given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
                     .willReturn(Optional.of(reservationGroup));
-            given(paymentRepository.findByMerchantUid(payment.getMerchantUid())).willReturn(Optional.of(payment));
-            given(portOneClient.getPaymentInfo(request.paymentId())).willReturn(response);
-
-            assertThatThrownBy(() -> paymentService.verifyAndCompletePayment(userId, request))
-                    .isInstanceOf(CustomException.class)
-                    .satisfies(exception -> {
-                        CustomException ex = (CustomException) exception;
-
-                        assertThat(ex.getErrorCode().getStatus()).isEqualTo(HttpStatus.CONFLICT);
-                    });
-        }
-
-        @Test
-        void 서비스_거래ID_다름_409반환() {
-            response = new PortOnePaymentResponse(
-                    new PortOnePaymentResponse.Payment(
-                            "payment-id", "merchant-uidddd", "PAID",
-                            new PortOnePaymentResponse.Amount(BigDecimal.valueOf(reservationGroup.getTotalPrice()), BigDecimal.ZERO),
-                            new PortOnePaymentResponse.Method("card", "SAMSUNG", "123412341234", 0),
-                            null, null, null
-                    )
-            );
-
-            given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
-                    .willReturn(Optional.of(reservationGroup));
-            given(paymentRepository.findByMerchantUid(payment.getMerchantUid())).willReturn(Optional.of(payment));
+            given(paymentRepository.findByPaymentId(payment.getPaymentId())).willReturn(Optional.of(payment));
             given(portOneClient.getPaymentInfo(request.paymentId())).willReturn(response);
 
             assertThatThrownBy(() -> paymentService.verifyAndCompletePayment(userId, request))
@@ -256,17 +227,15 @@ class PaymentServiceTest {
         @Test
         void 금액_검증_다름_409반환() {
             response = new PortOnePaymentResponse(
-                    new PortOnePaymentResponse.Payment(
-                            "payment-id", "merchant-uid", "PAID",
+                            "payment-id", "order-uid", "PAID",
                             new PortOnePaymentResponse.Amount(BigDecimal.valueOf(50000000), BigDecimal.ZERO),
                             new PortOnePaymentResponse.Method("card", "SAMSUNG", "123412341234", 0),
                             null, null, null
-                    )
             );
 
             given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
                     .willReturn(Optional.of(reservationGroup));
-            given(paymentRepository.findByMerchantUid(payment.getMerchantUid())).willReturn(Optional.of(payment));
+            given(paymentRepository.findByPaymentId(payment.getPaymentId())).willReturn(Optional.of(payment));
             given(portOneClient.getPaymentInfo(request.paymentId())).willReturn(response);
 
             assertThatThrownBy(() -> paymentService.verifyAndCompletePayment(userId, request))
@@ -281,17 +250,15 @@ class PaymentServiceTest {
         @Test
         void 결제_상태_검증_409반환() {
             response = new PortOnePaymentResponse(
-                    new PortOnePaymentResponse.Payment(
-                            "payment-id", "merchant-uid", "CANCELLED",
+                            "payment-id", "order-uid", "CANCELLED",
                             new PortOnePaymentResponse.Amount(BigDecimal.valueOf(reservationGroup.getTotalPrice()), BigDecimal.ZERO),
                             new PortOnePaymentResponse.Method("card", "SAMSUNG", "123412341234", 0),
                             null, null, null
-                    )
             );
 
             given(reservationGroupRepository.findByIdAndUserId(reservationGroup.getId(), userId))
                     .willReturn(Optional.of(reservationGroup));
-            given(paymentRepository.findByMerchantUid(payment.getMerchantUid())).willReturn(Optional.of(payment));
+            given(paymentRepository.findByPaymentId(payment.getPaymentId())).willReturn(Optional.of(payment));
             given(portOneClient.getPaymentInfo(request.paymentId())).willReturn(response);
 
             assertThatThrownBy(() -> paymentService.verifyAndCompletePayment(userId, request))
@@ -312,7 +279,7 @@ class PaymentServiceTest {
         void setUp() {
             payment = Payment.createPayment(reservationGroup,
                     "테스터", "01012341234", "a@b.com",
-                    "merchant-uid", BigDecimal.valueOf(reservationGroup.getTotalPrice())
+                    "payment-uid", BigDecimal.valueOf(reservationGroup.getTotalPrice())
             );
 
             payment.successPayment(
@@ -324,7 +291,7 @@ class PaymentServiceTest {
 
         @Test
         void 결제_취소() {
-            PortOneCancelRequest request = new PortOneCancelRequest(BigDecimal.valueOf(reservationGroup.getTotalPrice()), "사용자 예약 취소로 인한 환불");
+            PortOneCancelRequest request = new PortOneCancelRequest(BigDecimal.valueOf(reservationGroup.getTotalPrice()).longValueExact(), "사용자 예약 취소로 인한 환불");
             RefundResult result = new RefundResult(true, BigDecimal.valueOf(reservationGroup.getTotalPrice()), null);
 
             given(paymentRepository.findByReservationGroupId(reservationGroup.getId()))
@@ -409,7 +376,7 @@ class PaymentServiceTest {
         void setUp() {
             payment = Payment.createPayment(reservationGroup,
                     "테스터", "01012341234", "a@b.com",
-                    "merchant-uid", BigDecimal.valueOf(reservationGroup.getTotalPrice())
+                    "payment-uid", BigDecimal.valueOf(reservationGroup.getTotalPrice())
             );
 
             payment.successPayment(
@@ -424,7 +391,7 @@ class PaymentServiceTest {
             given(paymentRepository.findByReservationGroupId(reservationGroup.getId()))
                     .willReturn(Optional.of(payment));
 
-            PortOneCancelRequest request = new PortOneCancelRequest(BigDecimal.valueOf(reservationGroup.getTotalPrice()), "사용자 예약 취소로 인한 환불");
+            PortOneCancelRequest request = new PortOneCancelRequest(BigDecimal.valueOf(reservationGroup.getTotalPrice()).longValueExact(), "사용자 예약 취소로 인한 환불");
             RefundResult result = new RefundResult(true, BigDecimal.valueOf(reservationGroup.getTotalPrice()), null);
 
             given(paymentRepository.findByReservationGroupId(reservationGroup.getId()))

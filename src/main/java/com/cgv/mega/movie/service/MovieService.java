@@ -2,7 +2,6 @@ package com.cgv.mega.movie.service;
 
 import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;
@@ -10,8 +9,10 @@ import com.cgv.mega.movie.dto.*;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.entity.MovieDocument;
 import com.cgv.mega.movie.enums.MovieStatus;
+import com.cgv.mega.movie.enums.MovieType;
+import com.cgv.mega.movie.repository.MovieQueryRepository;
 import com.cgv.mega.movie.repository.MovieRepository;
-import com.cgv.mega.movie.repository.MovieSearchRepository;
+import com.cgv.mega.movie.repository.MovieSearchService;
 import com.cgv.mega.screening.repository.ScreeningRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,7 +33,8 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final GenreRepository genreRepository;
     private final ScreeningRepository screeningRepository;
-    private final MovieSearchRepository movieSearchRepository;
+    private final MovieQueryRepository movieQueryRepository;
+    private final MovieSearchService movieSearchService;
     private final ApplicationEventPublisher eventPublisher;
 
     // 영화 등록
@@ -82,9 +84,22 @@ public class MovieService {
     // 영화 상세조회
     @Transactional(readOnly = true)
     public MovieInfoResponse getMovieInfo(Long movieId) {
+        Movie movie = movieRepository.findByIdWithGenresAndTypesForUser(movieId, MovieStatus.ACTIVE)
+                .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+        return movieInfoToResponse(movie);
+    }
+
+    // 영화 상세조회(관리자용)
+    @Transactional(readOnly = true)
+    public MovieInfoResponse getMovieInfoForAdmin(Long movieId) {
         Movie movie = movieRepository.findByIdWithGenresAndTypes(movieId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
 
+        return movieInfoToResponse(movie);
+    }
+
+    private MovieInfoResponse movieInfoToResponse(Movie movie) {
         Set<String> genres = movie.getMovieGenres().stream()
                 .map(mg -> mg.getGenre().getName())
                 .collect(Collectors.toSet());
@@ -98,12 +113,15 @@ public class MovieService {
     }
 
     // 영화 전체 목록 조회
+    @Transactional(readOnly = true)
     public PageResponse getMovieList(String keyword, Pageable pageable) {
-        if (!StringUtils.hasText(keyword)) {
-            return PageResponse.from(Page.empty());
+        if (!StringUtils.hasText(keyword) || keyword.length() < 2) {
+            Page<MovieListResponse> allMovieList = movieQueryRepository.getAllMovieList(pageable);
+
+            return PageResponse.from(allMovieList);
         }
 
-        Page<MovieDocument> searchPage = movieSearchRepository.searchByTitle(keyword, pageable);
+        Page<MovieDocument> searchPage = movieSearchService.searchByTitle(keyword, pageable);
 
         Page<MovieListResponse> responsePage = searchPage.map(MovieListResponse::from);
 

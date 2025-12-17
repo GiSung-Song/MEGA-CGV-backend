@@ -193,7 +193,7 @@ public class ReservationIntegrationTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.data.reservationGroupId").exists())
-                    .andExpect(jsonPath("$.data.merchantUid").exists())
+                    .andExpect(jsonPath("$.data.paymentId").exists())
                     .andExpect(jsonPath("$.data.expectedAmount").value(2000))
                     .andDo(
                             document("reservation-reserve",
@@ -210,7 +210,7 @@ public class ReservationIntegrationTest {
                                             fieldWithPath("status").description("응답 코드"),
                                             fieldWithPath("message").description("응답 메시지"),
                                             fieldWithPath("data.reservationGroupId").description("예약 식별자 ID"),
-                                            fieldWithPath("data.merchantUid").description("서비스 내 거래 고유번호"),
+                                            fieldWithPath("data.paymentId").description("서비스 내 거래 고유번호"),
                                             fieldWithPath("data.expectedAmount").description("결제 예상 금액")
                                     )
                             ))
@@ -348,7 +348,7 @@ public class ReservationIntegrationTest {
 
             Payment payment = Payment.createPayment(
                     reservationGroup, user.getName(), user.getPhoneNumber(),
-                    user.getEmail(), "merchant-uid", BigDecimal.valueOf(2000)
+                    user.getEmail(), "payment-uid", BigDecimal.valueOf(2000)
             );
 
             payment.successPayment(
@@ -435,7 +435,7 @@ public class ReservationIntegrationTest {
 
             Payment payment = Payment.createPayment(
                     reservationGroup, user.getName(), user.getPhoneNumber(),
-                    user.getEmail(), "merchant-uid", BigDecimal.valueOf(2000)
+                    user.getEmail(), "payment-uid", BigDecimal.valueOf(2000)
             );
 
             payment.successPayment(
@@ -489,7 +489,6 @@ public class ReservationIntegrationTest {
                                             fieldWithPath("data.paymentMethod").description("결제 방법"),
                                             fieldWithPath("data.paymentAmount").description("결제 금액"),
                                             fieldWithPath("data.refundAmount").description("환불 금액"),
-                                            fieldWithPath("data.merchantUid").description("서비스 내 거래 고유번호"),
                                             fieldWithPath("data.paymentId").description("거래 고유번호"),
                                             fieldWithPath("data.buyerName").description("결제자 이름"),
                                             fieldWithPath("data.buyerPhoneNumber").description("결제자 휴대폰 번호"),
@@ -514,7 +513,7 @@ public class ReservationIntegrationTest {
 
             Payment payment = Payment.createPayment(
                     reservationGroup, user.getName(), user.getPhoneNumber(),
-                    user.getEmail(), "merchant-uid", BigDecimal.valueOf(2000)
+                    user.getEmail(), "payment-uid", BigDecimal.valueOf(2000)
             );
 
             payment.successPayment(

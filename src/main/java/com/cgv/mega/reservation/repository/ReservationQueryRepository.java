@@ -78,7 +78,6 @@ public class ReservationQueryRepository {
                                         payment.payMethod,
                                         payment.paidAmount,
                                         payment.refundAmount,
-                                        payment.merchantUid,
                                         payment.paymentId,
 
                                         payment.buyerName,

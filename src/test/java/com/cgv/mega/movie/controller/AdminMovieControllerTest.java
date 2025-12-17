@@ -1,9 +1,12 @@
 package com.cgv.mega.movie.controller;
 
 import com.cgv.mega.common.dto.PageResponse;
-import com.cgv.mega.movie.enums.MovieType;
+import com.cgv.mega.common.enums.ErrorCode;
+import com.cgv.mega.common.exception.CustomException;
+import com.cgv.mega.movie.dto.MovieInfoResponse;
 import com.cgv.mega.movie.dto.MovieListResponse;
 import com.cgv.mega.movie.dto.RegisterMovieRequest;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.movie.service.MovieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
@@ -20,12 +23,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +46,7 @@ class AdminMovieControllerTest {
     private MovieService movieService;
 
     @Nested
-    class 영화_등록_테스트 {
+    class 영화_등록 {
         @Test
         void 영화_등록_성공() throws Exception {
             RegisterMovieRequest request = new RegisterMovieRequest(
@@ -75,7 +77,44 @@ class AdminMovieControllerTest {
     }
 
     @Nested
-    class 영화_삭제_테스트 {
+    class 영화_상세조회 {
+        @Test
+        void 영화_상세조회_성공() throws Exception {
+            MovieInfoResponse response = new MovieInfoResponse(
+                    "혹성탈출", 150, "혹성탈출 설명", "escape.jpg",
+                    Set.of("ACTION", "DRAMA"), Set.of("2D", "3D")
+            );
+
+            given(movieService.getMovieInfoForAdmin(1L)).willReturn(response);
+
+            mockMvc.perform(get("/api/admin/movies/{movieId}", 1L))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.title").value("혹성탈출"))
+                    .andExpect(jsonPath("$.data.duration").value(150))
+                    .andExpect(jsonPath("$.data.genres", containsInAnyOrder("ACTION", "DRAMA")))
+                    .andExpect(jsonPath("$.data.types", containsInAnyOrder("2D", "3D")))
+                    .andDo(print());
+        }
+
+        @Test
+        void 경로변수_오류_400반환() throws Exception {
+            mockMvc.perform(get("/api/admin/movies/{movieId}", "fdsafeqfdsa"))
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
+        }
+
+        @Test
+        void 서비스에서_404반환() throws Exception {
+            given(movieService.getMovieInfoForAdmin(1L)).willThrow(new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+            mockMvc.perform(get("/api/admin/movies/{movieId}", 1L))
+                    .andExpect(status().isNotFound())
+                    .andDo(print());
+        }
+    }
+
+    @Nested
+    class 영화_삭제 {
         @Test
         void 영화_삭제_성공() throws Exception {
             doNothing().when(movieService).deleteMovie(anyLong());
@@ -94,7 +133,7 @@ class AdminMovieControllerTest {
     }
 
     @Nested
-    class 영화_목록_조회_테스트 {
+    class 영화_목록_조회 {
         @Test
         void 영화_목록_조회() throws Exception {
             List<MovieListResponse> content = List.of(

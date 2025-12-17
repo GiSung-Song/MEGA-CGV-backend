@@ -75,7 +75,7 @@ public class SecurityConfig {
                         // 회원가입 API
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // 인증 실패 시 401 반환
                 .exceptionHandling(exception -> exception

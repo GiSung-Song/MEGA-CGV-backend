@@ -41,7 +41,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Nested
-    class 회원가입_테스트 {
+    class 회원가입 {
 
         @Test
         void 회원가입_성공() {
@@ -100,7 +100,7 @@ class UserServiceTest {
     }
 
     @Nested
-    class 회원탈퇴_테스트 {
+    class 회원탈퇴 {
 
         @Test
         void 회원_존재_탈퇴() {
@@ -123,7 +123,7 @@ class UserServiceTest {
     }
 
     @Nested
-    class 비밀번호_변경_테스트 {
+    class 비밀번호_변경 {
 
         @Test
         void 비밀번호_변경_성공() {
@@ -177,7 +177,7 @@ class UserServiceTest {
     }
 
     @Nested
-    class 휴대폰_번호_변경_테스트 {
+    class 휴대폰_번호_변경 {
 
         @Test
         void 휴대폰_번호_변경_성공() {

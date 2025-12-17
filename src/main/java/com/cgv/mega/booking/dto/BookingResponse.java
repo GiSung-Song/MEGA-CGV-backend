@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public record BookingResponse(
         Long reservationGroupId,
-        String merchantUid,
+        String paymentId,
         BigDecimal expectedAmount
 ) {
 }

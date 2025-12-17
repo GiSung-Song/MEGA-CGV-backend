@@ -1,8 +1,10 @@
 package com.cgv.mega.movie.dto;
 
+import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.entity.MovieDocument;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public record MovieListResponse(
     Long id,
