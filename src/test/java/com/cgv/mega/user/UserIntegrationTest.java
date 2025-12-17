@@ -84,7 +84,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void 회원가입_테스트() throws Exception {
+    void 회원가입() throws Exception {
         RegisterUserRequest request = new RegisterUserRequest("tester", "b@c.com", "rawPassword", "01013572468");
 
         mockMvc.perform(post("/api/users")
@@ -114,7 +114,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void 회원_탈퇴_테스트() throws Exception {
+    void 회원_탈퇴() throws Exception {
         mockMvc.perform(delete("/api/users/me")
                         .header("Authorization", accessToken))
                 .andExpect(status().isOk())
@@ -136,7 +136,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void 비밀번호_변경_테스트() throws Exception {
+    void 비밀번호_변경() throws Exception {
         ChangePasswordRequest request = new ChangePasswordRequest("rawPassword", "newPassword");
 
         mockMvc.perform(patch("/api/users/me/password")
@@ -166,7 +166,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void 휴대폰_번호_변경_테스트() throws Exception {
+    void 휴대폰_번호_변경() throws Exception {
         ChangePhoneNumberRequest request = new ChangePhoneNumberRequest("01098765432");
 
         mockMvc.perform(patch("/api/users/me/phone-number")
@@ -195,7 +195,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void 회원정보_조회_테스트() throws Exception {
+    void 회원정보_조회() throws Exception {
         mockMvc.perform(get("/api/users/me")
                         .header("Authorization", accessToken))
                 .andExpect(status().isOk())

@@ -35,7 +35,7 @@ public class AuthControllerTest {
     private AuthService authService;
 
     @Nested
-    class 로그인_테스트 {
+    class 로그인_테스 {
 
         @Test
         void 로그인_성공() throws Exception {
@@ -77,7 +77,7 @@ public class AuthControllerTest {
     }
 
     @Nested
-    class 로그아웃_테스트 {
+    class 로그아웃 {
 
         @Test
         void 로그아웃_정상() throws Exception {
@@ -102,7 +102,7 @@ public class AuthControllerTest {
     }
 
     @Nested
-    class 토큰_재발급_테스트 {
+    class 토큰_재발급 {
 
         @Test
         void 토큰_재발급_성공() throws Exception {

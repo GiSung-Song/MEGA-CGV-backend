@@ -40,7 +40,7 @@ public class PaymentService {
                 dto.name(),
                 dto.phoneNumber(),
                 dto.email(),
-                createMerchantUID(reservationGroup.getId()),
+                createPaymentId(reservationGroup.getId()),
                 expectedAmount
         );
 
@@ -55,7 +55,7 @@ public class PaymentService {
         ReservationGroup reservationGroup = reservationGroupRepository.findByIdAndUserId(request.reservationGroupId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
 
-        Payment payment = paymentRepository.findByMerchantUid(request.merchantUid())
+        Payment payment = paymentRepository.findByPaymentId(request.paymentId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 
         // 이미 검증 완료된 상태면 return
@@ -70,35 +70,28 @@ public class PaymentService {
 
         // 포트원 서버로부터 결제 조회 API 호출
         PortOnePaymentResponse response = portOneClient.getPaymentInfo(request.paymentId());
-        PortOnePaymentResponse.Payment p = response.payment();
 
         // paymentId (거래 ID) 일치 검증
-        if (!p.id().equals(request.paymentId())) {
+        if (!response.id().equals(request.paymentId())) {
             markFail(payment, reservationGroup, "payment_id mismatch");
             throw new CustomException(ErrorCode.PAYMENT_INFO_MISMATCH);
         }
 
-        // merchantUid 일치 검증
-        if (!p.orderId().equals(request.merchantUid())) {
-            markFail(payment, reservationGroup, "merchant_uid mismatch");
-            throw new CustomException(ErrorCode.PAYMENT_INFO_MISMATCH);
-        }
-
         // 금액 검증
-        BigDecimal paidAmount = p.amount().total();
+        BigDecimal paidAmount = response.amount().total();
         if (paidAmount.compareTo(payment.getExpectedAmount()) != 0) {
             markFail(payment, reservationGroup, "amount mismatch");
             throw new CustomException(ErrorCode.PAYMENT_INFO_MISMATCH);
         }
 
         // 결제 상태 검증
-        if (!"PAID".equalsIgnoreCase(p.status())) {
-            markFail(payment, reservationGroup, "status: " + p.status());
+        if (!"PAID".equalsIgnoreCase(response.status())) {
+            markFail(payment, reservationGroup, "status: " + response.status());
             throw new CustomException(ErrorCode.PAYMENT_INFO_MISMATCH);
         }
 
         // 결제 상태 변경 및 데이터 추가
-        updatePaymentSuccess(payment, p);
+        updatePaymentSuccess(payment, response);
 
         // 예약 상태 변경
         reservationGroup.successReservation();
@@ -139,7 +132,7 @@ public class PaymentService {
 
     private void executeRefund(Payment payment, BigDecimal refundAmount, String reason) {
         // 환불 API 요청
-        PortOneCancelRequest request = new PortOneCancelRequest(refundAmount, reason);
+        PortOneCancelRequest request = new PortOneCancelRequest(refundAmount.longValueExact(), reason);
         RefundResult result = portOneClient.refundPayment(payment.getPaymentId(), request);
 
         if (result.isFailure()) {
@@ -152,8 +145,8 @@ public class PaymentService {
         payment.cancelPayment(cancelledAmount, reason);
     }
 
-    // 결제번호 (merchant_uid 생성)
-    private String createMerchantUID(Long reservationGroupId) {
+    // 결제번호 (paymentId 생성)
+    private String createPaymentId(Long reservationGroupId) {
         String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
 
@@ -188,15 +181,15 @@ public class PaymentService {
         reservationGroup.cancelAndReleaseSeats();
     }
 
-    private void updatePaymentSuccess(Payment payment, PortOnePaymentResponse.Payment p) {
+    private void updatePaymentSuccess(Payment payment, PortOnePaymentResponse response) {
         payment.successPayment(
-                p.id(),
-                p.amount().total(),
-                p.method() != null ? p.method().provider() : null,
-                p.method() != null ? p.method().type() : null,
-                p.method() != null ? p.method().cardName() : null,
-                p.method() != null ? p.method().cardQuota() : null,
-                parseDateTime(p.statusChangedAt())
+                response.id(),
+                response.amount().total(),
+                response.method() != null ? response.method().provider() : null,
+                response.method() != null ? response.method().type() : null,
+                response.method() != null ? response.method().cardName() : null,
+                response.method() != null ? response.method().cardQuota() : null,
+                parseDateTime(response.statusChangedAt())
         );
     }
 

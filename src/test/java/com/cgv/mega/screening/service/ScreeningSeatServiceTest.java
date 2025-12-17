@@ -88,7 +88,7 @@ class ScreeningSeatServiceTest {
     }
 
     @Nested
-    class 좌석_수리_상태변경_테스트 {
+    class 좌석_수리_상태변경 {
         ScreeningSeat screeningSeat;
 
         @BeforeEach
@@ -132,7 +132,7 @@ class ScreeningSeatServiceTest {
     }
 
     @Nested
-    class 좌석_정상_상태변경_테스트 {
+    class 좌석_정상_상태변경 {
         ScreeningSeat screeningSeat;
 
         @BeforeEach

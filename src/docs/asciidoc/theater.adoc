@@ -6,5 +6,3 @@
 include::{snippets}/theater-list/http-request.adoc[]
 include::{snippets}/theater-list/http-response.adoc[]
 include::{snippets}/theater-list/response-fields.adoc[]
-
----

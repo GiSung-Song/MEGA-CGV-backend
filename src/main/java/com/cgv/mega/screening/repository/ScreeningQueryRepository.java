@@ -59,7 +59,6 @@ public class ScreeningQueryRepository {
                 .select(screening.sequence.max())
                 .from(screening)
                 .where(
-                        screening.status.ne(ScreeningStatus.CANCELED),
                         screening.movie.id.eq(movieId)
                 )
                 .fetchOne();

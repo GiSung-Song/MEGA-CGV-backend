@@ -2,7 +2,6 @@ package com.cgv.mega.movie.service;
 
 import com.cgv.mega.common.dto.PageResponse;
 import com.cgv.mega.common.enums.ErrorCode;
-import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.entity.GenreFixture;
@@ -12,8 +11,10 @@ import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.entity.MovieDocument;
 import com.cgv.mega.movie.entity.MovieDocumentFixture;
 import com.cgv.mega.movie.enums.MovieStatus;
+import com.cgv.mega.movie.enums.MovieType;
+import com.cgv.mega.movie.repository.MovieQueryRepository;
 import com.cgv.mega.movie.repository.MovieRepository;
-import com.cgv.mega.movie.repository.MovieSearchRepository;
+import com.cgv.mega.movie.repository.MovieSearchService;
 import com.cgv.mega.screening.repository.ScreeningRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,7 +41,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class MovieServiceTest {
@@ -48,13 +51,16 @@ class MovieServiceTest {
     private MovieRepository movieRepository;
 
     @Mock
+    private MovieQueryRepository movieQueryRepository;
+
+    @Mock
     private GenreRepository genreRepository;
 
     @Mock
     private ScreeningRepository screeningRepository;
 
     @Mock
-    private MovieSearchRepository movieSearchRepository;
+    private MovieSearchService movieSearchService;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -63,7 +69,7 @@ class MovieServiceTest {
     private MovieService movieService;
 
     @Nested
-    class 영화_등록_테스트 {
+    class 영화_등록 {
 
         @Test
         void 영화_등록_성공() {
@@ -111,7 +117,7 @@ class MovieServiceTest {
     }
 
     @Nested
-    class 영화_삭제_테스트 {
+    class 영화_삭제 {
         @Test
         void 영화_삭제_정상() {
             Movie movie = Movie.createMovie("혹성탈출", 150, "혹성탈출 설명", "escape.png");
@@ -178,7 +184,46 @@ class MovieServiceTest {
     }
 
     @Nested
-    class 영화_상세조회_테스트 {
+    class 영화_상세조회 {
+
+        @Test
+        void 영화_상세조회_성공() {
+            Movie movie = Movie.createMovie("혹성탈출", 150, "혹성탈출 설명", "escape.png");
+            ReflectionTestUtils.setField(movie, "id", 1L);
+            Genre action = GenreFixture.create(1L, "ACTION");
+            Genre drama = GenreFixture.create(2L, "DRAMA");
+
+            movie.addGenre(action);
+            movie.addGenre(drama);
+            movie.addType(MovieType.TWO_D);
+
+            given(movieRepository.findByIdWithGenresAndTypesForUser(1L, MovieStatus.ACTIVE)).willReturn(Optional.of(movie));
+
+            MovieInfoResponse movieInfo = movieService.getMovieInfo(1L);
+
+            assertThat(movieInfo.genres().size()).isEqualTo(2);
+            assertThat(movieInfo.title()).isEqualTo("혹성탈출");
+            assertThat(movieInfo.types()).containsExactly("2D");
+            assertThat(movieInfo.genres()).containsExactlyInAnyOrder("ACTION", "DRAMA");
+        }
+
+        @Test
+        void 존재하지_않는_영화_404반환() {
+            given(movieRepository.findByIdWithGenresAndTypesForUser(anyLong(), eq(MovieStatus.ACTIVE))).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> movieService.getMovieInfo(1L))
+                    .isInstanceOf(CustomException.class)
+                    .satisfies(exception -> {
+                        CustomException ex = (CustomException) exception;
+
+                        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MOVIE_NOT_FOUND);
+                        assertThat(ex.getErrorCode().getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
+                    });
+        }
+    }
+
+    @Nested
+    class 영화_상세조회_관리자용 {
 
         @Test
         void 영화_상세조회_성공() {
@@ -193,7 +238,7 @@ class MovieServiceTest {
 
             given(movieRepository.findByIdWithGenresAndTypes(1L)).willReturn(Optional.of(movie));
 
-            MovieInfoResponse movieInfo = movieService.getMovieInfo(1L);
+            MovieInfoResponse movieInfo = movieService.getMovieInfoForAdmin(1L);
 
             assertThat(movieInfo.genres().size()).isEqualTo(2);
             assertThat(movieInfo.title()).isEqualTo("혹성탈출");
@@ -205,7 +250,7 @@ class MovieServiceTest {
         void 존재하지_않는_영화_404반환() {
             given(movieRepository.findByIdWithGenresAndTypes(anyLong())).willReturn(Optional.empty());
 
-            assertThatThrownBy(() -> movieService.getMovieInfo(1L))
+            assertThatThrownBy(() -> movieService.getMovieInfoForAdmin(1L))
                     .isInstanceOf(CustomException.class)
                     .satisfies(exception -> {
                         CustomException ex = (CustomException) exception;
@@ -217,11 +262,14 @@ class MovieServiceTest {
     }
 
     @Nested
-    class 영화_목록_조회_테스트 {
+    class 영화_목록_조회 {
 
         @Test
         void 조회_결과_0건() {
             Pageable pageable = PageRequest.of(0, 10);
+            PageImpl<MovieListResponse> result = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+            given(movieQueryRepository.getAllMovieList(pageable)).willReturn(result);
 
             PageResponse<MovieListResponse> movieList = movieService.getMovieList("", pageable);
 
@@ -235,7 +283,7 @@ class MovieServiceTest {
             MovieDocument doc = MovieDocumentFixture.create(1L, "혹성탈출", Set.of("ACTION", "DRAMA"), Set.of("TWO_D", "THREE_D"), "poster@png.com");
 
             Page<MovieDocument> page = new PageImpl<>(List.of(doc), pageable, 1);
-            given(movieSearchRepository.searchByTitle("혹성", pageable)).willReturn(page);
+            given(movieSearchService.searchByTitle("혹성", pageable)).willReturn(page);
 
             PageResponse<MovieListResponse> result = movieService.getMovieList("혹성", pageable);
 

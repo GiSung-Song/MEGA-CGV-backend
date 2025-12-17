@@ -36,7 +36,6 @@ public record ReservationDetailDto(
         String paymentMethod,
         BigDecimal paymentAmount,
         BigDecimal refundAmount,
-        String merchantUid,
         String paymentId,
 
         String buyerName,

@@ -76,7 +76,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    void 로그인_테스트() throws Exception {
+    void 로그인() throws Exception {
         LoginRequest request = new LoginRequest(user.getEmail(), "rawPassword");
 
         mockMvc.perform(post("/api/auth/login")
@@ -101,7 +101,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    void 로그아웃_테스트() throws Exception {
+    void 로그아웃() throws Exception {
         JwtPayloadDto jwtPayloadDto = new JwtPayloadDto(user.getId(), user.getEmail(), user.getName(), user.getRole());
         String accessToken = jwtTokenProvider.generateAccessToken(jwtPayloadDto);
 
@@ -123,7 +123,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    void 토큰_재발급_테스트() throws Exception {
+    void 토큰_재발급() throws Exception {
         JwtPayloadDto jwtPayloadDto = new JwtPayloadDto(user.getId(), user.getEmail(), user.getName(), user.getRole());
         String refreshToken = jwtTokenProvider.generateRefreshToken(jwtPayloadDto);
 

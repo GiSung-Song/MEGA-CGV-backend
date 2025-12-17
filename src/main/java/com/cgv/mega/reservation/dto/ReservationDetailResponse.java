@@ -32,7 +32,6 @@ public record ReservationDetailResponse(
         String paymentMethod,
         BigDecimal paymentAmount,
         BigDecimal refundAmount,
-        String merchantUid,
         String paymentId,
 
         String buyerName,
@@ -76,7 +75,6 @@ public record ReservationDetailResponse(
                 dto.paymentMethod(),
                 dto.paymentAmount(),
                 dto.refundAmount(),
-                dto.merchantUid(),
                 dto.paymentId(),
 
                 dto.buyerName(),

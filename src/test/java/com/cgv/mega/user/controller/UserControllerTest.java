@@ -43,7 +43,7 @@ class UserControllerTest {
     private UserService userService;
 
     @Nested
-    class 회원가입_테스트 {
+    class 회원가입 {
 
         @Test
         void 회원가입_성공_201반환() throws Exception {
@@ -82,7 +82,7 @@ class UserControllerTest {
     }
 
     @Nested
-    class 회원_탈퇴_테스트 {
+    class 회원_탈퇴 {
 
         @Test
         @CustomMockUser(id = 1L, name = "user", email = "a@b.com", role = Role.USER)
@@ -96,7 +96,7 @@ class UserControllerTest {
     }
 
     @Nested
-    class 비밀번호_변경_테스트 {
+    class 비밀번호_변경 {
 
         @Test
         @CustomMockUser(id = 1L, name = "user", email = "a@b.com", role = Role.USER)
@@ -140,7 +140,7 @@ class UserControllerTest {
     }
 
     @Nested
-    class 휴대폰_번호_변경_테스트 {
+    class 휴대폰_번호_변경 {
 
         @Test
         @CustomMockUser(id = 1L, name = "user", email = "a@b.com", role = Role.USER)
@@ -185,7 +185,7 @@ class UserControllerTest {
     }
 
     @Nested
-    class 사용자_정보_조회_테스트 {
+    class 사용자_정보_조회 {
 
         @Test
         @CustomMockUser(id = 1L, name = "user", email = "a@b.com", role = Role.USER)

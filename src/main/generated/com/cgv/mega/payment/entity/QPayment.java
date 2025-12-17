@@ -47,8 +47,6 @@ public class QPayment extends EntityPathBase<Payment> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath merchantUid = createString("merchantUid");
-
     public final NumberPath<java.math.BigDecimal> paidAmount = createNumber("paidAmount", java.math.BigDecimal.class);
 
     public final DateTimePath<java.time.LocalDateTime> paidAt = createDateTime("paidAt", java.time.LocalDateTime.class);
@@ -67,8 +65,6 @@ public class QPayment extends EntityPathBase<Payment> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
-
-    public final BooleanPath webhookVerified = createBoolean("webhookVerified");
 
     public QPayment(String variable) {
         this(Payment.class, forVariable(variable), INITS);

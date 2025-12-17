@@ -11,8 +11,8 @@ spring:
 
   elasticsearch:
     uris: http://localhost:9200
-    connection-timeout: 3s
-    socket-timeout: 10s
+    connection-timeout: 10s
+    socket-timeout: 30s
 
 jwt:
   secretKey: LOCAL_JWT_SECRET_KEY_ON_MEGA_CGV_PROJECT_BY_GISUNG

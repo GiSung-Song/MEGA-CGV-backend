@@ -3,6 +3,7 @@ package com.cgv.mega.screening.service;
 import com.cgv.mega.common.enums.ErrorCode;
 import com.cgv.mega.common.exception.CustomException;
 import com.cgv.mega.movie.entity.Movie;
+import com.cgv.mega.movie.enums.MovieStatus;
 import com.cgv.mega.movie.repository.MovieRepository;
 import com.cgv.mega.reservation.entity.ReservationGroup;
 import com.cgv.mega.reservation.repository.ReservationGroupRepository;
@@ -113,6 +114,10 @@ public class ScreeningService {
         // 영화 없으면 throw
         Movie movie = movieRepository.findById(request.movieId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOVIE_NOT_FOUND));
+
+        if (movie.getStatus() == MovieStatus.INACTIVE) {
+            throw new CustomException(ErrorCode.MOVIE_ALREADY_DELETED);
+        }
 
         // 상영관 없으면 throw
         Theater theater = theaterRepository.findById(request.theaterId())

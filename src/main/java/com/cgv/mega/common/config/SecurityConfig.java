@@ -75,12 +75,15 @@ public class SecurityConfig {
                         // 회원가입 API
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // 인증 실패 시 401 반환
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
                         })
                 )
                 .addFilterBefore(requestTraceFilter, UsernamePasswordAuthenticationFilter.class)
