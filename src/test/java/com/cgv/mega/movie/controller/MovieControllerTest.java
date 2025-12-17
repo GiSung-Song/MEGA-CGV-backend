@@ -32,7 +32,7 @@ class MovieControllerTest {
     private MovieService movieService;
 
     @Nested
-    class 영화_상세조회_테스트 {
+    class 영화_상세조회 {
         @Test
         void 영화_상세조회_성공() throws Exception {
             MovieInfoResponse response = new MovieInfoResponse(

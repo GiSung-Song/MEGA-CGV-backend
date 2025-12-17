@@ -7,7 +7,6 @@ import lombok.*;
 @Entity
 @Table(
         name = "reservations",
-        uniqueConstraints = @UniqueConstraint(name = "uq_reservations_screening_seat", columnNames = {"screening_seat_id"}),
         indexes = @Index(name = "idx_reservations_reservation_group", columnList = "reservation_group_id")
 )
 @Getter

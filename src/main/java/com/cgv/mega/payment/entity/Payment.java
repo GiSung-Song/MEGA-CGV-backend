@@ -17,10 +17,6 @@ import java.time.LocalDateTime;
         name = "payments",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uq_payments_merchant_uid",
-                        columnNames = "merchant_uid"
-                ),
-                @UniqueConstraint(
                         name = "uq_payments_payment_id",
                         columnNames = "payment_id"
                 )
@@ -57,10 +53,7 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "buyer_email", nullable = false, length = 50)
     private String buyerEmail;
 
-    @Column(name = "merchant_uid", nullable = false, length = 100)
-    private String merchantUid;
-
-    @Column(name = "payment_id", length = 100)
+    @Column(name = "payment_id", nullable = false, length = 100)
     private String paymentId;
 
     @Column(name = "expected_amount", nullable = false, precision = 15, scale = 2)
@@ -100,26 +93,22 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 
-    @Column(name = "webhook_verified", nullable = false)
-    private boolean webhookVerified;
-
     @Builder(access = AccessLevel.PRIVATE)
     private Payment(
             ReservationGroup reservationGroup,
             String buyerName,
             String buyerPhoneNumber,
             String buyerEmail,
-            String merchantUid,
+            String paymentId,
             BigDecimal expectedAmount
     ) {
        this.reservationGroup = reservationGroup;
        this.buyerName = buyerName;
        this.buyerPhoneNumber = buyerPhoneNumber;
        this.buyerEmail = buyerEmail;
-       this.merchantUid = merchantUid;
+       this.paymentId = paymentId;
        this.expectedAmount = expectedAmount;
        this.status = PaymentStatus.READY;
-       this.webhookVerified = false;
     }
 
     public static Payment createPayment(
@@ -127,7 +116,7 @@ public class Payment extends BaseTimeEntity {
             String buyerName,
             String buyerPhoneNumber,
             String buyerEmail,
-            String merchantUid,
+            String paymentId,
             BigDecimal expectedAmount
     ) {
         return Payment.builder()
@@ -135,7 +124,7 @@ public class Payment extends BaseTimeEntity {
                 .buyerName(buyerName)
                 .buyerPhoneNumber(buyerPhoneNumber)
                 .buyerEmail(buyerEmail)
-                .merchantUid(merchantUid)
+                .paymentId(paymentId)
                 .expectedAmount(expectedAmount)
                 .build();
     }

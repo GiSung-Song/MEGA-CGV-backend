@@ -21,7 +21,11 @@ public class MovieDocument {
     @Id
     private Long id;
 
-    @Field(type = FieldType.Text, analyzer = "nori_edge_ngram_analyzer")
+    @Field(
+            type = FieldType.Text,
+            analyzer = "nori_edge_ngram_analyzer",
+            searchAnalyzer = "autocomplete_analyzer"
+    )
     private String title;
 
     @Field(type = FieldType.Keyword)

@@ -1,6 +1,5 @@
 package com.cgv.mega.movie;
 
-import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.containers.TestContainerManager;
 import com.cgv.mega.genre.entity.Genre;
 import com.cgv.mega.genre.repository.GenreRepository;
@@ -8,12 +7,15 @@ import com.cgv.mega.movie.dto.RegisterMovieRequest;
 import com.cgv.mega.movie.entity.Movie;
 import com.cgv.mega.movie.entity.MovieDocument;
 import com.cgv.mega.movie.enums.MovieStatus;
+import com.cgv.mega.movie.enums.MovieType;
 import com.cgv.mega.movie.repository.MovieRepository;
 import com.cgv.mega.movie.repository.MovieSearchRepository;
 import com.cgv.mega.user.entity.User;
 import com.cgv.mega.user.repository.UserRepository;
 import com.cgv.mega.util.TestDataFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -105,7 +108,7 @@ public class AdminMovieIntegrationTest {
     }
 
     @Nested
-    class 영화_등록_테스트 {
+    class 영화_등록 {
         @Test
         @Commit
         void 운영자인_경우_등록_성공() throws Exception {
@@ -167,7 +170,7 @@ public class AdminMovieIntegrationTest {
     }
 
     @Nested
-    class 영화_삭제_테스트 {
+    class 영화_삭제 {
         @Test
         @Commit
         void 운영자인_경우_삭제_성공() throws Exception {
@@ -231,7 +234,7 @@ public class AdminMovieIntegrationTest {
 
     @Nested
     @Transactional
-    class 영화_목록_조회_테스트 {
+    class 영화_목록_조회 {
 
         @BeforeEach
         void setUp() {
@@ -270,7 +273,7 @@ public class AdminMovieIntegrationTest {
                     .andExpect(jsonPath("$.data.pageInfo.totalElements").value(1))
                     .andDo(document("movie-list-search",
                             queryParameters(
-                                    parameterWithName("keyword").description("조회할 영화 제목 (부분 검색 가능)").optional(),
+                                    parameterWithName("keyword").description("조회할 영화 제목").optional(),
                                     parameterWithName("page").description("페이지 번호(기본 0)").optional(),
                                     parameterWithName("size").description("한 페이지 크기 (기본 10)").optional()
                             ),
@@ -315,5 +318,49 @@ public class AdminMovieIntegrationTest {
                     .andExpect(status().isForbidden())
                     .andDo(print());
         }
+    }
+
+    @Test
+    @Transactional
+    void 영화_상세_조회() throws Exception {
+        Movie movie = testDataFactory.createMovie("혹성탈출");
+
+        Genre action = genreRepository.findById(1L)
+                .orElseThrow();
+
+        Genre drama = genreRepository.findById(2L)
+                .orElseThrow();
+
+        movie.addGenre(action);
+        movie.addGenre(drama);
+        movie.addType(MovieType.TWO_D);
+        movie.addType(MovieType.THREE_D);
+
+        mockMvc.perform(get("/api/admin/movies/{movieId}", movie.getId())
+                        .header("Authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.title").value("혹성탈출"))
+                .andExpect(jsonPath("$.data.duration").value(150))
+                .andExpect(jsonPath("$.data.genres", containsInAnyOrder("ACTION", "DRAMA")))
+                .andExpect(jsonPath("$.data.types", containsInAnyOrder("2D", "3D")))
+                .andDo(document("movie-info-admin",
+                        requestHeaders(
+                                headerWithName("Authorization").description("JWT Access Token (Bearer)")
+                        ),
+                        pathParameters(
+                                parameterWithName("movieId").description("조회할 영화의 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.title").description("영화 제목"),
+                                fieldWithPath("data.duration").description("상영 시간 (분 단위)"),
+                                fieldWithPath("data.description").description("영화 설명"),
+                                fieldWithPath("data.posterUrl").description("영화 포스터 URL"),
+                                fieldWithPath("data.genres[]").description("영화 장르 목록(액션, 드라마 등)"),
+                                fieldWithPath("data.types[]").description("상영 타입 목록 (2D, 3D 등)")
+                        )
+                ))
+                .andDo(print());
     }
 }

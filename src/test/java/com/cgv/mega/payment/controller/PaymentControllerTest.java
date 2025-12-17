@@ -38,8 +38,7 @@ class PaymentControllerTest {
         @Test
         @CustomMockUser(id = 1L, name = "user", email = "a@b.com", role = Role.USER)
         void 검증_성공() throws Exception {
-            PaymentCompleteRequest request = new PaymentCompleteRequest(
-                    "merchant-uid", "payment-id",
+            PaymentCompleteRequest request = new PaymentCompleteRequest("payment-id",
                     BigDecimal.valueOf(20000), 5L
             );
 
@@ -53,7 +52,7 @@ class PaymentControllerTest {
         @Test
         void 필수값_누락_400반환() throws Exception {
             PaymentCompleteRequest request = new PaymentCompleteRequest(
-                    "merchant-uid", "payment-id",
+                    "payment-id",
                     null, 5L
             );
 

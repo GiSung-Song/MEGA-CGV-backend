@@ -38,7 +38,7 @@ class MovieEventHandlerTest {
     private MovieEventHandler movieEventHandler;
 
     @Nested
-    class 영화_ES_저장_테스트 {
+    class 영화_ES_저장{
         @Test
         void 저장_성공() {
             Movie movie = Movie.createMovie("혹성탈출", 150, "혹성탈출 설명", "escape.png");
@@ -67,7 +67,7 @@ class MovieEventHandlerTest {
     }
 
     @Nested
-    class 영화_삭제_테스트 {
+    class 영화_삭제 {
 
         @Test
         void 영화_삭제_성공() {

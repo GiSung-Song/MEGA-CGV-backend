@@ -33,11 +33,21 @@ include::{snippets}/movie-list-search/response-fields.adoc[]
 
 ---
 
+=== 영화 상세 정보 조회 API (관리자 전용)
+영화의 상세 정보를 조회합니다.
+
+include::{snippets}/movie-info-admin/http-request.adoc[]
+include::{snippets}/movie-info-admin/http-response.adoc[]
+include::{snippets}/movie-info-admin/path-parameters.adoc[]
+include::{snippets}/movie-info-admin/request-headers.adoc[]
+include::{snippets}/movie-info-admin/response-fields.adoc[]
+
+---
+
 === 영화 상세 정보 조회 API
 영화의 상세 정보를 조회합니다.
 
 include::{snippets}/movie-info/http-request.adoc[]
 include::{snippets}/movie-info/http-response.adoc[]
 include::{snippets}/movie-info/path-parameters.adoc[]
-include::{snippets}/movie-info/request-headers.adoc[]
 include::{snippets}/movie-info/response-fields.adoc[]

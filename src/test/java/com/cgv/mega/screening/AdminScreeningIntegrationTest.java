@@ -458,7 +458,7 @@ public class AdminScreeningIntegrationTest {
     }
 
     @Nested
-    class 상영_취소_테스트 {
+    class 상영_취소 {
         private Payment payment;
         private ReservationGroup reservationGroup;
 
@@ -491,7 +491,7 @@ public class AdminScreeningIntegrationTest {
 
             payment = Payment.createPayment(
                     reservationGroup, user.getName(), user.getPhoneNumber(),
-                    user.getEmail(), "merchant-uid", BigDecimal.valueOf(2000)
+                    user.getEmail(), "payment-uid", BigDecimal.valueOf(2000)
             );
 
             payment.successPayment(

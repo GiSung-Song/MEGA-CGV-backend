@@ -54,19 +54,19 @@ class ReservationControllerTest {
     private Long userId = 1L;
     private Long screeningId = 50L;
     private Long reservationGroupId = 99L;
+    private String paymentId = "payment-id";
 
     @Nested
     class 예약 {
         @Test
         @CustomMockUser(id = 1L, name = "user", email = "a@b.com", role = Role.USER)
         void 성공() throws Exception {
-            String merchantUid = "merchant-uid-1";
             BigDecimal expectedAmount = BigDecimal.valueOf(15000.00);
 
             ReservationRequest request = new ReservationRequest(Set.of(1L, 2L, 3L));
 
             BookingResponse bookingresponse = new BookingResponse(
-                    reservationGroupId, merchantUid, expectedAmount
+                    reservationGroupId, paymentId, expectedAmount
             );
 
             given(bookingService.startBooking(userId, screeningId, request)).willReturn(bookingresponse);
@@ -76,7 +76,7 @@ class ReservationControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.data.reservationGroupId").value(reservationGroupId.toString()))
-                    .andExpect(jsonPath("$.data.merchantUid").value(merchantUid))
+                    .andExpect(jsonPath("$.data.paymentId").value(paymentId))
                     .andExpect(jsonPath("$.data.expectedAmount").value(expectedAmount.toString()))
                     .andDo(print());
         }
@@ -177,7 +177,7 @@ class ReservationControllerTest {
                     reservationGroupId, "PAID",
                     LocalDateTime.of(2026, 11, 11, 8, 0),
                     null, "COMPLETED", "CARD", BigDecimal.valueOf(15000.00),
-                    null, "merchant-uid", "payment-id",
+                    null, "payment-id",
                     "buyer", "01012341234", "a@b.com"
             );
 

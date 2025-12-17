@@ -53,7 +53,7 @@ class AuthServiceTest {
     }
 
     @Nested
-    class 로그인_테스트 {
+    class 로그인 {
 
         @Test
         void 로그인_성공() {
@@ -109,7 +109,7 @@ class AuthServiceTest {
     }
 
     @Nested
-    class 로그아웃_테스트 {
+    class 로그아웃 {
 
         @Test
         void 로그아웃_성공() {
@@ -129,7 +129,7 @@ class AuthServiceTest {
     }
 
     @Nested
-    class 토큰_재발급_테스트 {
+    class 토큰_재발급 {
 
         @Test
         void 토큰_재발급_성공() {

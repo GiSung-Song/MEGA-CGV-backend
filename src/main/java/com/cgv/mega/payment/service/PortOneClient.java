@@ -34,16 +34,18 @@ public class PortOneClient {
 
     // 환불 API 호출
     public RefundResult refundPayment(String paymentId, PortOneCancelRequest request) {
-        PortOneCancelResponse response = getClient().post()
+        PortOneCancellationWrapper response = getClient().post()
                 .uri("/payments/{paymentId}/cancel", paymentId)
                 .header(HttpHeaders.AUTHORIZATION, "PortOne " + apiSecret)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(PortOneCancelResponse.class)
+                .bodyToMono(PortOneCancellationWrapper.class)
                 .block();
 
-        return toRefundResult(response);
+        PortOneCancellationResponse cancellation = response.cancellation();
+
+        return toRefundResult(cancellation);
     }
 
     private WebClient getClient() {
@@ -52,31 +54,24 @@ public class PortOneClient {
                 .build();
     }
 
-    private RefundResult toRefundResult(PortOneCancelResponse response) {
-        if (response == null || response.payment() == null) {
+    private RefundResult toRefundResult(PortOneCancellationResponse p) {
+        if (p == null) {
             return RefundResult.failure("EMPTY_RESPONSE");
         }
-        PortOnePaymentResponse.Payment p = response.payment();
 
-        if (p.failure() != null && p.failure().reason() != null) {
-            return RefundResult.failure(p.failure().reason());
+        System.out.println("[PORTONE CANCEL RESPONSE]");
+        System.out.println("status = " + p.status());
+        System.out.println("totalAmount = " + p.totalAmount());
+        System.out.println("reason = " + p.reason());
+
+        if (!"SUCCEEDED".equalsIgnoreCase(p.status())) {
+            return RefundResult.failure("CANCEL_NOT_SUCCEEDED: " + p.status());
         }
 
-        if (p.cancellation() == null || p.amount() == null || p.amount().cancelled() == null) {
-            return RefundResult.failure("CANCELLATION_OR_AMOUNT_MISSING");
+        if (p.totalAmount() == null || p.totalAmount() <= 0) {
+            return RefundResult.failure("INVALID_TOTAL_AMOUNT");
         }
 
-        String status = p.status();
-        BigDecimal cancelledAmount = p.amount().cancelled();
-
-        boolean success = ("CANCELLED".equalsIgnoreCase(status)
-                || "PARTIAL_CANCELLED".equalsIgnoreCase(status))
-                && cancelledAmount.compareTo(BigDecimal.ZERO) > 0;
-
-        if (!success) {
-            return RefundResult.failure("INVALID_STATUS_OR_AMOUNT: " + status);
-        }
-
-        return RefundResult.success(cancelledAmount);
+        return RefundResult.success(BigDecimal.valueOf(p.totalAmount()));
     }
 }

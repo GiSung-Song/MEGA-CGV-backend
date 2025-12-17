@@ -42,5 +42,3 @@ include::{snippets}/reservation-reserve-detail/http-response.adoc[]
 include::{snippets}/reservation-reserve-detail/path-parameters.adoc[]
 include::{snippets}/reservation-reserve-detail/request-headers.adoc[]
 include::{snippets}/reservation-reserve-detail/response-fields.adoc[]
-
----

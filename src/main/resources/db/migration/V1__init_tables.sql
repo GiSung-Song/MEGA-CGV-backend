@@ -172,8 +172,6 @@ CREATE TABLE reservations
 	CONSTRAINT fk_reservations_reservation_group FOREIGN KEY (reservation_group_id) REFERENCES reservation_groups(id),
 	CONSTRAINT fk_reservations_screening_seat    FOREIGN KEY (screening_seat_id)    REFERENCES screening_seats(id),
 
-	CONSTRAINT uq_reservations_screening_seat UNIQUE (screening_seat_id),
-
 	INDEX idx_reservations_reservation_group (reservation_group_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -187,8 +185,7 @@ CREATE TABLE payments
     buyer_phone_number   VARCHAR(20) NOT NULL,                 -- 거래자 휴대폰 번호
     buyer_email          VARCHAR(50) NOT NULL,                 -- 거래자 이메일
 
-    merchant_uid         VARCHAR(100) NOT NULL,                -- 시스템 주문 번호 (서비스 내에서 생성)
-    payment_id           VARCHAR(100),                         -- 결제 고유번호 (포트원 서비스)
+    payment_id           VARCHAR(100),                         -- 결제 고유번호
 
     expected_amount      DECIMAL(15, 2) NOT NULL,              -- 기대 금액
     paid_amount          DECIMAL(15, 2),                       -- 실제 결제 금액
@@ -207,8 +204,6 @@ CREATE TABLE payments
     paid_at              DATETIME,                             -- 결제 완료 시점
     cancelled_at         DATETIME,                             -- 결제 취소 시점
 
-    webhook_verified TINYINT(1) NOT NULL DEFAULT 0,            -- 웹훅 검증 여부
-
     created_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP,                             -- 생성 시각
     updated_at  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 종료 시각
 
@@ -216,7 +211,6 @@ CREATE TABLE payments
 
     CONSTRAINT chk_payments_status CHECK (status IN ('READY', 'COMPLETED', 'FAILED', 'FAILED_VERIFICATION', 'CANCELLED')),
 
-    CONSTRAINT uq_payments_merchant_uid UNIQUE (merchant_uid),
     CONSTRAINT uq_payments_payment_id   UNIQUE (payment_id),
 
     INDEX idx_payments_reservation_group (reservation_group_id)

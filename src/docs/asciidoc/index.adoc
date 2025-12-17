@@ -37,5 +37,3 @@ include::screening-seat.adoc[]
 
 == 예약 API
 include::reservation.adoc[]
-
----

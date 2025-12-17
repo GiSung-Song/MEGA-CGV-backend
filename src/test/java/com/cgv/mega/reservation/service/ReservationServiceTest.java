@@ -343,7 +343,7 @@ class ReservationServiceTest {
                             new ReservationDetailDto.SeatInfo(a2.getRowLabel(), a2.getColNumber(), a2.getType())),
                     reservationGroup.getId(), reservationGroup.getStatus(), reservationGroup.getCreatedAt(),
                     reservationGroup.getUpdatedAt(), PaymentStatus.COMPLETED, "card", BigDecimal.valueOf(15000.00),
-                    BigDecimal.ZERO, "merchant-uid-1", "payment-id-1", "buyer", "01012341234", "a@b.com"
+                    BigDecimal.ZERO, "payment-id-1", "buyer", "01012341234", "a@b.com"
             );
 
             given(reservationQueryRepository.getReservationDetail(userId, reservationGroup.getId())).willReturn(reservationDetailDto);

@@ -3,19 +3,15 @@ package com.cgv.mega.payment.dto;
 import java.math.BigDecimal;
 
 public record PortOnePaymentResponse(
-    Payment payment
+        String id,
+        String orderId,
+        String status,
+        Amount amount,
+        Method method,
+        String statusChangedAt,
+        Failure failure,
+        Cancellation cancellation
 ) {
-    public record Payment(
-            String id,
-            String orderId,
-            String status,
-            Amount amount,
-            Method method,
-            String statusChangedAt,
-            Failure failure,
-            Cancellation cancellation
-    ) {}
-
     public record Amount(
             BigDecimal total,
             BigDecimal cancelled

@@ -6,10 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record PaymentCompleteRequest(
-        @NotBlank(message = "상점 거래 번호는 필수입니다.")
-        String merchantUid,
-
-        @NotBlank(message = "PG사 거래 번호는 필수입니다.")
+        @NotBlank(message = "거래 번호는 필수입니다.")
         String paymentId,
 
         @NotNull(message = "거래 금액은 필수입니다.")
