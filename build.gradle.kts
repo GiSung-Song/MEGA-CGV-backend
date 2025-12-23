@@ -132,6 +132,7 @@ tasks.withType<AsciidoctorTask> {
 
 tasks.register<Copy>("copyIndexDoc") {
     dependsOn(tasks.named("asciidoctor"))
-    from(layout.buildDirectory.file("docs/asciidoc/index.html"))
-    into(layout.projectDirectory.dir("src/main/resources/static/docs"))
+
+    from(layout.buildDirectory.dir("docs/asciidoc"))
+    into(layout.projectDirectory.dir("docs"))
 }
