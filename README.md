@@ -13,7 +13,8 @@ Spring RestDocs 기반으로 작성된 API 문서입니다.
 모든 문서는 **테스트 코드 실행 결과로 자동 생성**되며,
 실제 Request / Response와 항상 동기화됩니다.
 
-==> [API 문서 바로가기](https://gisung-song.github.io/MEGA-CGV-backend/)
+👉 [API 문서 (Spring RestDocs · 테스트 기반 자동 생성)]
+https://gisung-song.github.io/MEGA-CGV-backend/
 
 ---
 
