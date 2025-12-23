@@ -3,6 +3,18 @@
 영화 예매 서비스의 **백엔드 시스템**으로,  
 영화 상영 정보 조회, 좌석 예약, 결제 및 환불(부분 환불 포함)을 지원합니다.
 
+동시 좌석 예약 경쟁 상황, 결제 검증 및 환불 정책 등
+**실제 서비스에서 발생할 수 있는 시나리오를 중심으로 설계·구현**했습니다.
+
+---
+
+## API Documentation
+Spring RestDocs 기반으로 작성된 API 문서입니다.
+모든 문서는 **테스트 코드 실행 결과로 자동 생성**되며,
+실제 Request / Response와 항상 동기화됩니다.
+
+==> [API 문서 바로가기](https://gisung-song.github.io/MEGA-CGV-backend/)
+
 ---
 
 ## 기술 스택
@@ -31,13 +43,21 @@
     - 부분 환불 / 전액 환불
     - 상영 취소 시 전액 환불 처리
 
-### Test
-- **Spring RestDocs**
-- **k6**
+---
+
+## Test
+### API Documentation
+ - **Spring RestDocs**
+     - 테스트 코드 기반 API 문서 자동 생성
+
+### Concurrency Test
+ - **k6**
     - 동시 좌석 점유 경쟁 상황 테스트
-- **PortOne SDK**
-    - 결제
-    - 예약 취소 시 환불 (부분 환불 포함)
+
+### Payment
+ - **PortOne SDK**
+    - 결제 검증 로직 테스트
+    - 예약 취소 시 부분 환불
     - 상영 취소 시 전액 환불
 
 ---
